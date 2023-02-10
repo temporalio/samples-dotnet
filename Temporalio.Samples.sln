@@ -1,0 +1,33 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.31903.59
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{1A647B41-53D0-4638-AE5A-6630BAAE45FC}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Temporalio.Samples.ActivityWorker", "src\ActivityWorker\Temporalio.Samples.ActivityWorker.csproj", "{17964E03-25F9-4BF3-B8CE-62B34ED25F70}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Temporalio.Samples.Tests", "tests\Temporalio.Samples.Tests.csproj", "{F8C804A6-54C9-4D39-A76B-AAD03A6E9F3A}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{17964E03-25F9-4BF3-B8CE-62B34ED25F70}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{17964E03-25F9-4BF3-B8CE-62B34ED25F70}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{17964E03-25F9-4BF3-B8CE-62B34ED25F70}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{17964E03-25F9-4BF3-B8CE-62B34ED25F70}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F8C804A6-54C9-4D39-A76B-AAD03A6E9F3A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F8C804A6-54C9-4D39-A76B-AAD03A6E9F3A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F8C804A6-54C9-4D39-A76B-AAD03A6E9F3A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F8C804A6-54C9-4D39-A76B-AAD03A6E9F3A}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{17964E03-25F9-4BF3-B8CE-62B34ED25F70} = {1A647B41-53D0-4638-AE5A-6630BAAE45FC}
+	EndGlobalSection
+EndGlobal

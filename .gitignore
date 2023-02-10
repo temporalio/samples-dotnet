@@ -1,0 +1,8 @@
+
+# Build results
+bin/
+obj/
+
+# IDE cruft
+/.vs
+/.vscode
