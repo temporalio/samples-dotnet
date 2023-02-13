@@ -24,6 +24,9 @@ dotnet_diagnostic.CA1307.severity = none
 dotnet_diagnostic.CA1310.severity = none
 dotnet_diagnostic.CA1311.severity = none
 
+# Don't need to mark sample test classes static
+dotnet_diagnostic.CA1812.severity = none
+
 # We accept logging performance is not important in samples
 dotnet_diagnostic.CA1848.severity = none
 
