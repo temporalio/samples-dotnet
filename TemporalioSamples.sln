@@ -1,0 +1,50 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.31903.59
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{1A647B41-53D0-4638-AE5A-6630BAAE45FC}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TemporalioSamples.ActivityWorker", "src\ActivityWorker\TemporalioSamples.ActivityWorker.csproj", "{7AECC7C6-9A21-4B8A-84D9-AFC4F5840CAF}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TemporalioSamples.Tests", "tests\TemporalioSamples.Tests.csproj", "{3FA7E5DF-03B7-4586-A980-85C155B376C5}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "AspNet", "AspNet", "{E431D279-E02B-4670-B934-3DB9F15D8CCC}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TemporalioSamples.AspNet.Web", "src\AspNet\Web\TemporalioSamples.AspNet.Web.csproj", "{31EC2647-6A5A-42D1-B7B5-02804B340726}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TemporalioSamples.AspNet.Worker", "src\AspNet\Worker\TemporalioSamples.AspNet.Worker.csproj", "{AFFA4143-DC28-4FBE-A33B-D6414F541EA4}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{7AECC7C6-9A21-4B8A-84D9-AFC4F5840CAF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7AECC7C6-9A21-4B8A-84D9-AFC4F5840CAF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7AECC7C6-9A21-4B8A-84D9-AFC4F5840CAF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7AECC7C6-9A21-4B8A-84D9-AFC4F5840CAF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3FA7E5DF-03B7-4586-A980-85C155B376C5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3FA7E5DF-03B7-4586-A980-85C155B376C5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3FA7E5DF-03B7-4586-A980-85C155B376C5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3FA7E5DF-03B7-4586-A980-85C155B376C5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{31EC2647-6A5A-42D1-B7B5-02804B340726}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{31EC2647-6A5A-42D1-B7B5-02804B340726}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{31EC2647-6A5A-42D1-B7B5-02804B340726}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{31EC2647-6A5A-42D1-B7B5-02804B340726}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AFFA4143-DC28-4FBE-A33B-D6414F541EA4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AFFA4143-DC28-4FBE-A33B-D6414F541EA4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AFFA4143-DC28-4FBE-A33B-D6414F541EA4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AFFA4143-DC28-4FBE-A33B-D6414F541EA4}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{7AECC7C6-9A21-4B8A-84D9-AFC4F5840CAF} = {1A647B41-53D0-4638-AE5A-6630BAAE45FC}
+		{E431D279-E02B-4670-B934-3DB9F15D8CCC} = {1A647B41-53D0-4638-AE5A-6630BAAE45FC}
+		{31EC2647-6A5A-42D1-B7B5-02804B340726} = {E431D279-E02B-4670-B934-3DB9F15D8CCC}
+		{AFFA4143-DC28-4FBE-A33B-D6414F541EA4} = {E431D279-E02B-4670-B934-3DB9F15D8CCC}
+	EndGlobalSection
+EndGlobal

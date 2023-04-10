@@ -1,3 +1,21 @@
+##### Temporal workflow files have different editor config #####
+[*.workflow.cs]
+
+# We use getters for queries, they cannot be properties
+dotnet_diagnostic.CA1024.severity = none
+
+# Don't force workflows to have static methods
+dotnet_diagnostic.CA1822.severity = none
+
+# Do not need task scheduler for workflows
+dotnet_diagnostic.CA2008.severity = none
+
+# Workflow randomness is intentionally deterministic
+dotnet_diagnostic.CA5394.severity = none
+
+# Don't avoid, but rather encourage things using TaskScheduler.Current in workflows
+dotnet_diagnostic.VSTHRD105.severity = none
+
 [*.cs]
 
 ##### Temporal additions ######
@@ -24,7 +42,10 @@ dotnet_diagnostic.CA1307.severity = none
 dotnet_diagnostic.CA1310.severity = none
 dotnet_diagnostic.CA1311.severity = none
 
-# Don't need to mark sample test classes static
+# Don't need to worry about name clashes across samples
+dotnet_diagnostic.CA1724.severity = none
+
+# Don't need to mark sample classes static
 dotnet_diagnostic.CA1812.severity = none
 
 # We accept logging performance is not important in samples
@@ -69,6 +90,9 @@ dotnet_diagnostic.SA1633.severity = none
 
 # Types don't have to match filename in samples (may be defined in Program.cs)
 dotnet_diagnostic.SA1649.severity = none
+
+# We accept the deadlock fear by awaiting a task separate from where created
+dotnet_diagnostic.VSTHRD003.severity = none
 
 ###############################
 

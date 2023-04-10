@@ -1,8 +1,8 @@
-using Temporalio.Activity;
+using Temporalio.Activities;
 using Temporalio.Client;
-using Temporalio.Samples.ActivityWorker;
+using TemporalioSamples.ActivityWorker;
 using Temporalio.Worker;
-using Temporalio.Workflow;
+using Temporalio.Workflows;
 
 // Create a client to localhost on default namespace
 var client = await TemporalClient.ConnectAsync(new("localhost:7233"));
@@ -10,7 +10,7 @@ var client = await TemporalClient.ConnectAsync(new("localhost:7233"));
 // Create worker
 using var worker = new TemporalWorker(
     client,
-    new() { TaskQueue = "activity-worker-sample", Activities = { Activities.SayHello } });
+    new() { TaskQueue = "activity-worker-sample", Activities = { SayHelloActivities.SayHello } });
 
 // Run worker until our code finishes
 await worker.ExecuteAsync(async () =>
@@ -25,9 +25,9 @@ await worker.ExecuteAsync(async () =>
     Console.WriteLine("Workflow result: {0}", result);
 });
 
-namespace Temporalio.Samples.ActivityWorker
+namespace TemporalioSamples.ActivityWorker
 {
-    public static class Activities
+    public static class SayHelloActivities
     {
         // Our activity implementation
         [Activity("say-hello-activity")]
@@ -38,7 +38,7 @@ namespace Temporalio.Samples.ActivityWorker
     [Workflow("say-hello-workflow")]
     public interface ISayHelloWorkflow
     {
-        static readonly ISayHelloWorkflow Ref = Refs.Create<ISayHelloWorkflow>();
+        static readonly ISayHelloWorkflow Ref = Temporalio.Refs.Create<ISayHelloWorkflow>();
 
         [WorkflowRun]
         Task<string> RunAsync(string name);
