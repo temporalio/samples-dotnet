@@ -1,4 +1,5 @@
 using Temporalio.Client;
+using TemporalioSamples.AspNet.Worker;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -14,7 +15,6 @@ builder.Services.AddSingleton(ctx =>
     TemporalClient.ConnectAsync(new()
     {
         TargetHost = "localhost:7233",
-        Namespace = "default",
         LoggerFactory = ctx.GetRequiredService<ILoggerFactory>(),
     }));
 

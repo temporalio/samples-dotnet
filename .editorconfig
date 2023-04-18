@@ -13,6 +13,9 @@ dotnet_diagnostic.CA2008.severity = none
 # Workflow randomness is intentionally deterministic
 dotnet_diagnostic.CA5394.severity = none
 
+# Allow async methods to not have await in them
+dotnet_diagnostic.CS1998.severity = none
+
 # Don't avoid, but rather encourage things using TaskScheduler.Current in workflows
 dotnet_diagnostic.VSTHRD105.severity = none
 
@@ -25,6 +28,9 @@ dotnet_diagnostic.VSTHRD105.severity = none
 # We cannot reasonably mark ourselves CLSCompliant one way or another if
 # libraries we rely on like Microsoft.Extensions.Logging.Abstractions don't
 dotnet_diagnostic.CA1014.severity = none
+
+# We're ok with public nested types in samples
+dotnet_diagnostic.CA1034.severity = none
 
 # We use nullable types instead of checking params are non-null, even in public
 # methods
@@ -47,6 +53,9 @@ dotnet_diagnostic.CA1724.severity = none
 
 # Don't need to mark sample classes static
 dotnet_diagnostic.CA1812.severity = none
+
+# For simple examples, we don't have to make non-instance-access methods static
+dotnet_diagnostic.CA1822.severity = none
 
 # We accept logging performance is not important in samples
 dotnet_diagnostic.CA1848.severity = none

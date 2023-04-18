@@ -1,4 +1,4 @@
-namespace Temporalio.Samples.Tests;
+namespace TemporalioSamples.Tests;
 
 using Microsoft.Extensions.Logging;
 using Xunit.Abstractions;

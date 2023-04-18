@@ -9,7 +9,7 @@ following from the [go-workflow] directory in a separate terminal:
 
 Then in another terminal, run the sample from this directory:
 
-    dotnet run .
+    dotnet run
 
 The .NET code will invoke the Go workflow which will execute the .NET activity and return. The output should be:
 

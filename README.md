@@ -17,7 +17,9 @@ Prerequisites:
 ## Samples
 
 <!-- Keep this list in alphabetical order -->
+* [ActivitySimple](src/ActivitySimple) - Simple workflow that runs simple activities.
 * [ActivityWorker](src/ActivityWorker) - Use .NET activities from a workflow in another language.
+* [AspNet](src/AspNet) - Demonstration of a generic host worker and an ASP.NET workflow starter.
 
 ## Development
 
@@ -47,5 +49,5 @@ Run:
 Can add options like:
 
 * `--logger "console;verbosity=detailed"` to show logs
-* `--filter "FullyQualifiedName=Temporalio.Samples.Tests.ActivityWorker.ActivityWorkerTests.Main_RunActivity_Succeeds"`
+* `--filter "FullyQualifiedName=TemporalioSamples.Tests.ActivityWorker.ActivityWorkerTests.Main_RunActivity_Succeeds"`
   to run a specific test

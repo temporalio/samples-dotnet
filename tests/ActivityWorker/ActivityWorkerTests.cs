@@ -1,5 +1,6 @@
-namespace Temporalio.Samples.Tests.ActivityWorker;
+namespace TemporalioSamples.Tests.ActivityWorker;
 
+using Temporalio.Testing;
 using TemporalioSamples.ActivityWorker;
 using Xunit;
 using Xunit.Abstractions;
@@ -14,7 +15,7 @@ public class ActivityWorkerTests : TestBase
     [Fact]
     public async Task Main_RunActivity_Succeeds()
     {
-        var env = new Testing.ActivityEnvironment();
+        var env = new ActivityEnvironment();
         Assert.Equal("Hello, Test!", await env.RunAsync(() => SayHelloActivities.SayHello("Test")));
     }
 }
