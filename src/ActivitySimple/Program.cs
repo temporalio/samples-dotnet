@@ -9,7 +9,7 @@ var client = await TemporalClient.ConnectAsync(new("localhost:7233")
     LoggerFactory = LoggerFactory.Create(builder =>
         builder.
             AddSimpleConsole(options => options.TimestampFormat = "[HH:mm:ss] ").
-            SetMinimumLevel(LogLevel.Trace)),
+            SetMinimumLevel(LogLevel.Information)),
 });
 
 async Task RunWorkerAsync()

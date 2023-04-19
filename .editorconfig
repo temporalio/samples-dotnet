@@ -66,6 +66,9 @@ dotnet_diagnostic.CA1852.severity = none
 # Don't need ConfigureAwait in samples
 dotnet_diagnostic.CA2007.severity = none
 
+# Sometimes we need relative URLs when the HTTP client already has an origin
+dotnet_diagnostic.CA2234.severity = none
+
 # Do not want to make all exceptions [Serializable], we don't support
 # cross-AppDomain currently
 dotnet_diagnostic.CA2237.severity = none
