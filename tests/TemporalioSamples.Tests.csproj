@@ -1,0 +1,28 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
+    <GenerateProgramFile>false</GenerateProgramFile>
+    <IsPackable>false</IsPackable>
+    <OutputType>Exe</OutputType>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="coverlet.collector" Version="3.1.2" />
+    <PackageReference Include="MartinCostello.Logging.XUnit" Version="0.3.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.Testing" Version="6.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Hosting" Version="7.0.0" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.4.1" />
+    <PackageReference Include="xunit" Version="2.4.2" />
+    <PackageReference Include="xunit.console" Version="2.4.2" />
+    <PackageReference Include="xunit.runner.visualstudio" Version="2.4.3" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\src\ActivitySimple\TemporalioSamples.ActivitySimple.csproj" />
+    <ProjectReference Include="..\src\ActivityWorker\TemporalioSamples.ActivityWorker.csproj" />
+    <ProjectReference Include="..\src\Encryption\Codec\TemporalioSamples.Encryption.Codec.csproj" />
+    <ProjectReference Include="..\src\Encryption\CodecServer\TemporalioSamples.Encryption.CodecServer.csproj" />
+  </ItemGroup>
+
+</Project>

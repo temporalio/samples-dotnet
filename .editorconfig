@@ -1,3 +1,24 @@
+##### Temporal workflow files have different editor config #####
+[*.workflow.cs]
+
+# We use getters for queries, they cannot be properties
+dotnet_diagnostic.CA1024.severity = none
+
+# Don't force workflows to have static methods
+dotnet_diagnostic.CA1822.severity = none
+
+# Do not need task scheduler for workflows
+dotnet_diagnostic.CA2008.severity = none
+
+# Workflow randomness is intentionally deterministic
+dotnet_diagnostic.CA5394.severity = none
+
+# Allow async methods to not have await in them
+dotnet_diagnostic.CS1998.severity = none
+
+# Don't avoid, but rather encourage things using TaskScheduler.Current in workflows
+dotnet_diagnostic.VSTHRD105.severity = none
+
 [*.cs]
 
 ##### Temporal additions ######
@@ -7,6 +28,9 @@
 # We cannot reasonably mark ourselves CLSCompliant one way or another if
 # libraries we rely on like Microsoft.Extensions.Logging.Abstractions don't
 dotnet_diagnostic.CA1014.severity = none
+
+# We're ok with public nested types in samples
+dotnet_diagnostic.CA1034.severity = none
 
 # We use nullable types instead of checking params are non-null, even in public
 # methods
@@ -24,8 +48,14 @@ dotnet_diagnostic.CA1307.severity = none
 dotnet_diagnostic.CA1310.severity = none
 dotnet_diagnostic.CA1311.severity = none
 
-# Don't need to mark sample test classes static
+# Don't need to worry about name clashes across samples
+dotnet_diagnostic.CA1724.severity = none
+
+# Don't need to mark sample classes static
 dotnet_diagnostic.CA1812.severity = none
+
+# For simple examples, we don't have to make non-instance-access methods static
+dotnet_diagnostic.CA1822.severity = none
 
 # We accept logging performance is not important in samples
 dotnet_diagnostic.CA1848.severity = none
@@ -35,6 +65,9 @@ dotnet_diagnostic.CA1852.severity = none
 
 # Don't need ConfigureAwait in samples
 dotnet_diagnostic.CA2007.severity = none
+
+# Sometimes we need relative URLs when the HTTP client already has an origin
+dotnet_diagnostic.CA2234.severity = none
 
 # Do not want to make all exceptions [Serializable], we don't support
 # cross-AppDomain currently
@@ -69,6 +102,9 @@ dotnet_diagnostic.SA1633.severity = none
 
 # Types don't have to match filename in samples (may be defined in Program.cs)
 dotnet_diagnostic.SA1649.severity = none
+
+# We accept the deadlock fear by awaiting a task separate from where created
+dotnet_diagnostic.VSTHRD003.severity = none
 
 ###############################
 

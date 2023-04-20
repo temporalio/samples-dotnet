@@ -1,4 +1,4 @@
-namespace Temporalio.Samples.Tests;
+namespace TemporalioSamples.Tests;
 
 using Microsoft.Extensions.Logging;
 using Xunit.Abstractions;
@@ -9,10 +9,21 @@ public abstract class TestBase : IDisposable
 
     protected TestBase(ITestOutputHelper output)
     {
-        LoggerFactory = Microsoft.Extensions.Logging.LoggerFactory.Create(builder =>
-            builder.AddXUnit(output));
-        consoleWriter = new ConsoleWriter(output);
-        Console.SetOut(consoleWriter);
+        if (Program.InProc)
+        {
+            LoggerFactory = Microsoft.Extensions.Logging.LoggerFactory.Create(builder =>
+                builder.
+                    AddSimpleConsole(options => options.TimestampFormat = "[HH:mm:ss] ").
+                    SetMinimumLevel(Program.Verbose ? LogLevel.Trace : LogLevel.Information));
+        }
+        else
+        {
+            LoggerFactory = Microsoft.Extensions.Logging.LoggerFactory.Create(builder =>
+                builder.AddXUnit(output));
+            // Only set this if not in-proc
+            consoleWriter = new ConsoleWriter(output);
+            Console.SetOut(consoleWriter);
+        }
     }
 
     ~TestBase()

@@ -1,0 +1,12 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Codec\TemporalioSamples.Encryption.Codec.csproj" />
+    <ProjectReference Include="..\Worker\TemporalioSamples.Encryption.Worker.csproj" />
+  </ItemGroup>
+
+</Project>
