@@ -14,7 +14,7 @@ public class MyWorkflowTests : TestBase
     {
     }
 
-    [Fact]
+    [TimeSkippingServerFact]
     public async Task RunAsync_SimpleRun_Succeeds()
     {
         await using var env = await WorkflowEnvironment.StartTimeSkippingAsync();
