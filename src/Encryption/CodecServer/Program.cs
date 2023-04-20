@@ -24,7 +24,9 @@ public sealed class Program
             builder => builder.
                 WithHeaders("content-type", "x-namespace").
                 WithMethods("POST").
-                WithOrigins("http://localhost:8080", "https://cloud.temporal.io/"));
+                // This list may need to be customized based on where the UI
+                // is communicating from
+                WithOrigins("http://localhost:8080", "http://localhost:8233", "https://cloud.temporal.io"));
 
         // These are the endpoints called for encrypt/decrypt
         app.MapPost("/encode", EncodeAsync);
