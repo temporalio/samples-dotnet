@@ -14,7 +14,7 @@ public class CodecServerTests : TestBase, IClassFixture<WebApplicationFactory<Pr
     public CodecServerTests(ITestOutputHelper output, WebApplicationFactory<Program> factory)
         : base(output) => this.factory = factory;
 
-    [Fact]
+    [AesGcmSupportedFact]
     public async Task CodecServer_WithEncryptionCodec_WorksProperly()
     {
         using var client = factory.CreateClient();
@@ -35,9 +35,9 @@ public class CodecServerTests : TestBase, IClassFixture<WebApplicationFactory<Pr
         // Encode
         using var encContent = new StringContent(JsonFormatter.Default.Format(origPayloads), null, "application/json");
         using var encResp = await client.PostAsync("/encode", encContent);
-        encResp.EnsureSuccessStatusCode();
-        var encPayloads = JsonParser.Default.Parse<Payloads>(
-            await encResp.Content.ReadAsStringAsync());
+        var encRespBody = await encResp.Content.ReadAsStringAsync();
+        Assert.True(encResp.IsSuccessStatusCode, encRespBody);
+        var encPayloads = JsonParser.Default.Parse<Payloads>(encRespBody);
         // Check encoding and key ID
         var encPayload = encPayloads.Payloads_.Single();
         Assert.Equal("binary/encrypted", encPayload.Metadata["encoding"].ToStringUtf8());
@@ -46,9 +46,20 @@ public class CodecServerTests : TestBase, IClassFixture<WebApplicationFactory<Pr
         // Decode
         using var decContent = new StringContent(JsonFormatter.Default.Format(encPayloads), null, "application/json");
         using var decResp = await client.PostAsync("/decode", decContent);
-        decResp.EnsureSuccessStatusCode();
-        var decPayloads = JsonParser.Default.Parse<Payloads>(
-            await decResp.Content.ReadAsStringAsync());
+        var decRespBody = await decResp.Content.ReadAsStringAsync();
+        Assert.True(decResp.IsSuccessStatusCode, decRespBody);
+        var decPayloads = JsonParser.Default.Parse<Payloads>(decRespBody);
         Assert.Equal(origPayloads, decPayloads);
+    }
+
+    public sealed class AesGcmSupportedFactAttribute : FactAttribute
+    {
+        public AesGcmSupportedFactAttribute()
+        {
+            if (!System.Security.Cryptography.AesGcm.IsSupported)
+            {
+                Skip = "AesGcm not supported on this platform";
+            }
+        }
     }
 }
