@@ -13,7 +13,7 @@
     <Nullable>enable</Nullable>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <RepositoryUrl>https://github.com/temporalio/samples-dotnet</RepositoryUrl>
-    <TargetFramework>net6.0</TargetFramework>
+    <TargetFramework>net7.0</TargetFramework>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
     <Version>0.1.0</Version>
   </PropertyGroup>
