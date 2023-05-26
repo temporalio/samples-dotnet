@@ -27,10 +27,8 @@ Console.CancelKeyPress += (_, eventArgs) =>
 Console.WriteLine("Running worker");
 using var worker = new TemporalWorker(
     client,
-    new(taskQueue: "encryption-sample")
-    {
-        Workflows = { typeof(GreetingWorkflow) },
-    });
+    new TemporalWorkerOptions(taskQueue: "encryption-sample").
+        AddWorkflow<GreetingWorkflow>());
 try
 {
     await worker.ExecuteAsync(tokenSource.Token);

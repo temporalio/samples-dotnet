@@ -6,16 +6,13 @@ using Temporalio.Workflows;
 [Workflow]
 public class MyWorkflow
 {
-    public static readonly MyWorkflow Ref = WorkflowRefs.Create<MyWorkflow>();
-
     [WorkflowRun]
     public async Task<string> RunAsync()
     {
         // Run an async instance method activity. Since it's an instance method,
         // we need to access via the Ref.
         var result1 = await Workflow.ExecuteActivityAsync(
-            MyActivities.Ref.SelectFromDatabaseAsync,
-            "some-db-table",
+            (MyActivities act) => act.SelectFromDatabaseAsync("some-db-table"),
             new()
             {
                 ScheduleToCloseTimeout = TimeSpan.FromMinutes(5),
@@ -25,7 +22,7 @@ public class MyWorkflow
         // Run a sync static method activity. Since it's a static method, we
         // don't need to use Ref to access it.
         var result2 = await Workflow.ExecuteActivityAsync(
-            MyActivities.DoStaticThing,
+            () => MyActivities.DoStaticThing(),
             new()
             {
                 ScheduleToCloseTimeout = TimeSpan.FromMinutes(5),

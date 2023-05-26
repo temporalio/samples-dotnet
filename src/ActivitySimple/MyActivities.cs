@@ -4,8 +4,6 @@ using Temporalio.Activities;
 
 public class MyActivities
 {
-    public static readonly MyActivities Ref = ActivityRefs.Create<MyActivities>();
-
     private readonly MyDatabaseClient dbClient = new();
 
     // Activities can be static and/or sync
