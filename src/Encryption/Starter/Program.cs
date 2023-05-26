@@ -16,7 +16,6 @@ var client = await TemporalClient.ConnectAsync(new("localhost:7233")
 
 // Run workflow
 var result = await client.ExecuteWorkflowAsync(
-    GreetingWorkflow.Ref.RunAsync,
-    "Temporal",
+    (GreetingWorkflow wf) => wf.RunAsync("Temporal"),
     new(id: "encryption-workflow-id", taskQueue: "encryption-sample"));
 Console.WriteLine("Workflow result: {0}", result);

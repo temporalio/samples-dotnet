@@ -24,8 +24,7 @@ app.MapGet("/", async (Task<TemporalClient> clientTask, string? name) =>
 {
     var client = await clientTask;
     return await client.ExecuteWorkflowAsync(
-        MyWorkflow.Ref.RunAsync,
-        name ?? "Temporal",
+        (MyWorkflow wf) => wf.RunAsync(name ?? "Temporal"),
         new(id: $"aspnet-sample-workflow-{Guid.NewGuid()}", taskQueue: MyWorkflow.TaskQueue));
 });
 

@@ -28,11 +28,8 @@ public sealed class Worker : BackgroundService
                 TargetHost = "localhost:7233",
                 LoggerFactory = loggerFactory,
             }),
-            new()
-            {
-                TaskQueue = MyWorkflow.TaskQueue,
-                Workflows = { typeof(MyWorkflow) },
-            });
+            new TemporalWorkerOptions(taskQueue: MyWorkflow.TaskQueue).
+                AddWorkflow<MyWorkflow>());
         await worker.ExecuteAsync(stoppingToken);
     }
 }

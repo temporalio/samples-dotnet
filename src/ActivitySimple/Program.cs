@@ -29,15 +29,10 @@ async Task RunWorkerAsync()
     Console.WriteLine("Running worker");
     using var worker = new TemporalWorker(
         client,
-        new(taskQueue: "activity-simple-sample")
-        {
-            Activities =
-            {
-                activities.SelectFromDatabaseAsync,
-                MyActivities.DoStaticThing,
-            },
-            Workflows = { typeof(MyWorkflow) },
-        });
+        new TemporalWorkerOptions(taskQueue: "activity-simple-sample").
+            AddActivity(activities.SelectFromDatabaseAsync).
+            AddActivity(MyActivities.DoStaticThing).
+            AddWorkflow<MyWorkflow>());
     try
     {
         await worker.ExecuteAsync(tokenSource.Token);
@@ -52,7 +47,7 @@ async Task ExecuteWorkflowAsync()
 {
     Console.WriteLine("Executing workflow");
     await client.ExecuteWorkflowAsync(
-        MyWorkflow.Ref.RunAsync,
+        (MyWorkflow wf) => wf.RunAsync(),
         new(id: "activity-simple-workflow-id", taskQueue: "activity-simple-sample"));
 }
 

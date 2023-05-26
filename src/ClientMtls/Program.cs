@@ -60,10 +60,8 @@ AddClientCommand("run-worker", "Run worker", async (client, cancelToken) =>
     Console.WriteLine("Running worker");
     using var worker = new TemporalWorker(
         client,
-        new(taskQueue: "client-mtls-sample")
-        {
-            Workflows = { typeof(GreetingWorkflow) },
-        });
+        new TemporalWorkerOptions(taskQueue: "client-mtls-sample").
+            AddWorkflow<GreetingWorkflow>());
     await worker.ExecuteAsync(cancelToken);
 });
 
@@ -71,8 +69,7 @@ AddClientCommand("run-worker", "Run worker", async (client, cancelToken) =>
 AddClientCommand("execute-workflow", "Execute workflow", async (client, cancelToken) =>
 {
     var result = await client.ExecuteWorkflowAsync(
-        GreetingWorkflow.Ref.RunAsync,
-        "Temporal",
+        (GreetingWorkflow wf) => wf.RunAsync("Temporal"),
         new(id: "client-mtls-workflow-id", taskQueue: "client-mtls-sample")
         {
             Rpc = new() { CancellationToken = cancelToken },
