@@ -17,6 +17,8 @@ Prerequisites:
 ## Samples
 
 <!-- Keep this list in alphabetical order -->
+* [ActivityDependencyInjection](src/ActivityDependencyInjection) - Demonstration of helpers/extensions to instantiate
+  activity classes using dependency injection.
 * [ActivitySimple](src/ActivitySimple) - Simple workflow that runs simple activities.
 * [ActivityWorker](src/ActivityWorker) - Use .NET activities from a workflow in another language.
 * [AspNet](src/AspNet) - Demonstration of a generic host worker and an ASP.NET workflow starter.
