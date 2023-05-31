@@ -1,6 +1,7 @@
 namespace TemporalioSamples.ActivityDependencyInjection;
 
 using System.Reflection;
+using System.Runtime.ExceptionServices;
 using Microsoft.Extensions.DependencyInjection;
 using Temporalio.Activities;
 using Temporalio.Worker;
@@ -10,15 +11,8 @@ using Temporalio.Worker;
 /// <see cref="Microsoft.Extensions.Options.IOptions{TOptions}" /> by workers to call
 /// <see cref="ApplyToWorkerOptions" /> to bind the activities.
 /// </summary>
-public class ActivityOptions
+public class ActivityCollection : List<ActivityCollection.ActivityDetails>
 {
-    private readonly List<ActivityDetails> activities = new();
-
-    /// <summary>
-    /// Gets the activity details.
-    /// </summary>
-    public IReadOnlyCollection<ActivityDetails> Activities => activities;
-
     /// <summary>
     /// Add all activities on the given type.
     /// </summary>
@@ -32,7 +26,7 @@ public class ActivityOptions
     /// <param name="type">Activity class type.</param>
     /// <param name="specificTaskQueue">Optional task queue to put activity on. Unset means all.</param>
     public void AddAllActivities(Type type, string? specificTaskQueue = null) =>
-        activities.AddRange(type.GetMethods(
+        AddRange(type.GetMethods(
             BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static | BindingFlags.Instance).
             Select(method =>
             {
@@ -43,7 +37,7 @@ public class ActivityOptions
                 }
                 // Make sure not already present
                 var name = ActivityDefinition.NameFromMethod(method);
-                if (activities.Any(existing =>
+                if (this.Any(existing =>
                     existing.Name == name &&
                     (existing.SpecificTaskQueue == specificTaskQueue || existing.SpecificTaskQueue == null)))
                 {
@@ -71,7 +65,7 @@ public class ActivityOptions
         {
             throw new InvalidOperationException("Options must have task queue before configure");
         }
-        foreach (var activity in activities)
+        foreach (var activity in this)
         {
             options.AddActivity(activity.BuildDefinition(serviceProvider));
         }
@@ -101,16 +95,65 @@ public class ActivityOptions
         /// </summary>
         /// <param name="serviceProvider">Service provider for creating activity instance.</param>
         /// <returns>Created definition.</returns>
-        public ActivityDefinition BuildDefinition(IServiceProvider serviceProvider) =>
-            ActivityDefinition.Create(
+        public ActivityDefinition BuildDefinition(IServiceProvider serviceProvider)
+        {
+            // Invoker can be async
+            async Task<object?> InvokeAsync(object?[] args)
+            {
+                // TODO(cretz): Much of this function is mimicked in ActivityDefinition.InvokeAsync
+                // so we should just provide a create-instance helper.
+                if (InstanceType == null)
+                {
+                    // Invoke static
+                    try
+                    {
+                        return Method.Invoke(null, args);
+                    }
+                    catch (TargetInvocationException e)
+                    {
+                        ExceptionDispatchInfo.Capture(e.InnerException!).Throw();
+                        // Unreachable
+                        throw new InvalidOperationException("Unreachable");
+                    }
+                }
+                // Use an async scope to properly handle IAsyncDisposable
+                await using var scope = serviceProvider.CreateAsyncScope();
+                object? result;
+                try
+                {
+                    result = Method.Invoke(
+                        scope.ServiceProvider.GetRequiredService(InstanceType), args);
+                }
+                catch (TargetInvocationException e)
+                {
+                    ExceptionDispatchInfo.Capture(e.InnerException!).Throw();
+                    // Unreachable
+                    throw new InvalidOperationException("Unreachable");
+                }
+                // In order to make sure the scope lasts the life of the activity, we need to
+                // wait on the task if it's a task
+                if (result is Task resultTask)
+                {
+                    await resultTask.ConfigureAwait(false);
+                    // We have to use reflection to extract value if it's a Task<>
+                    var resultTaskType = resultTask.GetType();
+                    if (resultTaskType.IsGenericType)
+                    {
+                        result = resultTaskType.GetProperty("Result")!.GetValue(resultTask);
+                    }
+                    else
+                    {
+                        result = ValueTuple.Create();
+                    }
+                }
+                return result;
+            }
+            return ActivityDefinition.Create(
                 Name,
                 ReturnType,
                 ParameterTypes,
                 RequiredParameterCount,
-                (args) =>
-                {
-                    var instance = InstanceType == null ? null : serviceProvider.GetRequiredService(InstanceType);
-                    return Method.Invoke(instance, args);
-                });
+                InvokeAsync);
+        }
     }
 }

@@ -11,7 +11,7 @@
     <PackageReference Include="coverlet.collector" Version="3.1.2" />
     <PackageReference Include="MartinCostello.Logging.XUnit" Version="0.3.0" />
     <PackageReference Include="Microsoft.AspNetCore.Mvc.Testing" Version="6.0.0" />
-    <PackageReference Include="Microsoft.Extensions.Hosting" Version="7.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Hosting" Version="7.0.1" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.4.1" />
     <PackageReference Include="xunit" Version="2.4.2" />
     <PackageReference Include="xunit.console" Version="2.4.2" />
@@ -19,6 +19,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\src\ActivityDependencyInjection\TemporalioSamples.ActivityDependencyInjection.csproj" />
     <ProjectReference Include="..\src\ActivitySimple\TemporalioSamples.ActivitySimple.csproj" />
     <ProjectReference Include="..\src\ActivityWorker\TemporalioSamples.ActivityWorker.csproj" />
     <ProjectReference Include="..\src\Encryption\Codec\TemporalioSamples.Encryption.Codec.csproj" />

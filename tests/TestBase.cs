@@ -9,27 +9,19 @@ public abstract class TestBase : IDisposable
 
     protected TestBase(ITestOutputHelper output)
     {
-        if (Program.InProc)
+        OutputHelper = output;
+        // Only set console writer if not in-proc
+        if (!Program.InProc)
         {
-            LoggerFactory = Microsoft.Extensions.Logging.LoggerFactory.Create(builder =>
-                builder.
-                    AddSimpleConsole(options => options.TimestampFormat = "[HH:mm:ss] ").
-                    SetMinimumLevel(Program.Verbose ? LogLevel.Trace : LogLevel.Information));
-        }
-        else
-        {
-            LoggerFactory = Microsoft.Extensions.Logging.LoggerFactory.Create(builder =>
-                builder.AddXUnit(output));
-            // Only set this if not in-proc
             consoleWriter = new ConsoleWriter(output);
             Console.SetOut(consoleWriter);
         }
+        LoggerFactory = Microsoft.Extensions.Logging.LoggerFactory.Create(ConfigureLogging);
     }
 
-    ~TestBase()
-    {
-        Dispose(false);
-    }
+    ~TestBase() => Dispose(false);
+
+    protected ITestOutputHelper OutputHelper { get; private init; }
 
     protected ILoggerFactory LoggerFactory { get; private init; }
 
@@ -44,6 +36,20 @@ public abstract class TestBase : IDisposable
         if (disposing)
         {
             consoleWriter?.Dispose();
+        }
+    }
+
+    protected void ConfigureLogging(ILoggingBuilder builder)
+    {
+        if (Program.InProc)
+        {
+            builder.
+                AddSimpleConsole(options => options.TimestampFormat = "[HH:mm:ss] ").
+                SetMinimumLevel(Program.Verbose ? LogLevel.Trace : LogLevel.Information);
+        }
+        else
+        {
+            builder.AddXUnit(OutputHelper);
         }
     }
 }

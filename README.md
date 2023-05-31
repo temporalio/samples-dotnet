@@ -55,3 +55,6 @@ Can add options like:
 * `--logger "console;verbosity=detailed"` to show logs
 * `--filter "FullyQualifiedName=TemporalioSamples.Tests.ActivityWorker.ActivityWorkerTests.Main_RunActivity_Succeeds"`
   to run a specific test
+
+Can also use direct process run via `dotnet run --project tests` with extra args like `-verbose` and
+`-method` added after `--`.

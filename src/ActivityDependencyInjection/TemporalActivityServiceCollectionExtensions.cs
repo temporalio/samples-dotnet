@@ -43,6 +43,40 @@ public static class TemporalActivityServiceCollectionExtensions
     }
 
     /// <summary>
+    /// Add scoped via
+    /// <see cref="ServiceCollectionDescriptorExtensions.TryAddScoped{TService}(IServiceCollection)" />
+    /// then configure all activities via
+    /// <see cref="ConfigureTemporalActivities{T}(IServiceCollection, string?)" />.
+    /// </summary>
+    /// <typeparam name="T">Activity class type.</typeparam>
+    /// <param name="services">Service collection.</param>
+    /// <param name="specificTaskQueue">Optional task queue to put activity on. Unset means all.</param>
+    /// <returns>Collection for chaining.</returns>
+    public static IServiceCollection AddTemporalActivityScoped<T>(
+        this IServiceCollection services,
+        string? specificTaskQueue = null) =>
+        services.AddTemporalActivityScoped(typeof(T), specificTaskQueue);
+
+    /// <summary>
+    /// Add scoped via
+    /// <see cref="ServiceCollectionDescriptorExtensions.TryAddScoped(IServiceCollection, Type)" />
+    /// then configure all activities via
+    /// <see cref="ConfigureTemporalActivities(IServiceCollection, Type, string?)" />.
+    /// </summary>
+    /// <param name="services">Service collection.</param>
+    /// <param name="type">Activity class type.</param>
+    /// <param name="specificTaskQueue">Optional task queue to put activity on. Unset means all.</param>
+    /// <returns>Collection for chaining.</returns>
+    public static IServiceCollection AddTemporalActivityScoped(
+        this IServiceCollection services,
+        Type type,
+        string? specificTaskQueue = null)
+    {
+        services.TryAddScoped(type);
+        return services.ConfigureTemporalActivities(type, specificTaskQueue);
+    }
+
+    /// <summary>
     /// Add transient via
     /// <see cref="ServiceCollectionDescriptorExtensions.TryAddTransient{TService}(IServiceCollection)" />
     /// then configure all activities via
@@ -77,7 +111,7 @@ public static class TemporalActivityServiceCollectionExtensions
     }
 
     /// <summary>
-    /// Configure all activity methods for the given type on <see cref="ActivityOptions" />.
+    /// Configure all activity methods for the given type on <see cref="ActivityCollection" />.
     /// </summary>
     /// <param name="services">Service collection.</param>
     /// <typeparam name="T">Activity class type.</typeparam>
@@ -89,7 +123,7 @@ public static class TemporalActivityServiceCollectionExtensions
         services.ConfigureTemporalActivities(typeof(T), specificTaskQueue);
 
     /// <summary>
-    /// Configure all activity methods for the given type on <see cref="ActivityOptions" />.
+    /// Configure all activity methods for the given type on <see cref="ActivityCollection" />.
     /// </summary>
     /// <param name="services">Service collection.</param>
     /// <param name="type">Activity class type.</param>
@@ -99,5 +133,5 @@ public static class TemporalActivityServiceCollectionExtensions
         this IServiceCollection services,
         Type type,
         string? specificTaskQueue = null) =>
-        services.Configure<ActivityOptions>(opts => opts.AddAllActivities(type, specificTaskQueue));
+        services.Configure<ActivityCollection>(opts => opts.AddAllActivities(type, specificTaskQueue));
 }
