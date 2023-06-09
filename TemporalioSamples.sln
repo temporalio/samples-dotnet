@@ -29,6 +29,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TemporalioSamples.Encryptio
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TemporalioSamples.ClientMtls", "src\ClientMtls\TemporalioSamples.ClientMtls.csproj", "{D2A3546F-2462-4B86-8B5E-999505483A2D}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TemporalioSamples.Schedules", "src\Schedules\TemporalioSamples.Schedules.csproj", "{297A58BE-3959-4525-A329-222B3575139D}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -78,6 +80,10 @@ Global
 		{D2A3546F-2462-4B86-8B5E-999505483A2D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D2A3546F-2462-4B86-8B5E-999505483A2D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D2A3546F-2462-4B86-8B5E-999505483A2D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{297A58BE-3959-4525-A329-222B3575139D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{297A58BE-3959-4525-A329-222B3575139D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{297A58BE-3959-4525-A329-222B3575139D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{297A58BE-3959-4525-A329-222B3575139D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{7AECC7C6-9A21-4B8A-84D9-AFC4F5840CAF} = {1A647B41-53D0-4638-AE5A-6630BAAE45FC}
@@ -91,5 +97,6 @@ Global
 		{6B50F9F9-9C17-475D-A34A-6F317558C446} = {2E1FF71C-0BE3-478E-9984-C6896A11DD3A}
 		{8905D1CD-F136-41CA-810F-F15FB5204384} = {2E1FF71C-0BE3-478E-9984-C6896A11DD3A}
 		{D2A3546F-2462-4B86-8B5E-999505483A2D} = {1A647B41-53D0-4638-AE5A-6630BAAE45FC}
+		{297A58BE-3959-4525-A329-222B3575139D} = {1A647B41-53D0-4638-AE5A-6630BAAE45FC}
 	EndGlobalSection
 EndGlobal

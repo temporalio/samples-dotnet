@@ -6,3 +6,4 @@ obj/
 # IDE cruft
 /.vs
 /.vscode
+.idea
