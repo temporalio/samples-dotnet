@@ -12,14 +12,14 @@ public class MyWorkflow
             () => MyActivities.AddReminderToDatabase(text),
             new()
             {
-                ScheduleToCloseTimeout = TimeSpan.FromMinutes(1),
+                StartToCloseTimeout = TimeSpan.FromMinutes(5),
             });
 
         await Workflow.ExecuteActivityAsync(
             () => MyActivities.NotifyUserAsync(text),
             new()
             {
-                ScheduleToCloseTimeout = TimeSpan.FromMinutes(1),
+                StartToCloseTimeout = TimeSpan.FromMinutes(5),
             });
     }
 }
