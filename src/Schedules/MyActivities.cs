@@ -3,7 +3,7 @@ using Temporalio.Activities;
 
 namespace TemporalioSamples.Schedules;
 
-public class MyActivities
+public static class MyActivities
 {
     [Activity]
     public static void AddReminderToDatabase(string text)
@@ -14,7 +14,7 @@ public class MyActivities
     [Activity]
     public static Task NotifyUserAsync(string text)
     {
-        ActivityExecutionContext.Current.Logger.LogInformation($"Notifying user Reminder: {text}");
+        ActivityExecutionContext.Current.Logger.LogInformation("Notifying user Reminder: {text}", text);
         return Task.CompletedTask;
     }
 }

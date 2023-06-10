@@ -148,5 +148,5 @@ switch (args.ElementAtOrDefault(0))
         await ScheduleDeleteAsync();
         break;
     default:
-        throw new ArgumentException("Must pass 'worker' or 'schedule-start' as the single argument");
+        throw new ArgumentException("Must pass 'worker', 'schedule-start', 'schedule-go-faster', 'schedule-pause', 'schedule-unpause' or 'schedule-delete' as the single argument");
 }
