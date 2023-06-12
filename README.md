@@ -18,6 +18,7 @@ Prerequisites:
 
 <!-- Keep this list in alphabetical order -->
 * [ActivitySimple](src/ActivitySimple) - Simple workflow that runs simple activities.
+* [ActivityStickyQueues](src/ActivityStickyQueues) - Use a unique task queue per Worker to have certain Activities only run on that specific Worker.
 * [ActivityWorker](src/ActivityWorker) - Use .NET activities from a workflow in another language.
 * [AspNet](src/AspNet) - Demonstration of a generic host worker and an ASP.NET workflow starter.
 * [ClientMtls](src/ClientMtls) - How to use client certificate authentication, e.g. for Temporal Cloud.
