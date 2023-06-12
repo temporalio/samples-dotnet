@@ -14,7 +14,7 @@ public static class MyActivities
     [Activity]
     public static Task NotifyUserAsync(string text)
     {
-        ActivityExecutionContext.Current.Logger.LogInformation("Notifying user Reminder: {text}", text);
+        ActivityExecutionContext.Current.Logger.LogInformation("Notifying user reminder: {Text}", text);
         return Task.CompletedTask;
     }
 }
