@@ -25,23 +25,22 @@ async Task RunWorkerAsync()
     var uniqueWorkerTaskQueue = Guid.NewGuid().ToString();
 
     var nonStickyActivities = new NonStickyActivities(uniqueWorkerTaskQueue);
-    var stickyActivities = new StickyActivities();
 
     // Run worker until cancelled
     Console.WriteLine("Running worker");
 
     using var nonStickyWorker = new TemporalWorker(
         client,
-        new TemporalWorkerOptions(taskQueue: "sticky-activity-tutorial")
-            .AddActivity(nonStickyActivities.GetUniqueTaskQueueAsync)
+        new TemporalWorkerOptions(taskQueue: "activity-sticky-queues-sample")
+            .AddActivity(nonStickyActivities.GetUniqueTaskQueue)
             .AddWorkflow<FileProcessingWorkflow>());
 
     using var stickyWorker = new TemporalWorker(
         client,
         new TemporalWorkerOptions(taskQueue: uniqueWorkerTaskQueue)
-            .AddActivity(stickyActivities.DownloadFileToWorkerFileSystemAsync)
-            .AddActivity(stickyActivities.CleanupFileFromWorkerFileSystemAsync)
-            .AddActivity(stickyActivities.WorkOnFileInWorkerFileSystemAsync));
+            .AddActivity(StickyActivities.DownloadFileToWorkerFileSystemAsync)
+            .AddActivity(StickyActivities.CleanupFileFromWorkerFileSystemAsync)
+            .AddActivity(StickyActivities.WorkOnFileInWorkerFileSystemAsync));
 
     try
     {
@@ -58,7 +57,7 @@ async Task ExecuteWorkflowAsync()
     Console.WriteLine("Executing workflow");
     await client.ExecuteWorkflowAsync(
         (FileProcessingWorkflow wf) => wf.RunAsync(5),
-        new(id: "file-processing-0", taskQueue: "sticky-activity-tutorial"));
+        new(id: "file-processing-0", taskQueue: "activity-sticky-queues-sample"));
 }
 
 switch (args.ElementAtOrDefault(0))

@@ -14,18 +14,13 @@ Activities have been artificially slowed with `await Task.Delay(TimeSpan.FromSec
 
 ### Running this sample
 
-1. `temporal server start-dev` to start [Temporal Server](https://github.com/temporalio/cli/#installation).
-2. `dotnet run worker` to start the Worker.
-3. In another shell, `dotnet run workflow` to run the Workflow.
+To run, first see [README.md](../../README.md) for prerequisites. Then, run the following from this directory
+in a separate terminal to start the worker:
 
-Example output:
+    dotnet run worker
 
-```bash
-Running worker
-[19:17:58] info: Temporalio.Activity:DownloadFileToWorkerFileSystem[0]
-      Downloading https://temporal.io and saving to path C:\Users\jaken\AppData\Local\Temp\tmp4409.tmp
-[19:18:04] info: Temporalio.Activity:WorkOnFileInWorkerFileSystem[0]
-      Did some work on C:\Users\jaken\AppData\Local\Temp\tmp4409.tmp, checksum: b3fc767460efa514753a75e6f3d7af97
-[19:18:07] info: Temporalio.Activity:CleanupFileFromWorkerFileSystem[0]
-      Removing C:\Users\jaken\AppData\Local\Temp\tmp4409.tmp
-```
+Then in another terminal, run the workflow from this directory:
+
+    dotnet run workflow
+
+This will show logs in the worker window of the workflow running.
