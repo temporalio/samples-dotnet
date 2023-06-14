@@ -12,11 +12,8 @@ public class FileProcessingWorkflow
             (NonStickyActivities act) => act.GetUniqueTaskQueue(),
             new() { StartToCloseTimeout = TimeSpan.FromMinutes(1) });
 
-        var downloadPath = Path.Join(Path.GetTempPath(), Workflow.NewGuid().ToString());
-        var downloadFileArgs = new DownloadFileArgs(new Uri("https://temporal.io"), downloadPath);
-
-        await Workflow.ExecuteActivityAsync(
-            () => StickyActivities.DownloadFileToWorkerFileSystemAsync(downloadFileArgs),
+        var downloadPath = await Workflow.ExecuteActivityAsync(
+            () => StickyActivities.DownloadFileToWorkerFileSystemAsync("https://temporal.io"),
             new()
             {
                 TaskQueue = uniqueWorkerTaskQueue,
@@ -27,27 +24,23 @@ public class FileProcessingWorkflow
                 ScheduleToCloseTimeout = TimeSpan.FromMinutes(5),
                 HeartbeatTimeout = TimeSpan.FromMinutes(1),
             });
-        try
-        {
-            await Workflow.ExecuteActivityAsync(
-                () => StickyActivities.WorkOnFileInWorkerFileSystemAsync(downloadPath),
-                new()
-                {
-                    TaskQueue = uniqueWorkerTaskQueue,
-                    ScheduleToCloseTimeout = TimeSpan.FromMinutes(5),
-                    HeartbeatTimeout = TimeSpan.FromMinutes(1),
-                });
-        }
-        finally
-        {
-            await Workflow.ExecuteActivityAsync(
-                () => StickyActivities.CleanupFileFromWorkerFileSystemAsync(downloadPath),
-                new()
-                {
-                    TaskQueue = uniqueWorkerTaskQueue,
-                    ScheduleToCloseTimeout = TimeSpan.FromMinutes(5),
-                    HeartbeatTimeout = TimeSpan.FromMinutes(1),
-                });
-        }
+
+        await Workflow.ExecuteActivityAsync(
+            () => StickyActivities.WorkOnFileInWorkerFileSystemAsync(downloadPath),
+            new()
+            {
+                TaskQueue = uniqueWorkerTaskQueue,
+                ScheduleToCloseTimeout = TimeSpan.FromMinutes(5),
+                HeartbeatTimeout = TimeSpan.FromMinutes(1),
+            });
+
+        await Workflow.ExecuteActivityAsync(
+            () => StickyActivities.CleanupFileFromWorkerFileSystemAsync(downloadPath),
+            new()
+            {
+                TaskQueue = uniqueWorkerTaskQueue,
+                ScheduleToCloseTimeout = TimeSpan.FromMinutes(5),
+                HeartbeatTimeout = TimeSpan.FromMinutes(1),
+            });
     }
 }

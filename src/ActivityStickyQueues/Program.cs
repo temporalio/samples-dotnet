@@ -42,11 +42,23 @@ async Task RunWorkerAsync()
             .AddActivity(StickyActivities.CleanupFileFromWorkerFileSystemAsync)
             .AddActivity(StickyActivities.WorkOnFileInWorkerFileSystemAsync));
 
-    try
+    var tasks = new List<Task> { nonStickyWorker.ExecuteAsync(tokenSource.Token), stickyWorker.ExecuteAsync(tokenSource.Token) };
+
+    var task = await Task.WhenAny(tasks);
+    if (task.Exception is not null)
     {
-        await Task.WhenAll(nonStickyWorker.ExecuteAsync(tokenSource.Token), stickyWorker.ExecuteAsync(tokenSource.Token));
+        try
+        {
+            tokenSource.Cancel();
+            await Task.WhenAll(tasks);
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Unhandled ex {ex}");
+            throw;
+        }
     }
-    catch (OperationCanceledException)
+    else
     {
         Console.WriteLine("Worker cancelled");
     }

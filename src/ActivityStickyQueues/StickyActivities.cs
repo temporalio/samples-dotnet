@@ -6,18 +6,20 @@ using Temporalio.Activities;
 
 namespace TemporalioSamples.ActivityStickyQueues;
 
-public record DownloadFileArgs(Uri Uri, string Path);
-
 public static class StickyActivities
 {
     [Activity]
-    public static async Task DownloadFileToWorkerFileSystemAsync(DownloadFileArgs args)
+#pragma warning disable CA1054
+    public static async Task<string> DownloadFileToWorkerFileSystemAsync(string url)
+#pragma warning restore CA1054
     {
-        ActivityExecutionContext.Current.Logger.LogInformation("Downloading {Uri} and saving to path {Path}", args.Uri, args.Path);
+        var path = Path.GetTempFileName();
+        ActivityExecutionContext.Current.Logger.LogInformation("Downloading {Url} and saving to path {Path}", url, path);
         // Here's were the real download code goes.
         var body = Encoding.UTF8.GetBytes("downloaded body");
         await Task.Delay(TimeSpan.FromSeconds(3));
-        await File.WriteAllBytesAsync(args.Path, body);
+        await File.WriteAllBytesAsync(path, body);
+        return path;
     }
 
     [Activity]
