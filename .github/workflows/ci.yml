@@ -29,9 +29,7 @@ jobs:
       - name: Setup .NET
         uses: actions/setup-dotnet@v3
         with:
-          # TODO(cretz): Remove specific version when https://github.com/dotnet/format/issues/1800 is fixed
-          #dotnet-version: 7
-          dotnet-version: 7.0.2xx
+          dotnet-version: 7
 
       - name: Build
         run: dotnet build
