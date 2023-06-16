@@ -9,8 +9,7 @@ public class MyWorkflow
     [WorkflowRun]
     public async Task<string> RunAsync()
     {
-        // Run an async instance method activity. Since it's an instance method,
-        // we need to access via the Ref.
+        // Run an async instance method activity.
         var result1 = await Workflow.ExecuteActivityAsync(
             (MyActivities act) => act.SelectFromDatabaseAsync("some-db-table"),
             new()
@@ -19,8 +18,7 @@ public class MyWorkflow
             });
         Workflow.Logger.LogInformation("Activity instance method result: {Result}", result1);
 
-        // Run a sync static method activity. Since it's a static method, we
-        // don't need to use Ref to access it.
+        // Run a sync static method activity.
         var result2 = await Workflow.ExecuteActivityAsync(
             () => MyActivities.DoStaticThing(),
             new()
