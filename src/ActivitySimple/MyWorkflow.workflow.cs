@@ -14,7 +14,7 @@ public class MyWorkflow
             (MyActivities act) => act.SelectFromDatabaseAsync("some-db-table"),
             new()
             {
-                ScheduleToCloseTimeout = TimeSpan.FromMinutes(5),
+                StartToCloseTimeout = TimeSpan.FromMinutes(5),
             });
         Workflow.Logger.LogInformation("Activity instance method result: {Result}", result1);
 
@@ -23,7 +23,7 @@ public class MyWorkflow
             () => MyActivities.DoStaticThing(),
             new()
             {
-                ScheduleToCloseTimeout = TimeSpan.FromMinutes(5),
+                StartToCloseTimeout = TimeSpan.FromMinutes(5),
             });
         Workflow.Logger.LogInformation("Activity static method result: {Result}", result2);
 
