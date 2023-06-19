@@ -1,6 +1,5 @@
 using Microsoft.Extensions.Logging;
 using Temporalio.Activities;
-using Temporalio.Exceptions;
 
 namespace TemporalioSamples.ActivityHeartbeatingCancellation;
 
@@ -22,13 +21,13 @@ public static class MyActivities
             {
                 ActivityExecutionContext.Current.CancellationToken.ThrowIfCancellationRequested();
                 ActivityExecutionContext.Current.Logger.LogInformation("Progress: {Progress}", progress);
-                await Task.Delay(sleepIntervalMs);
+                await Task.Delay(sleepIntervalMs, ActivityExecutionContext.Current.CancellationToken);
                 ActivityExecutionContext.Current.Heartbeat(progress);
             }
 
             ActivityExecutionContext.Current.Logger.LogInformation("Fake progress activity completed");
         }
-        catch (OperationCanceledException e) when (e.InnerException is CancelledFailureException)
+        catch (OperationCanceledException)
         {
             ActivityExecutionContext.Current.Logger.LogInformation("Fake progress activity cancelled");
             throw;

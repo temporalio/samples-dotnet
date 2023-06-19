@@ -22,9 +22,11 @@ public class MyWorkflow
                     CancellationType = ActivityCancellationType.WaitCancellationCompleted,
                 });
         }
-        catch (ActivityFailureException e) when (e.InnerException is CancelledFailureException)
+        catch (TemporalException e) when (TemporalException.IsCancelledException(e))
         {
+            // This catches the cancel just for demonstration, you usually don't want to catch it
             Workflow.Logger.LogInformation("Workflow cancelled along with its activity");
+            throw;
         }
     }
 }
