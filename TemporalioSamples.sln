@@ -33,6 +33,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TemporalioSamples.ActivityS
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TemporalioSamples.Schedules", "src\Schedules\TemporalioSamples.Schedules.csproj", "{297A58BE-3959-4525-A329-222B3575139D}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TemporalioSamples.ActivityHeartbeatingCancellation", "src\ActivityHeartbeatingCancellation\TemporalioSamples.ActivityHeartbeatingCancellation.csproj", "{CD0D6B7E-2076-4771-AF5B-E1EFB82A44B3}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -90,6 +92,10 @@ Global
 		{297A58BE-3959-4525-A329-222B3575139D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{297A58BE-3959-4525-A329-222B3575139D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{297A58BE-3959-4525-A329-222B3575139D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CD0D6B7E-2076-4771-AF5B-E1EFB82A44B3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CD0D6B7E-2076-4771-AF5B-E1EFB82A44B3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CD0D6B7E-2076-4771-AF5B-E1EFB82A44B3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CD0D6B7E-2076-4771-AF5B-E1EFB82A44B3}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{7AECC7C6-9A21-4B8A-84D9-AFC4F5840CAF} = {1A647B41-53D0-4638-AE5A-6630BAAE45FC}
@@ -105,5 +111,6 @@ Global
 		{D2A3546F-2462-4B86-8B5E-999505483A2D} = {1A647B41-53D0-4638-AE5A-6630BAAE45FC}
 		{974CCD5E-0254-4C85-9618-8CD014A2734F} = {1A647B41-53D0-4638-AE5A-6630BAAE45FC}
 		{297A58BE-3959-4525-A329-222B3575139D} = {1A647B41-53D0-4638-AE5A-6630BAAE45FC}
+		{CD0D6B7E-2076-4771-AF5B-E1EFB82A44B3} = {1A647B41-53D0-4638-AE5A-6630BAAE45FC}
 	EndGlobalSection
 EndGlobal

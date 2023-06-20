@@ -17,6 +17,7 @@ Prerequisites:
 ## Samples
 
 <!-- Keep this list in alphabetical order -->
+* [ActivityHeartbeatingCancellation](src/ActivityHeartbeatingCancellation) - How to use heartbeating and cancellation handling in an activity.
 * [ActivitySimple](src/ActivitySimple) - Simple workflow that runs simple activities.
 * [ActivityStickyQueues](src/ActivityStickyQueues) - Use a unique task queue per Worker to have certain Activities only run on that specific Worker.
 * [ActivityWorker](src/ActivityWorker) - Use .NET activities from a workflow in another language.
