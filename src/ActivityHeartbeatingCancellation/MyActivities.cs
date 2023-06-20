@@ -19,9 +19,8 @@ public static class MyActivities
 
             for (var progress = startingPoint; progress <= 100; ++progress)
             {
-                ActivityExecutionContext.Current.CancellationToken.ThrowIfCancellationRequested();
-                ActivityExecutionContext.Current.Logger.LogInformation("Progress: {Progress}", progress);
                 await Task.Delay(sleepIntervalMs, ActivityExecutionContext.Current.CancellationToken);
+                ActivityExecutionContext.Current.Logger.LogInformation("Progress: {Progress}", progress);
                 ActivityExecutionContext.Current.Heartbeat(progress);
             }
 
