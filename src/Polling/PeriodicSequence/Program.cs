@@ -33,7 +33,7 @@ async Task RunWorkerAsync()
         new TemporalWorkerOptions(taskQueue: "periodic-sequence-polling-sample")
             .AddActivity(activity.DoPollAsync)
             .AddWorkflow<PeriodicPollingWorkflow>()
-            .AddWorkflow<PerilodPollingChildWorkflow>());
+            .AddWorkflow<PeriodicPollingChildWorkflow>());
     try
     {
         await worker.ExecuteAsync(tokenSource.Token);

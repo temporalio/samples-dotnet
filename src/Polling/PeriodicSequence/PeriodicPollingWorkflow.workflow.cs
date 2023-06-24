@@ -13,7 +13,7 @@ public class PeriodicPollingWorkflow : IPollingWorkflow
     public async Task<string> RunAsync()
     {
         return await Workflow.ExecuteChildWorkflowAsync(
-            (PerilodPollingChildWorkflow wf) => wf.RunAsync(new(pollingIntervalInSeconds)),
+            (PeriodicPollingChildWorkflow wf) => wf.RunAsync(new(pollingIntervalInSeconds)),
             new()
             {
                 ID = "periodic-sequence-polling-sample-child-workflow-id",

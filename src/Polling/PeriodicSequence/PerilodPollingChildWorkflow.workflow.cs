@@ -5,7 +5,7 @@ using TemporalioSamples.Polling.Common;
 namespace TemporalioSamples.Polling.PeriodicSequence;
 
 [Workflow]
-public class PerilodPollingChildWorkflow : IPollingChildWorkflow
+public class PeriodicPollingChildWorkflow : IPollingChildWorkflow
 {
     private int singleWorkflowPollAttempts = 10;
 
@@ -38,6 +38,6 @@ public class PerilodPollingChildWorkflow : IPollingChildWorkflow
         }
 
         // Request that the new child workflow run is invoked
-        throw Workflow.CreateContinueAsNewException((PerilodPollingChildWorkflow wf) => wf.RunAsync(args));
+        throw Workflow.CreateContinueAsNewException((PeriodicPollingChildWorkflow wf) => wf.RunAsync(args));
     }
 }
