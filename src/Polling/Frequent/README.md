@@ -4,7 +4,7 @@ This sample shows how we can implement frequent polling (1 second or faster) ins
 
 To ensure that polling Activity is restarted in a timely manner, we make sure that it heartbeats on every iteration. Note that heartbeating only works if we set the `heartbeat_timeout` to a shorter value than the Activity `start_to_close_timeout` timeout.
 
-To run, first see [README.md](../../README.md) for prerequisites. Then, run the following from this directory
+To run, first see [README.md](../../../README.md) for prerequisites. Then, run the following from this directory
 in a separate terminal to start the worker:
 
     dotnet run worker

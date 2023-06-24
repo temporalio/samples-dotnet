@@ -9,7 +9,7 @@ Activity retries are utilized for this option, setting the following Retry optio
 
 This will enable the Activity to be retried exactly on the set interval.
 
-To run, first see [README.md](../../README.md) for prerequisites. Then, run the following from this directory
+To run, first see [README.md](../../../README.md) for prerequisites. Then, run the following from this directory
 in a separate terminal to start the worker:
 
     dotnet run worker
