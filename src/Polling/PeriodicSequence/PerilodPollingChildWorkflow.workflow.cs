@@ -35,7 +35,7 @@ public class PeriodicPollingChildWorkflow : IPollingChildWorkflow
                 // Log error after retries exhausted
             }
 
-            await Workflow.DelayAsync(TimeSpan.FromSeconds(1), ActivityExecutionContext.Current.CancellationToken);
+            await Workflow.DelayAsync(TimeSpan.FromSeconds(1), Workflow.CancellationToken);
         }
 
         // Request that the new child workflow run is invoked
