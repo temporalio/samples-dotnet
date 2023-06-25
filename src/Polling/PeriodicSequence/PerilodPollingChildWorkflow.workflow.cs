@@ -1,4 +1,3 @@
-using Temporalio.Activities;
 using Temporalio.Exceptions;
 using Temporalio.Workflows;
 using TemporalioSamples.Polling.Common;
