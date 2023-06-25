@@ -1,3 +1,4 @@
+using Temporalio.Activities;
 using Temporalio.Exceptions;
 using Temporalio.Workflows;
 using TemporalioSamples.Polling.Common;
@@ -34,7 +35,7 @@ public class PeriodicPollingChildWorkflow : IPollingChildWorkflow
                 // Log error after retries exhausted
             }
 
-            await Workflow.DelayAsync(TimeSpan.FromSeconds(1));
+            await Workflow.DelayAsync(TimeSpan.FromSeconds(1), ActivityExecutionContext.Current.CancellationToken);
         }
 
         // Request that the new child workflow run is invoked

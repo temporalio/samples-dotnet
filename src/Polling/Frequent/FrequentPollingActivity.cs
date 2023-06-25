@@ -38,7 +38,7 @@ public class FrequentPollingActivity : IPollingActivity
                 throw;
             }
 
-            await Task.Delay(TimeSpan.FromSeconds(pollDurationSections));
+            await Task.Delay(TimeSpan.FromSeconds(pollDurationSections), ActivityExecutionContext.Current.CancellationToken);
         }
     }
 }
