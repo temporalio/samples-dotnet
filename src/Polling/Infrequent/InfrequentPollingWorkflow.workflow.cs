@@ -18,7 +18,7 @@ public class InfrequentPollingWorkflow
         // With this in case our test service is "down" we can fail our activity and it will be retried based on our 60 second retry
         // interval until poll is successful and we can return a result from the activity.
         var result = await Workflow.ExecuteActivityAsync(
-            (InfrequentPollingActivity act) => act.DoPollAsync(),
+            (InfrequentPollingActivities act) => act.DoPollAsync(),
             new()
             {
                 // Set activity StartToClose timeout (single activity exec), does not include retries

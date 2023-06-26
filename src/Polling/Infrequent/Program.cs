@@ -23,14 +23,14 @@ async Task RunWorkerAsync()
     };
 
     // Create an activity instance with some state
-    var activity = new InfrequentPollingActivity(new());
+    var activities = new InfrequentPollingActivities(new());
 
     // Run worker until cancelled
     Console.WriteLine("Running worker");
     using var worker = new TemporalWorker(
         client,
         new TemporalWorkerOptions(taskQueue: "infrequent-polling-sample")
-            .AddActivity(activity.DoPollAsync)
+            .AddActivity(activities.DoPollAsync)
             .AddWorkflow<InfrequentPollingWorkflow>());
     try
     {

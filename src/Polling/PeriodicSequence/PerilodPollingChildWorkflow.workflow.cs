@@ -16,7 +16,7 @@ public class PeriodicPollingChildWorkflow
             try
             {
                 return await Workflow.ExecuteActivityAsync(
-                    (PeriodicPollingActivity a) => a.DoPollAsync(),
+                    (PeriodicPollingActivities a) => a.DoPollAsync(),
                     new()
                     {
                         StartToCloseTimeout = TimeSpan.FromSeconds(5),

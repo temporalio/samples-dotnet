@@ -23,14 +23,14 @@ async Task RunWorkerAsync()
     };
 
     // Create an activity instance with some state
-    var activity = new PeriodicPollingActivity(new(errorAttempts: 50));
+    var activities = new PeriodicPollingActivities(new(errorAttempts: 50));
 
     // Run worker until cancelled
     Console.WriteLine("Running worker");
     using var worker = new TemporalWorker(
         client,
         new TemporalWorkerOptions(taskQueue: "periodic-sequence-polling-sample")
-            .AddActivity(activity.DoPollAsync)
+            .AddActivity(activities.DoPollAsync)
             .AddWorkflow<PeriodicPollingWorkflow>()
             .AddWorkflow<PeriodicPollingChildWorkflow>());
     try

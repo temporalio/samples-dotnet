@@ -3,11 +3,11 @@ namespace TemporalioSamples.Polling.PeriodicSequence;
 using Microsoft.Extensions.Logging;
 using Temporalio.Activities;
 
-public class PeriodicPollingActivity
+public class PeriodicPollingActivities
 {
     private readonly TestService service;
 
-    public PeriodicPollingActivity(TestService service) => this.service = service;
+    public PeriodicPollingActivities(TestService service) => this.service = service;
 
     [Activity]
     public async Task<string> DoPollAsync()

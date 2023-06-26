@@ -3,11 +3,11 @@ namespace TemporalioSamples.Polling.Infrequent;
 using Microsoft.Extensions.Logging;
 using Temporalio.Activities;
 
-public class InfrequentPollingActivity
+public class InfrequentPollingActivities
 {
     private readonly TestService service;
 
-    public InfrequentPollingActivity(TestService service) => this.service = service;
+    public InfrequentPollingActivities(TestService service) => this.service = service;
 
     [Activity]
     public async Task<string> DoPollAsync()
