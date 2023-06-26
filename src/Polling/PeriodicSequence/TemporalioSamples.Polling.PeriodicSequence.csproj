@@ -4,8 +4,4 @@
     <OutputType>Exe</OutputType>
   </PropertyGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\Common\TemporalioSamples.Polling.Common.csproj" />
-  </ItemGroup>
-
 </Project>

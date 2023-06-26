@@ -1,18 +1,15 @@
-using Temporalio.Exceptions;
-using Temporalio.Workflows;
-using TemporalioSamples.Polling.Common;
-
 namespace TemporalioSamples.Polling.PeriodicSequence;
 
-[Workflow]
-public class PeriodicPollingChildWorkflow : IPollingChildWorkflow
-{
-    private int singleWorkflowPollAttempts = 10;
+using Temporalio.Exceptions;
+using Temporalio.Workflows;
 
+[Workflow]
+public class PeriodicPollingChildWorkflow
+{
     [WorkflowRun]
-    public async Task<string> RunAsync(PollingChildWorkflowArgs args)
+    public async Task<string> RunAsync()
     {
-        for (var i = 0; i < singleWorkflowPollAttempts; i++)
+        for (var i = 0; i < 10; i++)
         {
             // Here we would invoke a sequence of activities
             // For sample we just use a single one
@@ -22,7 +19,7 @@ public class PeriodicPollingChildWorkflow : IPollingChildWorkflow
                     (PeriodicPollingActivity a) => a.DoPollAsync(),
                     new()
                     {
-                        StartToCloseTimeout = TimeSpan.FromSeconds(4),
+                        StartToCloseTimeout = TimeSpan.FromSeconds(5),
                         RetryPolicy = new()
                         {
                             MaximumAttempts = 1,
@@ -31,13 +28,12 @@ public class PeriodicPollingChildWorkflow : IPollingChildWorkflow
             }
             catch (ActivityFailureException)
             {
-                // Log error after retries exhausted
             }
 
-            await Workflow.DelayAsync(TimeSpan.FromSeconds(1), Workflow.CancellationToken);
+            await Workflow.DelayAsync(TimeSpan.FromSeconds(1));
         }
 
         // Request that the new child workflow run is invoked
-        throw Workflow.CreateContinueAsNewException((PeriodicPollingChildWorkflow wf) => wf.RunAsync(args));
+        throw Workflow.CreateContinueAsNewException((PeriodicPollingChildWorkflow wf) => wf.RunAsync());
     }
 }

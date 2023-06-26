@@ -1,7 +1,6 @@
 using Microsoft.Extensions.Logging;
 using Temporalio.Client;
 using Temporalio.Worker;
-using TemporalioSamples.Polling.Common;
 using TemporalioSamples.Polling.PeriodicSequence;
 
 // Create a client to localhost on default namespace
@@ -24,7 +23,7 @@ async Task RunWorkerAsync()
     };
 
     // Create an activity instance with some state
-    IPollingActivity activity = new PeriodicPollingActivity(new(errorAttempts: 50));
+    var activity = new PeriodicPollingActivity(new(errorAttempts: 50));
 
     // Run worker until cancelled
     Console.WriteLine("Running worker");

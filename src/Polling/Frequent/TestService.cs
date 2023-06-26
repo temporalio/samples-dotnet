@@ -1,17 +1,13 @@
-﻿namespace TemporalioSamples.Polling.Common;
+﻿namespace TemporalioSamples.Polling.Frequent;
 
 public class TestService
 {
+    private readonly int errorAttempts;
     private int tryAttempt;
-    private int errorAttempts = 5;
 
-    public TestService()
-    {
-    }
+    public TestService(int errorAttempts = 5) => this.errorAttempts = errorAttempts;
 
-    public TestService(int errorAttempts) => this.errorAttempts = errorAttempts;
-
-    public Task<string> GetServiceResultAsync()
+    public Task<string> GetServiceResultAsync(CancellationToken cancellationToken)
     {
         tryAttempt++;
 

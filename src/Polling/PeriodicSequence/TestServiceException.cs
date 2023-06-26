@@ -1,4 +1,4 @@
-﻿namespace TemporalioSamples.Polling.Common;
+﻿namespace TemporalioSamples.Polling.PeriodicSequence;
 
 public class TestServiceException : Exception
 {

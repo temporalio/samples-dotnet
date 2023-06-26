@@ -1,10 +1,9 @@
-using Microsoft.Extensions.Logging;
-using Temporalio.Activities;
-using TemporalioSamples.Polling.Common;
-
 namespace TemporalioSamples.Polling.PeriodicSequence;
 
-public class PeriodicPollingActivity : IPollingActivity
+using Microsoft.Extensions.Logging;
+using Temporalio.Activities;
+
+public class PeriodicPollingActivity
 {
     private readonly TestService service;
 
@@ -15,12 +14,11 @@ public class PeriodicPollingActivity : IPollingActivity
     {
         try
         {
-            return await service.GetServiceResultAsync();
+            return await service.GetServiceResultAsync(ActivityExecutionContext.Current.CancellationToken);
         }
         catch (TestServiceException)
         {
             ActivityExecutionContext.Current.Logger.LogInformation("Test service was down");
-            // We want to throw the service exception so we can poll via activity retries
             throw;
         }
     }

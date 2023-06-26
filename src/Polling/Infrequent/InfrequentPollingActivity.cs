@@ -1,10 +1,9 @@
-using Microsoft.Extensions.Logging;
-using Temporalio.Activities;
-using TemporalioSamples.Polling.Common;
-
 namespace TemporalioSamples.Polling.Infrequent;
 
-public class InfrequentPollingActivity : IPollingActivity
+using Microsoft.Extensions.Logging;
+using Temporalio.Activities;
+
+public class InfrequentPollingActivity
 {
     private readonly TestService service;
 
@@ -15,7 +14,7 @@ public class InfrequentPollingActivity : IPollingActivity
     {
         try
         {
-            return await service.GetServiceResultAsync();
+            return await service.GetServiceResultAsync(ActivityExecutionContext.Current.CancellationToken);
         }
         catch (TestServiceException)
         {

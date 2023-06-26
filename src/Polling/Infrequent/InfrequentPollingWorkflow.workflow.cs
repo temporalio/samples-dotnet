@@ -1,10 +1,9 @@
-using Temporalio.Workflows;
-using TemporalioSamples.Polling.Common;
-
 namespace TemporalioSamples.Polling.Infrequent;
 
+using Temporalio.Workflows;
+
 [Workflow]
-public class InfrequentPollingWorkflow : IPollingWorkflow
+public class InfrequentPollingWorkflow
 {
     [WorkflowRun]
     public async Task<string> RunAsync()

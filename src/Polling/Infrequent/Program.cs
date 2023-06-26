@@ -1,7 +1,6 @@
 using Microsoft.Extensions.Logging;
 using Temporalio.Client;
 using Temporalio.Worker;
-using TemporalioSamples.Polling.Common;
 using TemporalioSamples.Polling.Infrequent;
 
 // Create a client to localhost on default namespace
@@ -24,15 +23,15 @@ async Task RunWorkerAsync()
     };
 
     // Create an activity instance with some state
-    IPollingActivity activity = new InfrequentPollingActivity(new());
+    var activity = new InfrequentPollingActivity(new());
 
     // Run worker until cancelled
     Console.WriteLine("Running worker");
     using var worker = new TemporalWorker(
         client,
-        new TemporalWorkerOptions(taskQueue: "infrequent-polling-sample").
-            AddActivity(activity.DoPollAsync).
-            AddWorkflow<InfrequentPollingWorkflow>());
+        new TemporalWorkerOptions(taskQueue: "infrequent-polling-sample")
+            .AddActivity(activity.DoPollAsync)
+            .AddWorkflow<InfrequentPollingWorkflow>());
     try
     {
         await worker.ExecuteAsync(tokenSource.Token);
