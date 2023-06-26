@@ -7,13 +7,15 @@ public class TestService
 
     public TestService(int errorAttempts = 5) => this.errorAttempts = errorAttempts;
 
-    public Task<string> GetServiceResultAsync(CancellationToken cancellationToken)
+    public async Task<string> GetServiceResultAsync(CancellationToken cancellationToken)
     {
+        // Fake delay to simulate a service call
+        await Task.Delay(TimeSpan.FromMilliseconds(10), cancellationToken);
         tryAttempt++;
 
         if (tryAttempt % errorAttempts == 0)
         {
-            return Task.FromResult("OK");
+            return "OK";
         }
 
         throw new TestServiceException("Service is down");
