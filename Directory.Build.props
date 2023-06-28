@@ -19,7 +19,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Temporalio" Version="0.1.0-alpha5" />
+    <PackageReference Include="Temporalio" Version="0.1.0-alpha6" />
     <!--
     Can also reference the SDK downloaded to a local directory:
     <ProjectReference Include="$(MSBuildThisFileDirectory)..\temporal-sdk-dotnet\src\Temporalio\Temporalio.csproj" />

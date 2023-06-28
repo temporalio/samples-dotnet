@@ -34,8 +34,8 @@ public sealed class EncryptionCodec : IPayloadCodec, IDisposable
         GC.SuppressFinalize(this);
     }
 
-    public Task<IEnumerable<Payload>> EncodeAsync(IReadOnlyCollection<Payload> payloads) =>
-        Task.FromResult(payloads.Select(p =>
+    public Task<IReadOnlyCollection<Payload>> EncodeAsync(IReadOnlyCollection<Payload> payloads) =>
+        Task.FromResult<IReadOnlyCollection<Payload>>(payloads.Select(p =>
         {
             return new Payload()
             {
@@ -47,10 +47,10 @@ public sealed class EncryptionCodec : IPayloadCodec, IDisposable
                 // TODO(cretz): Not clear here how to prevent copy
                 Data = ByteString.CopyFrom(Encrypt(p.ToByteArray())),
             };
-        }));
+        }).ToList());
 
-    public Task<IEnumerable<Payload>> DecodeAsync(IReadOnlyCollection<Payload> payloads) =>
-        Task.FromResult(payloads.Select(p =>
+    public Task<IReadOnlyCollection<Payload>> DecodeAsync(IReadOnlyCollection<Payload> payloads) =>
+        Task.FromResult<IReadOnlyCollection<Payload>>(payloads.Select(p =>
         {
             // Ignore if it doesn't have our expected encoding
             if (p.Metadata.GetValueOrDefault("encoding") != EncodingByteString)
@@ -65,7 +65,7 @@ public sealed class EncryptionCodec : IPayloadCodec, IDisposable
             }
             // Decrypt
             return Payload.Parser.ParseFrom(Decrypt(p.Data.ToByteArray()));
-        }));
+        }).ToList());
 
     private byte[] Encrypt(byte[] data)
     {
