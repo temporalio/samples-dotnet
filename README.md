@@ -23,6 +23,7 @@ Prerequisites:
 * [ActivityWorker](src/ActivityWorker) - Use .NET activities from a workflow in another language.
 * [AspNet](src/AspNet) - Demonstration of a generic host worker and an ASP.NET workflow starter.
 * [ClientMtls](src/ClientMtls) - How to use client certificate authentication, e.g. for Temporal Cloud.
+* [DependencyInjection](src/DependencyInjection) - How to inject dependencies in activities and use generic hosts for workers
 * [Encryption](src/Encryption) - End-to-end encryption with Temporal payload codecs.
 * [Polling](src/Polling) - Recommended implementation of an activity that needs to periodically poll an external resource waiting its successful completion.
 * [Schedules](src/Schedules) - How to schedule workflows to be run at specific times in the future.
