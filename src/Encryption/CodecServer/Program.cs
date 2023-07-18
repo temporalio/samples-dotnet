@@ -42,7 +42,7 @@ public sealed class Program
         HttpContext ctx, IPayloadCodec codec) => ApplyCodecFuncAsync(ctx, codec.DecodeAsync);
 
     private static async Task<IResult> ApplyCodecFuncAsync(
-        HttpContext ctx, Func<IReadOnlyCollection<Payload>, Task<IEnumerable<Payload>>> func)
+        HttpContext ctx, Func<IReadOnlyCollection<Payload>, Task<IReadOnlyCollection<Payload>>> func)
     {
         // Read payloads as JSON
         if (ctx.Request.ContentType?.StartsWith("application/json") != true)
