@@ -24,6 +24,7 @@ Prerequisites:
 * [AspNet](src/AspNet) - Demonstration of a generic host worker and an ASP.NET workflow starter.
 * [ClientMtls](src/ClientMtls) - How to use client certificate authentication, e.g. for Temporal Cloud.
 * [Encryption](src/Encryption) - End-to-end encryption with Temporal payload codecs.
+* [Polling](src/Polling) - Recommended implementation of an activity that needs to periodically poll an external resource waiting its successful completion.
 * [Schedules](src/Schedules) - How to schedule workflows to be run at specific times in the future.
 
 ## Development

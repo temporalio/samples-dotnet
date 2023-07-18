@@ -1,0 +1,18 @@
+namespace TemporalioSamples.Polling.PeriodicSequence;
+
+using Temporalio.Workflows;
+
+[Workflow]
+public class PeriodicPollingWorkflow
+{
+    [WorkflowRun]
+    public async Task<string> RunAsync()
+    {
+        return await Workflow.ExecuteChildWorkflowAsync(
+            (PeriodicPollingChildWorkflow wf) => wf.RunAsync(),
+            new()
+            {
+                ID = "periodic-sequence-polling-sample-child-workflow-id",
+            });
+    }
+}
