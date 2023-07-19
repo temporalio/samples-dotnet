@@ -59,7 +59,7 @@ async Task ExecuteWorkflowAndThenCancelAsync()
     {
         await handle.GetResultAsync();
     }
-    catch (WorkflowFailedException e) when (e.InnerException is CancelledFailureException)
+    catch (WorkflowFailedException e) when (e.InnerException is CanceledFailureException)
     {
         Console.WriteLine("await handle.GetResultAsync() threw because Workflow was cancelled");
     }

@@ -52,7 +52,7 @@ async Task ScheduleStartAsync()
         wf => wf.RunAsync(text),
         new()
         {
-            ID = "schedule-workflow-id",
+            Id = "schedule-workflow-id",
             TaskQueue = "schedules",
         });
 
@@ -75,7 +75,7 @@ async Task ScheduleStartAsync()
 
     var scheduleHandle = await client.CreateScheduleAsync("sample-schedule", schedule);
 
-    Console.WriteLine(@$"Started schedule {scheduleHandle.ID}
+    Console.WriteLine(@$"Started schedule {scheduleHandle.Id}
 
 The reminder Workflow will run and log from the Worker every 10 seconds.
 

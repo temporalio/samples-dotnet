@@ -20,7 +20,7 @@ await worker.ExecuteAsync(async () =>
     // client here in the same process, but usually these are done separately.
     var result = await client.ExecuteWorkflowAsync(
         (ISayHelloWorkflow wf) => wf.RunAsync("Temporal"),
-        new() { ID = "activity-worker-sample-workflow-id", TaskQueue = "activity-worker-sample" });
+        new() { Id = "activity-worker-sample-workflow-id", TaskQueue = "activity-worker-sample" });
 
     Console.WriteLine("Workflow result: {0}", result);
 });

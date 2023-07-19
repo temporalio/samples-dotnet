@@ -12,7 +12,7 @@ public class PeriodicPollingWorkflow
             (PeriodicPollingChildWorkflow wf) => wf.RunAsync(),
             new()
             {
-                ID = "periodic-sequence-polling-sample-child-workflow-id",
+                Id = "periodic-sequence-polling-sample-child-workflow-id",
             });
     }
 }
