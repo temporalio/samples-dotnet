@@ -27,6 +27,7 @@ Prerequisites:
 * [Encryption](src/Encryption) - End-to-end encryption with Temporal payload codecs.
 * [Polling](src/Polling) - Recommended implementation of an activity that needs to periodically poll an external resource waiting its successful completion.
 * [Schedules](src/Schedules) - How to schedule workflows to be run at specific times in the future.
+* [WorkerVersioning](src/WorkerVersioning) - How to use the Worker Versioning feature to more easily deploy changes to Workflow & other code.
 
 ## Development
 

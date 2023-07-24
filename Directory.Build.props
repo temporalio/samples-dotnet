@@ -19,9 +19,9 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Temporalio" Version="0.1.0-alpha6" />
-    <PackageReference Include="Temporalio.Extensions.Hosting" Version="0.1.0-alpha6" />
-    <PackageReference Include="Temporalio.Extensions.OpenTelemetry" Version="0.1.0-alpha6" />
+    <PackageReference Include="Temporalio" Version="0.1.0-beta1" />
+    <PackageReference Include="Temporalio.Extensions.Hosting" Version="0.1.0-beta1" />
+    <PackageReference Include="Temporalio.Extensions.OpenTelemetry" Version="0.1.0-beta1" />
     <!--
     Can also reference the SDK downloaded to a local directory:
     <ProjectReference Include="$(MSBuildThisFileDirectory)..\temporal-sdk-dotnet\src\Temporalio\Temporalio.csproj" />
