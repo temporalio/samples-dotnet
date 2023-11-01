@@ -47,6 +47,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TemporalioSamples.Dependenc
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TemporalioSamples.WorkerVersioning", "src\WorkerVersioning\TemporalioSamples.WorkerVersioning.csproj", "{CA3FD1BC-C918-4B15-96F6-D6DDA125E63C}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TemporalioSamples.Mutex", "src\Mutex\TemporalioSamples.Mutex.csproj", "{3168FB2D-D821-433A-A761-309E0474DE48}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -128,6 +130,10 @@ Global
 		{CA3FD1BC-C918-4B15-96F6-D6DDA125E63C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{CA3FD1BC-C918-4B15-96F6-D6DDA125E63C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{CA3FD1BC-C918-4B15-96F6-D6DDA125E63C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3168FB2D-D821-433A-A761-309E0474DE48}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3168FB2D-D821-433A-A761-309E0474DE48}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3168FB2D-D821-433A-A761-309E0474DE48}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3168FB2D-D821-433A-A761-309E0474DE48}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{7AECC7C6-9A21-4B8A-84D9-AFC4F5840CAF} = {1A647B41-53D0-4638-AE5A-6630BAAE45FC}
@@ -150,5 +156,6 @@ Global
 		{11A5854B-EE6E-4752-9C46-F466503D853B} = {AE21E7F4-B114-4761-81B1-8FA63E9F6BB8}
 		{10E6F7C9-7F6C-4A8E-94A1-99C10F46BBA4} = {1A647B41-53D0-4638-AE5A-6630BAAE45FC}
 		{CA3FD1BC-C918-4B15-96F6-D6DDA125E63C} = {1A647B41-53D0-4638-AE5A-6630BAAE45FC}
+		{3168FB2D-D821-433A-A761-309E0474DE48} = {1A647B41-53D0-4638-AE5A-6630BAAE45FC}
 	EndGlobalSection
 EndGlobal
