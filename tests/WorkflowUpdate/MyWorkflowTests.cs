@@ -38,7 +38,7 @@ public class MyWorkflowTests : TestBase
 
             Console.WriteLine("2: ");
 
-            Assert.Equal("some-static-value", await handle.GetResultAsync());
+            Assert.Equal(1, await handle.GetResultAsync());
         });
     }
 }
