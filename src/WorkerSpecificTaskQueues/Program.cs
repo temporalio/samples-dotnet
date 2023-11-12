@@ -24,7 +24,7 @@ async Task RunWorkerAsync()
 
     var uniqueWorkerTaskQueue = Guid.NewGuid().ToString();
 
-    var nonStickyActivities = new NonStickyActivities(uniqueWorkerTaskQueue);
+    var normalActivities = new NormalActivities(uniqueWorkerTaskQueue);
 
     // Run worker until cancelled
     Console.WriteLine("Running worker");
@@ -32,7 +32,7 @@ async Task RunWorkerAsync()
     using var nonStickyWorker = new TemporalWorker(
         client,
         new TemporalWorkerOptions(taskQueue: "activity-sticky-queues-sample")
-            .AddActivity(nonStickyActivities.GetUniqueTaskQueue)
+            .AddActivity(normalActivities.GetUniqueTaskQueue)
             .AddWorkflow<FileProcessingWorkflow>());
 
     using var stickyWorker = new TemporalWorker(

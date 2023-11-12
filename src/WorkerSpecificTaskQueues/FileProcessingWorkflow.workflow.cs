@@ -9,7 +9,7 @@ public class FileProcessingWorkflow
     public async Task RunAsync(int maxAttempts = 5)
     {
         var uniqueWorkerTaskQueue = await Workflow.ExecuteActivityAsync(
-            (NonStickyActivities act) => act.GetUniqueTaskQueue(),
+            (NormalActivities act) => act.GetUniqueTaskQueue(),
             new() { StartToCloseTimeout = TimeSpan.FromMinutes(1) });
 
         var downloadPath = await Workflow.ExecuteActivityAsync(

@@ -2,11 +2,11 @@
 
 namespace TemporalioSamples.ActivityStickyQueues;
 
-public class NonStickyActivities
+public class NormalActivities
 {
     private readonly string uniqueWorkerTaskQueue;
 
-    public NonStickyActivities(string uniqueWorkerTaskQueue) =>
+    public NormalActivities(string uniqueWorkerTaskQueue) =>
         this.uniqueWorkerTaskQueue = uniqueWorkerTaskQueue;
 
     [Activity]
