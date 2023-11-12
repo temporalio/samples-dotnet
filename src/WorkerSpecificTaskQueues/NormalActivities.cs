@@ -1,6 +1,6 @@
 ﻿using Temporalio.Activities;
 
-namespace TemporalioSamples.ActivityStickyQueues;
+namespace TemporalioSamples.WorkerSpecificTaskQueues;
 
 public class NormalActivities
 {

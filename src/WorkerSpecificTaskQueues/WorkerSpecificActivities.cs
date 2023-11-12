@@ -4,9 +4,9 @@ using System.Text;
 using Microsoft.Extensions.Logging;
 using Temporalio.Activities;
 
-namespace TemporalioSamples.ActivityStickyQueues;
+namespace TemporalioSamples.WorkerSpecificTaskQueues;
 
-public static class StickyActivities
+public static class WorkerSpecificActivities
 {
     [Activity]
 #pragma warning disable CA1054

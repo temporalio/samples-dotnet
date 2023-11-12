@@ -1,14 +1,16 @@
-# Sticky Activity Queues
+# Worker-Specific Task Queues
 
-This sample shows how to have [Sticky Execution](https://docs.temporal.io/tasks/#sticky-execution): using a unique task queue per Worker to have certain activities only run on that specific Worker.
+Use a unique Task Queue for each Worker in order to have certain Activities run on a specific Worker.
 
-The strategy is:
+This is useful in scenarios where multiple Activities need to run in the same process or on the same host, for example to share memory or disk. This sample has a file processing Workflow, where one Activity downloads the file to disk and other Activities process it and clean it up.
 
-- Create a `GetUniqueTaskQueue` activity that generates a unique task queue name, `uniqueWorkerTaskQueue`.
-- It doesn't matter where this activity is run, so it can be "non sticky" as per Temporal default behavior.
-- In this demo, `uniqueWorkerTaskQueue` is simply a `uuid` initialized in the Worker, but you can inject smart logic here to uniquely identify the Worker, [as Netflix did](https://community.temporal.io/t/using-dynamic-task-queues-for-traffic-routing/3045).
-- For activities intended to be "sticky", only register them in one Worker, and have that be the only Worker listening on that `uniqueWorkerTaskQueue`.
-- Execute workflows from the Client like normal.
+This strategy is:
+
+- Each Worker process runs two `TemporalWorker`s:
+  - One `TemporalWorker` listens on the shared `worker-specific-task-queues-sample` Task Queue.
+  - Another `TemporalWorker` listens on a uniquely generated Task Queue.
+- Create a `GetUniqueTaskQueue` Activity that returns one of the uniquely generated Task Queues (that only one Worker is listening on—i.e. the **Worker-specific Task Queue**). It doesn't matter where this Activity is run, so it can be executed on the shared Task Queue. In this sample, the unique Task Queue is simply a `uuid`, but you can inject smart logic here to uniquely identify the Worker, [as Netflix did](https://community.temporal.io/t/using-dynamic-task-queues-for-traffic-routing/3045).
+- The Workflow and the first Activity are run on the shared `worker-specific-task-queues-sample` Task Queue. The rest of the Activities that do the file processing are run on the Worker-specific Task Queue.
 
 Activities have been artificially slowed with `await Task.Delay(TimeSpan.FromSeconds(3))` to simulate slow activities.
 
@@ -23,4 +25,14 @@ Then in another terminal, run the workflow from this directory:
 
     dotnet run workflow
 
-This will show logs in the worker window of the workflow running.
+In the worker terminal, you should see logs like:
+
+```
+Running worker
+[21:57:26] info: Temporalio.Activity:DownloadFileToWorkerFileSystem[0]
+      Downloading https://temporal.io and saving to path /tmp/tmpD5c6wy.tmp
+[21:57:32] info: Temporalio.Activity:WorkOnFileInWorkerFileSystem[0]
+      Did some work on /tmp/tmpD5c6wy.tmp, checksum: 49d7419e6cba3575b3158f62d053f922aa08b23c64f05411cda3213b56c84ba4
+[21:57:35] info: Temporalio.Activity:CleanupFileFromWorkerFileSystem[0]
+      Removing /tmp/tmpD5c6wy.tmp
+```
