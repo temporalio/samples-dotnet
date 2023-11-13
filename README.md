@@ -19,7 +19,6 @@ Prerequisites:
 <!-- Keep this list in alphabetical order -->
 * [ActivityHeartbeatingCancellation](src/ActivityHeartbeatingCancellation) - How to use heartbeating and cancellation handling in an activity.
 * [ActivitySimple](src/ActivitySimple) - Simple workflow that runs simple activities.
-* [ActivityStickyQueues](src/ActivityStickyQueues) - Use a unique task queue per Worker to have certain Activities only run on that specific Worker.
 * [ActivityWorker](src/ActivityWorker) - Use .NET activities from a workflow in another language.
 * [AspNet](src/AspNet) - Demonstration of a generic host worker and an ASP.NET workflow starter.
 * [ClientMtls](src/ClientMtls) - How to use client certificate authentication, e.g. for Temporal Cloud.
@@ -28,6 +27,7 @@ Prerequisites:
 * [Mutex](src/Mutex) - How to implement a mutex as a workflow. Demonstrates how to avoid race conditions or parallel mutually exclusive operations on the same resource.
 * [Polling](src/Polling) - Recommended implementation of an activity that needs to periodically poll an external resource waiting its successful completion.
 * [Schedules](src/Schedules) - How to schedule workflows to be run at specific times in the future.
+* [WorkerSpecificTaskQueues](src/WorkerSpecificTaskQueues) - Use a unique task queue per Worker to have certain Activities only run on that specific Worker.
 * [WorkerVersioning](src/WorkerVersioning) - How to use the Worker Versioning feature to more easily deploy changes to Workflow & other code.
 
 ## Development

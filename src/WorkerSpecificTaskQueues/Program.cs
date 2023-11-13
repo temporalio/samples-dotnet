@@ -1,7 +1,7 @@
 using Microsoft.Extensions.Logging;
 using Temporalio.Client;
 using Temporalio.Worker;
-using TemporalioSamples.ActivityStickyQueues;
+using TemporalioSamples.WorkerSpecificTaskQueues;
 
 // Create a client to localhost on default namespace
 var client = await TemporalClient.ConnectAsync(new("localhost:7233")
@@ -24,25 +24,25 @@ async Task RunWorkerAsync()
 
     var uniqueWorkerTaskQueue = Guid.NewGuid().ToString();
 
-    var nonStickyActivities = new NonStickyActivities(uniqueWorkerTaskQueue);
+    var normalActivities = new NormalActivities(uniqueWorkerTaskQueue);
 
     // Run worker until cancelled
     Console.WriteLine("Running worker");
 
-    using var nonStickyWorker = new TemporalWorker(
+    using var normalWorker = new TemporalWorker(
         client,
-        new TemporalWorkerOptions(taskQueue: "activity-sticky-queues-sample")
-            .AddActivity(nonStickyActivities.GetUniqueTaskQueue)
+        new TemporalWorkerOptions(taskQueue: "worker-specific-task-queues-sample")
+            .AddActivity(normalActivities.GetUniqueTaskQueue)
             .AddWorkflow<FileProcessingWorkflow>());
 
-    using var stickyWorker = new TemporalWorker(
+    using var uniqueTaskQueueWorker = new TemporalWorker(
         client,
         new TemporalWorkerOptions(taskQueue: uniqueWorkerTaskQueue)
-            .AddActivity(StickyActivities.DownloadFileToWorkerFileSystemAsync)
-            .AddActivity(StickyActivities.CleanupFileFromWorkerFileSystemAsync)
-            .AddActivity(StickyActivities.WorkOnFileInWorkerFileSystemAsync));
+            .AddActivity(WorkerSpecificActivities.DownloadFileToWorkerFileSystemAsync)
+            .AddActivity(WorkerSpecificActivities.CleanupFileFromWorkerFileSystemAsync)
+            .AddActivity(WorkerSpecificActivities.WorkOnFileInWorkerFileSystemAsync));
 
-    var tasks = new List<Task> { nonStickyWorker.ExecuteAsync(tokenSource.Token), stickyWorker.ExecuteAsync(tokenSource.Token) };
+    var tasks = new List<Task> { normalWorker.ExecuteAsync(tokenSource.Token), uniqueTaskQueueWorker.ExecuteAsync(tokenSource.Token) };
 
     var task = await Task.WhenAny(tasks);
     if (task.Exception is not null)
@@ -69,7 +69,7 @@ async Task ExecuteWorkflowAsync()
     Console.WriteLine("Executing workflow");
     await client.ExecuteWorkflowAsync(
         (FileProcessingWorkflow wf) => wf.RunAsync(5),
-        new(id: "file-processing-0", taskQueue: "activity-sticky-queues-sample"));
+        new(id: "file-processing-0", taskQueue: "worker-specific-task-queues-sample"));
 }
 
 switch (args.ElementAtOrDefault(0))
