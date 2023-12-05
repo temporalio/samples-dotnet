@@ -2,11 +2,6 @@
 
 This is the set of .NET samples for the [.NET SDK](https://github.com/temporalio/sdk-dotnet).
 
-⚠️ UNDER ACTIVE DEVELOPMENT
-
-The .NET SDK and is under active development and has not released a stable version yet. APIs may change in incompatible
-ways until the SDK is marked stable.
-
 ## Usage
 
 Prerequisites:
