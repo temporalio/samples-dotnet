@@ -37,6 +37,7 @@ async Task RunWorkerAsync()
         Console.WriteLine("Worker cancelled");
     }
 }
+
 async Task ExecuteWorkflowAsync()
 {
     var workflowId = "test-" + Guid.NewGuid();

@@ -9,6 +9,9 @@ public class SagaWorkflow
     [WorkflowRun]
     public async Task RunAsync(TransferDetails transfer)
     {
+        List<Func<Task>> compensations = new();
+        var logger = Workflow.Logger;
+
         var options = new ActivityOptions()
         {
             StartToCloseTimeout = TimeSpan.FromSeconds(90), // schedule a retry if the Activity function doesn't return within 90 seconds
@@ -21,20 +24,17 @@ public class SagaWorkflow
             },
         };
 
-        var logger = Workflow.Logger;
-        var saga = new Saga(logger);
-
         try
         {
             await Workflow.ExecuteActivityAsync(() => Activities.Withdraw(transfer), options);
 
-            saga.AddCompensation(async () => await Workflow.ExecuteActivityAsync(
+            compensations.Add(async () => await Workflow.ExecuteActivityAsync(
                                   () => Activities.WithdrawCompensation(transfer),
                                   options));
 
             await Workflow.ExecuteActivityAsync(() => Activities.Deposit(transfer), options);
 
-            saga.AddCompensation(async () => await Workflow.ExecuteActivityAsync(
+            compensations.Add(async () => await Workflow.ExecuteActivityAsync(
                        () => Activities.DepositCompensation(transfer),
                        options));
 
@@ -44,21 +44,11 @@ public class SagaWorkflow
         catch (Exception)
         {
             logger.LogInformation("Exception caught. Initiating compensation...");
-            saga.OnCompensationComplete((log) =>
+            compensations.Reverse();
+            foreach (var comp in compensations)
             {
-                /* Send "we're sorry, but.." email to customer... */
-                log.LogInformation("Done. Compensation complete!");
-                return Task.CompletedTask;
-            });
-
-            saga.OnCompensationError((log) =>
-            {
-                /* Send emails to internal supporting teams */
-                log.LogInformation("Done. Compensation unsuccessful... Manual intervention required!");
-                return Task.CompletedTask;
-            });
-
-            await saga.CompensateAsync();
+                await comp.Invoke();
+            }
             throw;
         }
     }
