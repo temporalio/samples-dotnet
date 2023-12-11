@@ -5,57 +5,56 @@ VisualStudioVersion = 17.0.31903.59
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{1A647B41-53D0-4638-AE5A-6630BAAE45FC}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TemporalioSamples.ActivityWorker", "src\ActivityWorker\TemporalioSamples.ActivityWorker.csproj", "{7AECC7C6-9A21-4B8A-84D9-AFC4F5840CAF}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TemporalioSamples.ActivityWorker", "src\ActivityWorker\TemporalioSamples.ActivityWorker.csproj", "{7AECC7C6-9A21-4B8A-84D9-AFC4F5840CAF}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TemporalioSamples.Tests", "tests\TemporalioSamples.Tests.csproj", "{3FA7E5DF-03B7-4586-A980-85C155B376C5}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TemporalioSamples.Tests", "tests\TemporalioSamples.Tests.csproj", "{3FA7E5DF-03B7-4586-A980-85C155B376C5}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "AspNet", "AspNet", "{E431D279-E02B-4670-B934-3DB9F15D8CCC}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TemporalioSamples.AspNet.Web", "src\AspNet\Web\TemporalioSamples.AspNet.Web.csproj", "{31EC2647-6A5A-42D1-B7B5-02804B340726}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TemporalioSamples.AspNet.Web", "src\AspNet\Web\TemporalioSamples.AspNet.Web.csproj", "{31EC2647-6A5A-42D1-B7B5-02804B340726}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TemporalioSamples.AspNet.Worker", "src\AspNet\Worker\TemporalioSamples.AspNet.Worker.csproj", "{AFFA4143-DC28-4FBE-A33B-D6414F541EA4}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TemporalioSamples.AspNet.Worker", "src\AspNet\Worker\TemporalioSamples.AspNet.Worker.csproj", "{AFFA4143-DC28-4FBE-A33B-D6414F541EA4}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TemporalioSamples.ActivitySimple", "src\ActivitySimple\TemporalioSamples.ActivitySimple.csproj", "{7608AFB5-CFD1-427F-81FE-81C7EFE8AFBE}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TemporalioSamples.ActivitySimple", "src\ActivitySimple\TemporalioSamples.ActivitySimple.csproj", "{7608AFB5-CFD1-427F-81FE-81C7EFE8AFBE}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Encryption", "Encryption", "{2E1FF71C-0BE3-478E-9984-C6896A11DD3A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TemporalioSamples.Encryption.Codec", "src\Encryption\Codec\TemporalioSamples.Encryption.Codec.csproj", "{F25A0BB4-6FF5-4187-932B-5189987C4B4A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TemporalioSamples.Encryption.Codec", "src\Encryption\Codec\TemporalioSamples.Encryption.Codec.csproj", "{F25A0BB4-6FF5-4187-932B-5189987C4B4A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TemporalioSamples.Encryption.Starter", "src\Encryption\Starter\TemporalioSamples.Encryption.Starter.csproj", "{DD8A2E0D-7644-4B95-91BE-A652CF85BACF}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TemporalioSamples.Encryption.Starter", "src\Encryption\Starter\TemporalioSamples.Encryption.Starter.csproj", "{DD8A2E0D-7644-4B95-91BE-A652CF85BACF}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TemporalioSamples.Encryption.Worker", "src\Encryption\Worker\TemporalioSamples.Encryption.Worker.csproj", "{6B50F9F9-9C17-475D-A34A-6F317558C446}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TemporalioSamples.Encryption.Worker", "src\Encryption\Worker\TemporalioSamples.Encryption.Worker.csproj", "{6B50F9F9-9C17-475D-A34A-6F317558C446}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TemporalioSamples.Encryption.CodecServer", "src\Encryption\CodecServer\TemporalioSamples.Encryption.CodecServer.csproj", "{8905D1CD-F136-41CA-810F-F15FB5204384}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TemporalioSamples.Encryption.CodecServer", "src\Encryption\CodecServer\TemporalioSamples.Encryption.CodecServer.csproj", "{8905D1CD-F136-41CA-810F-F15FB5204384}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TemporalioSamples.ClientMtls", "src\ClientMtls\TemporalioSamples.ClientMtls.csproj", "{D2A3546F-2462-4B86-8B5E-999505483A2D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TemporalioSamples.ClientMtls", "src\ClientMtls\TemporalioSamples.ClientMtls.csproj", "{D2A3546F-2462-4B86-8B5E-999505483A2D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TemporalioSamples.WorkerSpecificTaskQueues", "src\WorkerSpecificTaskQueues\TemporalioSamples.WorkerSpecificTaskQueues.csproj", "{974CCD5E-0254-4C85-9618-8CD014A2734F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TemporalioSamples.WorkerSpecificTaskQueues", "src\WorkerSpecificTaskQueues\TemporalioSamples.WorkerSpecificTaskQueues.csproj", "{974CCD5E-0254-4C85-9618-8CD014A2734F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TemporalioSamples.Schedules", "src\Schedules\TemporalioSamples.Schedules.csproj", "{297A58BE-3959-4525-A329-222B3575139D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TemporalioSamples.Schedules", "src\Schedules\TemporalioSamples.Schedules.csproj", "{297A58BE-3959-4525-A329-222B3575139D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TemporalioSamples.ActivityHeartbeatingCancellation", "src\ActivityHeartbeatingCancellation\TemporalioSamples.ActivityHeartbeatingCancellation.csproj", "{CD0D6B7E-2076-4771-AF5B-E1EFB82A44B3}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TemporalioSamples.ActivityHeartbeatingCancellation", "src\ActivityHeartbeatingCancellation\TemporalioSamples.ActivityHeartbeatingCancellation.csproj", "{CD0D6B7E-2076-4771-AF5B-E1EFB82A44B3}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TemporalioSamples.Polling.Frequent", "src\Polling\Frequent\TemporalioSamples.Polling.Frequent.csproj", "{6935B8AC-160F-463D-BE03-AD6FF31585A3}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TemporalioSamples.Polling.Frequent", "src\Polling\Frequent\TemporalioSamples.Polling.Frequent.csproj", "{6935B8AC-160F-463D-BE03-AD6FF31585A3}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Polling", "Polling", "{AE21E7F4-B114-4761-81B1-8FA63E9F6BB8}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TemporalioSamples.Polling.Infrequent", "src\Polling\Infrequent\TemporalioSamples.Polling.Infrequent.csproj", "{DD2DE0CF-C127-461B-B4F1-D4E13BDD3B5D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TemporalioSamples.Polling.Infrequent", "src\Polling\Infrequent\TemporalioSamples.Polling.Infrequent.csproj", "{DD2DE0CF-C127-461B-B4F1-D4E13BDD3B5D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TemporalioSamples.Polling.PeriodicSequence", "src\Polling\PeriodicSequence\TemporalioSamples.Polling.PeriodicSequence.csproj", "{11A5854B-EE6E-4752-9C46-F466503D853B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TemporalioSamples.Polling.PeriodicSequence", "src\Polling\PeriodicSequence\TemporalioSamples.Polling.PeriodicSequence.csproj", "{11A5854B-EE6E-4752-9C46-F466503D853B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TemporalioSamples.DependencyInjection", "src\DependencyInjection\TemporalioSamples.DependencyInjection.csproj", "{10E6F7C9-7F6C-4A8E-94A1-99C10F46BBA4}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TemporalioSamples.DependencyInjection", "src\DependencyInjection\TemporalioSamples.DependencyInjection.csproj", "{10E6F7C9-7F6C-4A8E-94A1-99C10F46BBA4}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TemporalioSamples.WorkerVersioning", "src\WorkerVersioning\TemporalioSamples.WorkerVersioning.csproj", "{CA3FD1BC-C918-4B15-96F6-D6DDA125E63C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TemporalioSamples.WorkerVersioning", "src\WorkerVersioning\TemporalioSamples.WorkerVersioning.csproj", "{CA3FD1BC-C918-4B15-96F6-D6DDA125E63C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TemporalioSamples.Mutex", "src\Mutex\TemporalioSamples.Mutex.csproj", "{3168FB2D-D821-433A-A761-309E0474DE48}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TemporalioSamples.Mutex", "src\Mutex\TemporalioSamples.Mutex.csproj", "{3168FB2D-D821-433A-A761-309E0474DE48}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TemporalioSamples.Saga", "src\Saga\TemporalioSamples.Saga.csproj", "{B79F07F7-3429-4C58-84C3-08587F748B2D}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
 		Release|Any CPU = Release|Any CPU
-	EndGlobalSection
-	GlobalSection(SolutionProperties) = preSolution
-		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{7AECC7C6-9A21-4B8A-84D9-AFC4F5840CAF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
@@ -134,6 +133,13 @@ Global
 		{3168FB2D-D821-433A-A761-309E0474DE48}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3168FB2D-D821-433A-A761-309E0474DE48}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{3168FB2D-D821-433A-A761-309E0474DE48}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B79F07F7-3429-4C58-84C3-08587F748B2D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B79F07F7-3429-4C58-84C3-08587F748B2D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B79F07F7-3429-4C58-84C3-08587F748B2D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B79F07F7-3429-4C58-84C3-08587F748B2D}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{7AECC7C6-9A21-4B8A-84D9-AFC4F5840CAF} = {1A647B41-53D0-4638-AE5A-6630BAAE45FC}
@@ -150,12 +156,13 @@ Global
 		{974CCD5E-0254-4C85-9618-8CD014A2734F} = {1A647B41-53D0-4638-AE5A-6630BAAE45FC}
 		{297A58BE-3959-4525-A329-222B3575139D} = {1A647B41-53D0-4638-AE5A-6630BAAE45FC}
 		{CD0D6B7E-2076-4771-AF5B-E1EFB82A44B3} = {1A647B41-53D0-4638-AE5A-6630BAAE45FC}
-		{AE21E7F4-B114-4761-81B1-8FA63E9F6BB8} = {1A647B41-53D0-4638-AE5A-6630BAAE45FC}
 		{6935B8AC-160F-463D-BE03-AD6FF31585A3} = {AE21E7F4-B114-4761-81B1-8FA63E9F6BB8}
+		{AE21E7F4-B114-4761-81B1-8FA63E9F6BB8} = {1A647B41-53D0-4638-AE5A-6630BAAE45FC}
 		{DD2DE0CF-C127-461B-B4F1-D4E13BDD3B5D} = {AE21E7F4-B114-4761-81B1-8FA63E9F6BB8}
 		{11A5854B-EE6E-4752-9C46-F466503D853B} = {AE21E7F4-B114-4761-81B1-8FA63E9F6BB8}
 		{10E6F7C9-7F6C-4A8E-94A1-99C10F46BBA4} = {1A647B41-53D0-4638-AE5A-6630BAAE45FC}
 		{CA3FD1BC-C918-4B15-96F6-D6DDA125E63C} = {1A647B41-53D0-4638-AE5A-6630BAAE45FC}
 		{3168FB2D-D821-433A-A761-309E0474DE48} = {1A647B41-53D0-4638-AE5A-6630BAAE45FC}
+		{B79F07F7-3429-4C58-84C3-08587F748B2D} = {1A647B41-53D0-4638-AE5A-6630BAAE45FC}
 	EndGlobalSection
 EndGlobal
