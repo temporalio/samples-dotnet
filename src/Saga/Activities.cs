@@ -36,6 +36,6 @@ public static class Activities
     public static void StepWithError(TransferDetails d)
     {
         ActivityExecutionContext.Current.Logger.LogInformation("Simulate failure to trigger compensation. ReferenceId: {ReferenceId}", d.ReferenceId);
-        throw new ApplicationFailureException("Simulated failure");
+        throw new ApplicationFailureException("Simulated failure", nonRetryable: true);
     }
 }
