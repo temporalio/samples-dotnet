@@ -12,17 +12,7 @@ public class SagaWorkflow
         List<Func<Task>> compensations = new();
         var logger = Workflow.Logger;
 
-        var options = new ActivityOptions()
-        {
-            StartToCloseTimeout = TimeSpan.FromSeconds(90), // schedule a retry if the Activity function doesn't return within 90 seconds
-            RetryPolicy = new()
-            {
-                InitialInterval = TimeSpan.FromSeconds(15), // first try will occur after 15 seconds
-                BackoffCoefficient = 1, // double the delay after each retry
-                MaximumInterval = TimeSpan.FromMinutes(1), // up to a maximum delay of 1 minute
-                MaximumAttempts = 2, // fail the Activitiesivity after 2 attempts
-            },
-        };
+        var options = new ActivityOptions() { StartToCloseTimeout = TimeSpan.FromSeconds(90) };
 
         try
         {
@@ -44,12 +34,29 @@ public class SagaWorkflow
         catch (Exception)
         {
             logger.LogInformation("Exception caught. Initiating compensation...");
+            await CompensateAsync(compensations);
+            throw;
+        }
+    }
+
+    private async Task CompensateAsync(List<Func<Task>> compensations)
+    {
+        if (compensations.Count > 0)
+        {
             compensations.Reverse();
             foreach (var comp in compensations)
             {
-                await comp.Invoke();
+                try
+                {
+                    await comp.Invoke();
+                }
+                catch (Exception ex)
+                {
+                    Workflow.Logger.LogError("failed to compensate: {Message}", ex.Message);
+                    // swallow errors
+                    throw;
+                }
             }
-            throw;
         }
     }
 }
