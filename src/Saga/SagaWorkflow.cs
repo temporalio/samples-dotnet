@@ -46,15 +46,17 @@ public class SagaWorkflow
             compensations.Reverse();
             foreach (var comp in compensations)
             {
+#pragma warning disable CA1031
                 try
                 {
                     await comp.Invoke();
                 }
-                catch (ApplicationException ex)
+                catch (Exception ex)
                 {
                     Workflow.Logger.LogError(ex, "Failed to compensate");
                     // swallow errors
                 }
+#pragma warning restore CA1031
             }
         }
     }
