@@ -50,11 +50,10 @@ public class SagaWorkflow
                 {
                     await comp.Invoke();
                 }
-                catch (Exception ex)
+                catch (ApplicationException ex)
                 {
-                    Workflow.Logger.LogError("failed to compensate: {Message}", ex.Message);
+                    Workflow.Logger.LogError(ex, "Failed to compensate");
                     // swallow errors
-                    throw;
                 }
             }
         }
