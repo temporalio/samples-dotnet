@@ -41,23 +41,20 @@ public class SagaWorkflow
 
     private async Task CompensateAsync(List<Func<Task>> compensations)
     {
-        if (compensations.Count > 0)
+        compensations.Reverse();
+        foreach (var comp in compensations)
         {
-            compensations.Reverse();
-            foreach (var comp in compensations)
-            {
 #pragma warning disable CA1031
-                try
-                {
-                    await comp.Invoke();
-                }
-                catch (Exception ex)
-                {
-                    Workflow.Logger.LogError(ex, "Failed to compensate");
-                    // swallow errors
-                }
-#pragma warning restore CA1031
+            try
+            {
+                await comp.Invoke();
             }
+            catch (Exception ex)
+            {
+                Workflow.Logger.LogError(ex, "Failed to compensate");
+                // swallow errors
+            }
+#pragma warning restore CA1031
         }
     }
 }
