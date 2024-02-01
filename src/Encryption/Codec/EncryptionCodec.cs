@@ -16,7 +16,6 @@ public sealed class EncryptionCodec : IPayloadCodec, IDisposable
 
     private readonly byte[] KeyBytes;
     private readonly ByteString keyIDByteString;
-    private readonly AesGcm aes;
 
     public EncryptionCodec(string keyID = DefaultKeyID, string? key = DefaultKey)
     {
