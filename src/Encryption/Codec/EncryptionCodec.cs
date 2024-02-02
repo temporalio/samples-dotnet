@@ -17,11 +17,11 @@ public sealed class EncryptionCodec : IPayloadCodec
     private readonly byte[] key;
     private readonly ByteString keyIDByteString;
 
-    public EncryptionCodec(string keyID = DefaultKeyID, byte[]? _key = DefaultKey)
+    public EncryptionCodec(string keyID = DefaultKeyID, byte[]? key)
     {
         KeyID = keyID;
         keyIDByteString = ByteString.CopyFromUtf8(keyID);
-        key = _key;
+        this.key = key ?? DefaultKey;
     }
 
     public string KeyID { get; private init; }
