@@ -17,7 +17,7 @@ public sealed class EncryptionCodec : IPayloadCodec
     private readonly byte[] key;
     private readonly ByteString keyIDByteString;
 
-    public EncryptionCodec(string keyID = DefaultKeyID, byte[]? key)
+    public EncryptionCodec(string keyID = DefaultKeyID, byte[]? key = null)
     {
         KeyID = keyID;
         keyIDByteString = ByteString.CopyFromUtf8(keyID);
