@@ -5,7 +5,7 @@ using Google.Protobuf;
 using Temporalio.Api.Common.V1;
 using Temporalio.Converters;
 
-public sealed class EncryptionCodec : IPayloadCodec, IDisposable
+public sealed class EncryptionCodec : IPayloadCodec
 {
     public const string DefaultKeyID = "test-key-id";
     public static readonly byte[] DefaultKey = System.Text.Encoding.ASCII.GetBytes("test-key-test-key-test-key-test!");
@@ -14,25 +14,17 @@ public sealed class EncryptionCodec : IPayloadCodec, IDisposable
     private const int TagSize = 16;
     private static readonly ByteString EncodingByteString = ByteString.CopyFromUtf8("binary/encrypted");
 
+    private readonly byte[] key;
     private readonly ByteString keyIDByteString;
-    private readonly AesGcm aes;
 
     public EncryptionCodec(string keyID = DefaultKeyID, byte[]? key = null)
     {
         KeyID = keyID;
         keyIDByteString = ByteString.CopyFromUtf8(keyID);
-        aes = new(key ?? DefaultKey);
+        this.key = key ?? DefaultKey;
     }
-
-    ~EncryptionCodec() => Dispose();
 
     public string KeyID { get; private init; }
-
-    public void Dispose()
-    {
-        aes.Dispose();
-        GC.SuppressFinalize(this);
-    }
 
     public Task<IReadOnlyCollection<Payload>> EncodeAsync(IReadOnlyCollection<Payload> payloads) =>
         Task.FromResult<IReadOnlyCollection<Payload>>(payloads.Select(p =>
@@ -79,15 +71,22 @@ public sealed class EncryptionCodec : IPayloadCodec, IDisposable
         RandomNumberGenerator.Fill(nonceSpan);
 
         // Perform encryption
-        aes.Encrypt(nonceSpan, data, bytes.AsSpan(NonceSize + TagSize), bytes.AsSpan(NonceSize, TagSize));
-        return bytes;
+        using (var aes = new AesGcm(key))
+        {
+            aes.Encrypt(nonceSpan, data, bytes.AsSpan(NonceSize + TagSize), bytes.AsSpan(NonceSize, TagSize));
+            return bytes;
+        }
     }
 
     private byte[] Decrypt(byte[] data)
     {
         var bytes = new byte[data.Length - NonceSize - TagSize];
-        aes.Decrypt(
-            data.AsSpan(0, NonceSize), data.AsSpan(NonceSize + TagSize), data.AsSpan(NonceSize, TagSize), bytes.AsSpan());
-        return bytes;
+
+        using (var aes = new AesGcm(key))
+        {
+            aes.Decrypt(
+                data.AsSpan(0, NonceSize), data.AsSpan(NonceSize + TagSize), data.AsSpan(NonceSize, TagSize), bytes.AsSpan());
+            return bytes;
+        }
     }
 }
