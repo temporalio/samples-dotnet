@@ -16,7 +16,9 @@ var taskQueue = $"worker-versioning-{Guid.NewGuid()}";
 // Start a 1.0 worker
 using var workerV1 = new TemporalWorker(
     client,
-    new TemporalWorkerOptions(taskQueue).AddActivity(MyActivities.Greet).AddWorkflow<MyWorkflowV1>());
+    new TemporalWorkerOptions(taskQueue) { BuildId = "1.0", UseWorkerVersioning = true }
+        .AddActivity(MyActivities.Greet)
+        .AddWorkflow<MyWorkflowV1>());
 
 var v1Handle = await workerV1.ExecuteAsync(async () =>
 {
@@ -42,7 +44,7 @@ var v1Handle = await workerV1.ExecuteAsync(async () =>
 await client.UpdateWorkerBuildIdCompatibilityAsync(taskQueue, new BuildIdOp.AddNewCompatible("1.1", "1.0"));
 using var workerV1Dot1 = new TemporalWorker(
     client,
-    new TemporalWorkerOptions(taskQueue)
+    new TemporalWorkerOptions(taskQueue) { BuildId = "1.1", UseWorkerVersioning = true }
         .AddActivity(MyActivities.Greet)
         .AddActivity(MyActivities.SuperGreet)
         .AddWorkflow<MyWorkflowV1Dot1>());
@@ -60,7 +62,7 @@ await workerV1Dot1.ExecuteAsync(async () =>
     // Start a 2.0 worker
     using var workerV2 = new TemporalWorker(
         client,
-        new TemporalWorkerOptions(taskQueue)
+        new TemporalWorkerOptions(taskQueue) { BuildId = "2.0", UseWorkerVersioning = true }
         .AddActivity(MyActivities.Greet)
         .AddActivity(MyActivities.SuperGreet)
         .AddWorkflow<MyWorkflowV2>());
