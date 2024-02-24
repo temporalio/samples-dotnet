@@ -29,7 +29,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TemporalioSamples.Encryptio
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TemporalioSamples.ClientMtls", "src\ClientMtls\TemporalioSamples.ClientMtls.csproj", "{D2A3546F-2462-4B86-8B5E-999505483A2D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TemporalioSamples.ActivityStickyQueues", "src\ActivityStickyQueues\TemporalioSamples.ActivityStickyQueues.csproj", "{974CCD5E-0254-4C85-9618-8CD014A2734F}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TemporalioSamples.WorkerSpecificTaskQueues", "src\WorkerSpecificTaskQueues\TemporalioSamples.WorkerSpecificTaskQueues.csproj", "{974CCD5E-0254-4C85-9618-8CD014A2734F}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TemporalioSamples.Schedules", "src\Schedules\TemporalioSamples.Schedules.csproj", "{297A58BE-3959-4525-A329-222B3575139D}"
 EndProject

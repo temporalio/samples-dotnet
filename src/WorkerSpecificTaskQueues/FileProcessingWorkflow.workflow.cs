@@ -1,6 +1,6 @@
 using Temporalio.Workflows;
 
-namespace TemporalioSamples.ActivityStickyQueues;
+namespace TemporalioSamples.WorkerSpecificTaskQueues;
 
 [Workflow]
 public class FileProcessingWorkflow
@@ -9,11 +9,11 @@ public class FileProcessingWorkflow
     public async Task RunAsync(int maxAttempts = 5)
     {
         var uniqueWorkerTaskQueue = await Workflow.ExecuteActivityAsync(
-            (NonStickyActivities act) => act.GetUniqueTaskQueue(),
+            (NormalActivities act) => act.GetUniqueTaskQueue(),
             new() { StartToCloseTimeout = TimeSpan.FromMinutes(1) });
 
         var downloadPath = await Workflow.ExecuteActivityAsync(
-            () => StickyActivities.DownloadFileToWorkerFileSystemAsync("https://temporal.io"),
+            () => WorkerSpecificActivities.DownloadFileToWorkerFileSystemAsync("https://temporal.io"),
             new()
             {
                 TaskQueue = uniqueWorkerTaskQueue,
@@ -26,7 +26,7 @@ public class FileProcessingWorkflow
             });
 
         await Workflow.ExecuteActivityAsync(
-            () => StickyActivities.WorkOnFileInWorkerFileSystemAsync(downloadPath),
+            () => WorkerSpecificActivities.WorkOnFileInWorkerFileSystemAsync(downloadPath),
             new()
             {
                 TaskQueue = uniqueWorkerTaskQueue,
@@ -35,7 +35,7 @@ public class FileProcessingWorkflow
             });
 
         await Workflow.ExecuteActivityAsync(
-            () => StickyActivities.CleanupFileFromWorkerFileSystemAsync(downloadPath),
+            () => WorkerSpecificActivities.CleanupFileFromWorkerFileSystemAsync(downloadPath),
             new()
             {
                 TaskQueue = uniqueWorkerTaskQueue,

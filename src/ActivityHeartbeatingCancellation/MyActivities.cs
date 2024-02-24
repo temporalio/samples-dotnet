@@ -11,7 +11,7 @@ public static class MyActivities
         try
         {
             // Allow for resuming from heartbeat
-            var startingPoint = ActivityExecutionContext.Current.Info.HeartbeatDetails.Any()
+            var startingPoint = ActivityExecutionContext.Current.Info.HeartbeatDetails.Count > 0
                 ? await ActivityExecutionContext.Current.Info.HeartbeatDetailAtAsync<int>(0)
                 : 1;
 

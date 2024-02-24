@@ -44,9 +44,9 @@ void AddClientCommand(
                 Tls = new()
                 {
                     ClientCert =
-                        File.ReadAllBytes(ctx.ParseResult.GetValueForOption(clientCertOption)!.FullName),
+                        await File.ReadAllBytesAsync(ctx.ParseResult.GetValueForOption(clientCertOption)!.FullName),
                     ClientPrivateKey =
-                        File.ReadAllBytes(ctx.ParseResult.GetValueForOption(clientKeyOption)!.FullName),
+                        await File.ReadAllBytesAsync(ctx.ParseResult.GetValueForOption(clientKeyOption)!.FullName),
                 },
             });
         // Run
