@@ -11,12 +11,14 @@ public class MyWorkflowUpdate
     [WorkflowRun]
     public async Task RunAsync()
     {
-        while (!IsLatestScreen())
+        while (!IsLastScreen())
         {
+            // watch eventHistoryLength (Workflow.CurrentHistoryLength) and CAN if > 10000
             await Workflow.WaitConditionAsync(() => requests.Any());
             var currentRequest = requests.Peek();
             SetNextScreen(currentRequest);
             requests.Dequeue();
+
         }
 
         // TODO if I remove this the test (RunAsync_SimpleRun_Succeeds) fails,
@@ -53,7 +55,7 @@ public class MyWorkflowUpdate
         return screen;
     }
 
-    private bool IsLatestScreen()
+    private bool IsLastScreen()
     {
         return GetCurrentScreen() == ScreenId.End;
     }
