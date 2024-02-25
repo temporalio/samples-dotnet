@@ -45,28 +45,17 @@ async Task ExecuteWorkflowAsync()
 
     var handle = await client.StartWorkflowAsync(
         (MyWorkflowUpdate wf) => wf.RunAsync(),
-        new(id: "workflow-update-id", taskQueue: "workflow-update-queue"));
+        new(id: $"workflow-update-{Guid.NewGuid()}", taskQueue: "workflow-update-queue"));
 
-    try
-    {
-        // The update request will fail on a negative number and the exception will be thrown here.
-        await handle.ExecuteUpdateAsync(
-            (MyWorkflowUpdate wf) => wf.AddValueAsync(-1));
-    }
-    catch (WorkflowUpdateFailedException e)
-    {
-        Console.WriteLine("Update failed, cause:  " + e);
-    }
-    for (int i = 0; i < 4; i++)
-    {
-        await handle.ExecuteUpdateAsync(
-            (MyWorkflowUpdate wf) => wf.AddValueAsync(i));
-    }
+    await handle.ExecuteUpdateAsync(wf =>
+        wf.SubmitScreenAsync(new UiRequest($"requestId-{Guid.NewGuid()}", ScreenId.Screen1)));
 
-    await handle.SignalAsync(
-        (MyWorkflowUpdate wf) => wf.ExitAsync());
+    await handle.ExecuteUpdateAsync(wf =>
+        wf.SubmitScreenAsync(new UiRequest($"requestId-{Guid.NewGuid()}", ScreenId.Screen2)));
 
-    Console.WriteLine("Result: " + await handle.GetResultAsync());
+    // Workflow completes
+    await handle.GetResultAsync();
+    Console.WriteLine("Workflow completes");
 }
 
 switch (args.ElementAtOrDefault(0))

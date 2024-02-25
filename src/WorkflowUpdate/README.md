@@ -1,7 +1,7 @@
-# Activity Simple
+# Workflow Update
 
-This sample shows a workflow executing a synchronous static activity method and an asynchronous instance activity
-method.
+//TODO
+
 
 To run, first see [README.md](../../README.md) for prerequisites. Then, run the following from this directory
 in a separate terminal to start the worker:

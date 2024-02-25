@@ -5,36 +5,65 @@ using Temporalio.Workflows;
 [Workflow]
 public class MyWorkflowUpdate
 {
-    private bool exit;
-
-    private int result;
+    private readonly Queue<UiRequest> requests = new();
+    private ScreenId screen = ScreenId.Screen1;
 
     [WorkflowRun]
-    public async Task<int> RunAsync()
+    public async Task RunAsync()
     {
-        await Workflow.WaitConditionAsync(() => exit);
-        return result;
+        while (!IsLatestScreen())
+        {
+            await Workflow.WaitConditionAsync(() => requests.Any());
+            var currentRequest = requests.Peek();
+            SetNextScreen(currentRequest);
+            requests.Dequeue();
+        }
+
+        // TODO if I remove this the test (RunAsync_SimpleRun_Succeeds) fails,
+        // I think it is because the workflow completes
+        // before the update handler returns the value?
+        await Workflow.WaitConditionAsync(() => true);
     }
 
-    [WorkflowUpdateValidator(nameof(AddValueAsync))]
-    public void ValidatorAddValue(int inputValue)
+    [WorkflowUpdateValidator(nameof(SubmitScreenAsync))]
+    public void ValidatorSubmitScreen(UiRequest request)
     {
-        if (inputValue < 0)
+        if (request == null)
         {
-            throw new ArgumentException("Input can not be a negative number");
+            throw new ArgumentException("Input can not be null");
         }
     }
 
     [WorkflowUpdate]
-    public async Task<int> AddValueAsync(int inputValue)
+    public async Task<ScreenId> SubmitScreenAsync(UiRequest request)
     {
-        result += inputValue;
-        return result;
+        // Ensure we process the requests one by one
+        await Workflow.WaitConditionAsync(() => !requests.Any());
+
+        requests.Enqueue(request);
+
+        await Workflow.WaitConditionAsync(() => !requests.Contains(request));
+
+        return GetCurrentScreen();
     }
 
-    [WorkflowSignal]
-    public async Task ExitAsync()
+    [WorkflowQuery]
+    public ScreenId GetCurrentScreen()
     {
-        exit = true;
+        return screen;
+    }
+
+    private bool IsLatestScreen()
+    {
+        return GetCurrentScreen() == ScreenId.End;
+    }
+
+    private void SetNextScreen(UiRequest currentRequest)
+    {
+        screen = currentRequest.ScreenId switch {
+            ScreenId.Screen1 => ScreenId.Screen2,
+            ScreenId.Screen2 => ScreenId.End,
+            _ => screen,
+        };
     }
 }
