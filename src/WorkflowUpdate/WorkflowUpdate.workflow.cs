@@ -3,10 +3,11 @@ namespace TemporalioSamples.WorkflowUpdate;
 using Temporalio.Workflows;
 
 [Workflow]
-public class MyWorkflowUpdate
+public class WorkflowUpdate
 {
     private readonly Queue<UiRequest> requests = new();
     private ScreenId screen = ScreenId.Screen1;
+    private bool updateInProgress;
 
     [WorkflowRun]
     public async Task RunAsync()
@@ -18,13 +19,10 @@ public class MyWorkflowUpdate
             var currentRequest = requests.Peek();
             SetNextScreen(currentRequest);
             requests.Dequeue();
-
         }
 
-        // TODO if I remove this the test (RunAsync_SimpleRun_Succeeds) fails,
-        // I think it is because the workflow completes
-        // before the update handler returns the value?
-        await Workflow.WaitConditionAsync(() => true);
+        // Ensure update method has completed
+        await Workflow.WaitConditionAsync(() => !updateInProgress);
     }
 
     [WorkflowUpdateValidator(nameof(SubmitScreenAsync))]
@@ -41,10 +39,12 @@ public class MyWorkflowUpdate
     {
         // Ensure we process the requests one by one
         await Workflow.WaitConditionAsync(() => !requests.Any());
+        updateInProgress = true;
 
         requests.Enqueue(request);
 
         await Workflow.WaitConditionAsync(() => !requests.Contains(request));
+        updateInProgress = false;
 
         return GetCurrentScreen();
     }

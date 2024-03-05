@@ -8,25 +8,25 @@ using Temporalio.Worker;
 using Xunit;
 using Xunit.Abstractions;
 
-public class MyWorkflowTests : TestBase
+public class WorkflowUpdateTests : TestBase
 {
-    public MyWorkflowTests(ITestOutputHelper output)
+    public WorkflowUpdateTests(ITestOutputHelper output)
         : base(output)
     {
     }
 
     [TimeSkippingServerFact]
-    public async Task RunAsync_SimpleRun_Succeeds()
+    public async Task SimpleRun_Succeed()
     {
         await using var env = await WorkflowEnvironment.StartLocalAsync();
         using var worker = new TemporalWorker(
             env.Client,
             new TemporalWorkerOptions("my-task-queue").
-                AddWorkflow<MyWorkflowUpdate>());
+                AddWorkflow<TemporalioSamples.WorkflowUpdate.WorkflowUpdate>());
         await worker.ExecuteAsync(async () =>
         {
             var handle = await env.Client.StartWorkflowAsync(
-                (MyWorkflowUpdate wf) => wf.RunAsync(),
+                (TemporalioSamples.WorkflowUpdate.WorkflowUpdate wf) => wf.RunAsync(),
                 new(id: $"workflow-{Guid.NewGuid()}", taskQueue: worker.Options.TaskQueue!));
 
             Assert.Equal(
@@ -43,17 +43,17 @@ public class MyWorkflowTests : TestBase
     }
 
     [TimeSkippingServerFact]
-    public async Task RunAsync_Fail_Update()
+    public async Task Reject_Update()
     {
         await using var env = await WorkflowEnvironment.StartLocalAsync();
         using var worker = new TemporalWorker(
             env.Client,
             new TemporalWorkerOptions("my-task-queue").
-                AddWorkflow<MyWorkflowUpdate>());
+                AddWorkflow<TemporalioSamples.WorkflowUpdate.WorkflowUpdate>());
         await worker.ExecuteAsync(async () =>
         {
             var handle = await env.Client.StartWorkflowAsync(
-                (MyWorkflowUpdate wf) => wf.RunAsync(),
+                (TemporalioSamples.WorkflowUpdate.WorkflowUpdate wf) => wf.RunAsync(),
                 new(id: $"workflow-{Guid.NewGuid()}", taskQueue: worker.Options.TaskQueue!));
 
             await Assert.ThrowsAsync<WorkflowUpdateFailedException>(() =>

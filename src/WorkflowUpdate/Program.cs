@@ -28,7 +28,7 @@ async Task RunWorkerAsync()
     using var worker = new TemporalWorker(
         client,
         new TemporalWorkerOptions(taskQueue: "workflow-update-queue").
-            AddWorkflow<MyWorkflowUpdate>());
+            AddWorkflow<WorkflowUpdate>());
     try
     {
         await worker.ExecuteAsync(tokenSource.Token);
@@ -44,7 +44,7 @@ async Task ExecuteWorkflowAsync()
     Console.WriteLine("Executing workflow");
 
     var handle = await client.StartWorkflowAsync(
-        (MyWorkflowUpdate wf) => wf.RunAsync(),
+        (WorkflowUpdate wf) => wf.RunAsync(),
         new(id: $"workflow-update-{Guid.NewGuid()}", taskQueue: "workflow-update-queue"));
 
     await handle.ExecuteUpdateAsync(wf =>
