@@ -30,12 +30,12 @@ public class WorkflowUpdateTests : TestBase
                 new(id: $"workflow-{Guid.NewGuid()}", taskQueue: worker.Options.TaskQueue!));
 
             Assert.Equal(
-                ScreenId.Screen2,
-                await handle.ExecuteUpdateAsync((wf) => wf.SubmitScreenAsync(new UiRequest($"requestId-{Guid.NewGuid()}", ScreenId.Screen1))));
+                TemporalioSamples.WorkflowUpdate.WorkflowUpdate.ScreenId.Screen2,
+                await handle.ExecuteUpdateAsync((wf) => wf.SubmitScreenAsync(new TemporalioSamples.WorkflowUpdate.WorkflowUpdate.UiRequest($"requestId-{Guid.NewGuid()}", TemporalioSamples.WorkflowUpdate.WorkflowUpdate.ScreenId.Screen1))));
 
             Assert.Equal(
-                ScreenId.End,
-                await handle.ExecuteUpdateAsync((wf) => wf.SubmitScreenAsync(new UiRequest($"requestId-{Guid.NewGuid()}", ScreenId.Screen2))));
+                TemporalioSamples.WorkflowUpdate.WorkflowUpdate.ScreenId.End,
+                await handle.ExecuteUpdateAsync((wf) => wf.SubmitScreenAsync(new TemporalioSamples.WorkflowUpdate.WorkflowUpdate.UiRequest($"requestId-{Guid.NewGuid()}", TemporalioSamples.WorkflowUpdate.WorkflowUpdate.ScreenId.Screen2))));
 
             // Workflow completes
             await handle.GetResultAsync();

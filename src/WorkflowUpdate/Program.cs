@@ -48,10 +48,14 @@ async Task ExecuteWorkflowAsync()
         new(id: $"workflow-update-{Guid.NewGuid()}", taskQueue: "workflow-update-queue"));
 
     await handle.ExecuteUpdateAsync(wf =>
-        wf.SubmitScreenAsync(new UiRequest($"requestId-{Guid.NewGuid()}", ScreenId.Screen1)));
+        wf.SubmitScreenAsync(new WorkflowUpdate.UiRequest(
+            $"requestId-{Guid.NewGuid()}",
+            WorkflowUpdate.ScreenId.Screen1)));
 
     await handle.ExecuteUpdateAsync(wf =>
-        wf.SubmitScreenAsync(new UiRequest($"requestId-{Guid.NewGuid()}", ScreenId.Screen2)));
+        wf.SubmitScreenAsync(new WorkflowUpdate.UiRequest(
+            $"requestId-{Guid.NewGuid()}",
+            WorkflowUpdate.ScreenId.Screen2)));
 
     // Workflow completes
     await handle.GetResultAsync();
