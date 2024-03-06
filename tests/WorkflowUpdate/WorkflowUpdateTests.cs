@@ -14,7 +14,7 @@ public class WorkflowUpdateTests : TestBase
     {
     }
 
-    [TimeSkippingServerFact]
+    [Fact]
     public async Task SimpleRun_Succeed()
     {
         await using var env = await WorkflowEnvironment.StartLocalAsync();
@@ -41,7 +41,7 @@ public class WorkflowUpdateTests : TestBase
         });
     }
 
-    [TimeSkippingServerFact]
+    [Fact]
     public async Task Reject_Update()
     {
         await using var env = await WorkflowEnvironment.StartLocalAsync();

@@ -9,10 +9,7 @@ public class WorkflowUpdate
     private ScreenId currentScreen = ScreenId.Screen1;
 
     [WorkflowRun]
-    public async Task RunAsync()
-    {
-        await Workflow.WaitConditionAsync(() => currentScreen == ScreenId.End);
-    }
+    public async Task RunAsync() => await Workflow.WaitConditionAsync(() => currentScreen == ScreenId.End);
 
     [WorkflowUpdateValidator(nameof(SubmitScreenAsync))]
     public void ValidatorSubmitScreen(UiRequest request)
