@@ -4,20 +4,16 @@ using System.Runtime.InteropServices;
 using Xunit;
 
 /// <summary>
-/// The time-skipping test server can only run on x86/x64/Arm64 currently.
+/// The time-skipping test server can only run on x86/x64 currently.
 /// </remarks>
 public sealed class TimeSkippingServerFactAttribute : FactAttribute
 {
     public TimeSkippingServerFactAttribute()
     {
-        var processArchitecture = RuntimeInformation.ProcessArchitecture;
-
-        if (
-            processArchitecture != Architecture.X86 &&
-            processArchitecture != Architecture.X64 &&
-            processArchitecture != Architecture.Arm64)
+        if (RuntimeInformation.ProcessArchitecture != Architecture.X86 &&
+            RuntimeInformation.ProcessArchitecture != Architecture.X64)
         {
-            Skip = "Time-skipping test server only works on x86/x64/Arm64 platforms. Current platform " + processArchitecture;
+            Skip = "Time-skipping test server only works on x86/x64 platforms";
         }
     }
 }
