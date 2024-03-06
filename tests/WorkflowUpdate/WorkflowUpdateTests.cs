@@ -1,5 +1,4 @@
 using Temporalio.Exceptions;
-using TemporalioSamples.WorkflowUpdate;
 
 namespace TemporalioSamples.Tests.WorkflowUpdate;
 

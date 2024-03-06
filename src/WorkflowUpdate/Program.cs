@@ -1,6 +1,5 @@
 using Microsoft.Extensions.Logging;
 using Temporalio.Client;
-using Temporalio.Exceptions;
 using Temporalio.Worker;
 using TemporalioSamples.WorkflowUpdate;
 

@@ -38,7 +38,8 @@ public class WorkflowUpdate
 
     private void SetNextScreen(UiRequest currentRequest)
     {
-        currentScreen = currentRequest.ScreenId switch {
+        currentScreen = currentRequest.ScreenId switch
+        {
             ScreenId.Screen1 => ScreenId.Screen2,
             ScreenId.Screen2 => ScreenId.End,
             _ => currentScreen,
@@ -47,8 +48,19 @@ public class WorkflowUpdate
 
     public enum ScreenId
     {
+        /// <summary>
+        /// Screen1.
+        /// </summary>
         Screen1,
+
+        /// <summary>
+        /// Screen2.
+        /// </summary>
         Screen2,
+
+        /// <summary>
+        /// End.
+        /// </summary>
         End,
     }
 
