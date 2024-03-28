@@ -23,7 +23,7 @@ Prerequisites:
 * [Polling](src/Polling) - Recommended implementation of an activity that needs to periodically poll an external resource waiting its successful completion.
 * [Saga](src/Saga) - Demonstrates how to implement a saga pattern.
 * [Schedules](src/Schedules) - How to schedule workflows to be run at specific times in the future.
-* [Timer](src/Timer) - Use a timer to implement a monthly subscription.
+* [Timer](src/Timer) - Use a timer to implement a monthly subscription; handle workflow cancellation.
 * [WorkerSpecificTaskQueues](src/WorkerSpecificTaskQueues) - Use a unique task queue per Worker to have certain Activities only run on that specific Worker.
 * [WorkerVersioning](src/WorkerVersioning) - How to use the Worker Versioning feature to more easily deploy changes to Workflow & other code.
 * [WorkflowUpdate](src/WorkflowUpdate) - How to use the Workflow Update feature while blocking in update method for concurrent updates.
