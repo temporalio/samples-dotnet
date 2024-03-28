@@ -11,4 +11,4 @@ Then in another terminal, run the workflow from this directory:
 
     dotnet run workflow
 
-The worker terminal will show logs from the workflow running.
+The worker terminal will show logs from running the workflow.
