@@ -31,7 +31,7 @@ async Task RunWorkerAsync()
         client,
         new TemporalWorkerOptions(taskQueue: "timer-sample").
             AddActivity(MyActivities.Charge).
-            AddWorkflow<MyWorkflow>());
+            AddWorkflow<Subscription>());
     try
     {
         await worker.ExecuteAsync(tokenSource.Token);
@@ -46,7 +46,7 @@ async Task ExecuteWorkflowAsync()
 {
     Console.WriteLine("Executing workflow");
     await client.ExecuteWorkflowAsync(
-        (MyWorkflow wf) => wf.RunAsync("user-id-123"),
+        (Subscription wf) => wf.RunAsync("user-id-123"),
         new(id: "timer-workflow-id", taskQueue: "timer-sample"));
 }
 

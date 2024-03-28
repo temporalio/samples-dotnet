@@ -4,7 +4,7 @@ using Microsoft.Extensions.Logging;
 using Temporalio.Workflows;
 
 [Workflow]
-public class MyWorkflow
+public class Subscription
 {
     [WorkflowRun]
     public async Task RunAsync(string userId)
