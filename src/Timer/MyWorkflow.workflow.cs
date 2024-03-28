@@ -1,4 +1,4 @@
-namespace TemporalioSamples.ActivitySimple;
+namespace TemporalioSamples.Timer;
 
 using Microsoft.Extensions.Logging;
 using Temporalio.Workflows;
@@ -7,24 +7,16 @@ using Temporalio.Workflows;
 public class MyWorkflow
 {
     [WorkflowRun]
-    public async Task<string> RunAsync()
+    public async Task RunAsync(string userId)
     {
-        // Run an async instance method activity.
-        var result1 = await Workflow.ExecuteActivityAsync(
-            (MyActivities act) => act.SelectFromDatabaseAsync("some-db-table"),
-            new()
-            {
-                StartToCloseTimeout = TimeSpan.FromMinutes(5),
-            });
-        Workflow.Logger.LogInformation("Activity instance method result: {Result}", result1);
+        while (true)
+        {
+            await Workflow.DelayAsync(TimeSpan.FromDays(30));
 
-        // Run a sync static method activity.
-        var result2 = await Workflow.ExecuteActivityAsync(
-            () => MyActivities.DoStaticThing(),
-            new() { StartToCloseTimeout = TimeSpan.FromMinutes(5) });
-        Workflow.Logger.LogInformation("Activity static method result: {Result}", result2);
-
-        // We'll go ahead and return this result
-        return result2;
+            var result = await Workflow.ExecuteActivityAsync(
+                () => MyActivities.Charge(userId),
+                new() { StartToCloseTimeout = TimeSpan.FromMinutes(5) });
+            Workflow.Logger.LogInformation("Activity result: {Result}", result);
+        }
     }
 }

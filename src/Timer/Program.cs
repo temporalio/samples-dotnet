@@ -1,7 +1,7 @@
 using Microsoft.Extensions.Logging;
 using Temporalio.Client;
 using Temporalio.Worker;
-using TemporalioSamples.ActivitySimple;
+using TemporalioSamples.Timer;
 
 // Create a client to localhost on default namespace
 var client = await TemporalClient.ConnectAsync(new("localhost:7233")
@@ -29,9 +29,8 @@ async Task RunWorkerAsync()
     Console.WriteLine("Running worker");
     using var worker = new TemporalWorker(
         client,
-        new TemporalWorkerOptions(taskQueue: "activity-simple-sample").
-            AddActivity(activities.SelectFromDatabaseAsync).
-            AddActivity(MyActivities.DoStaticThing).
+        new TemporalWorkerOptions(taskQueue: "timer-sample").
+            AddActivity(MyActivities.Charge).
             AddWorkflow<MyWorkflow>());
     try
     {
@@ -47,8 +46,8 @@ async Task ExecuteWorkflowAsync()
 {
     Console.WriteLine("Executing workflow");
     await client.ExecuteWorkflowAsync(
-        (MyWorkflow wf) => wf.RunAsync(),
-        new(id: "activity-simple-workflow-id", taskQueue: "activity-simple-sample"));
+        (MyWorkflow wf) => wf.RunAsync("user-id-123"),
+        new(id: "timer-workflow-id", taskQueue: "timer-sample"));
 }
 
 switch (args.ElementAtOrDefault(0))
