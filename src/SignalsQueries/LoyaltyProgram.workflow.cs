@@ -7,32 +7,31 @@ using Temporalio.Workflows;
 public class LoyaltyProgram
 {
     private string? userId;
-    private int points = 0;
+
+    [WorkflowQuery]
+    public int Points { get; private set; }
 
     [WorkflowRun]
     public async Task RunAsync(string userId)
     {
         this.userId = userId;
 
-        // TODO dear chad, how do i await cancellation? or something short/simple that prevents from returning
+        // Keep this workflow running forever
+        await Workflow.WaitConditionAsync(() => false);
     }
 
     [WorkflowSignal]
     public async Task NotifyPurchaseAsync(int purchaseTotalCents)
     {
-        points += purchaseTotalCents;
-        Workflow.Logger.LogInformation("Added {Result} points, total: {Total}", purchaseTotalCents, points);
+        Points += purchaseTotalCents;
+        Workflow.Logger.LogInformation("Added {Result} points, total: {Total}", purchaseTotalCents, Points);
 
-        if (points >= 10_000)
+        if (Points >= 10_000)
         {
-            Workflow.Logger.LogInformation("Sending coupon to {UserId}", userId);
             await Workflow.ExecuteActivityAsync(
                 () => MyActivities.SendCoupon(userId),
                 new() { ScheduleToCloseTimeout = TimeSpan.FromMinutes(5) });
-            points -= 10_000;
+            Points -= 10_000;
         }
     }
-
-    [WorkflowQuery]
-    public int GetPoints() => points;
 }

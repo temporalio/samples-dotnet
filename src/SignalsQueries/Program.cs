@@ -22,9 +22,6 @@ async Task RunWorkerAsync()
         eventArgs.Cancel = true;
     };
 
-    // Create an activity instance with some state
-    var activities = new MyActivities();
-
     // Run worker until cancelled
     Console.WriteLine("Running worker");
     using var worker = new TemporalWorker(
@@ -45,11 +42,17 @@ async Task RunWorkerAsync()
 async Task ExecuteWorkflowAsync()
 {
     Console.WriteLine("Executing workflow");
-    await client.ExecuteWorkflowAsync(
+    var handle = await client.StartWorkflowAsync(
         (LoyaltyProgram wf) => wf.RunAsync("user-id-123"),
         new(id: "signals-queries-workflow-id", taskQueue: "signals-queries-sample"));
 
-    // TODO signal and query
+    Console.WriteLine("Signal: Purchase made for $80");
+    await handle.SignalAsync(wf => wf.NotifyPurchaseAsync(8_000));
+    Console.WriteLine("Signal: Purchase made for $30");
+    await handle.SignalAsync(wf => wf.NotifyPurchaseAsync(3_000));
+
+    var points = await handle.QueryAsync(wf => wf.Points);
+    Console.WriteLine("Remaining points: {Points}", points);
 }
 
 switch (args.ElementAtOrDefault(0))
