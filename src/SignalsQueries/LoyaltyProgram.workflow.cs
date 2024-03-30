@@ -28,10 +28,10 @@ public class LoyaltyProgram
 
         if (Points >= 10_000)
         {
+            Points -= 10_000;
             await Workflow.ExecuteActivityAsync(
                 () => MyActivities.SendCoupon(userId),
                 new() { ScheduleToCloseTimeout = TimeSpan.FromMinutes(5) });
-            Points -= 10_000;
         }
     }
 }

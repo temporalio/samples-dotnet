@@ -1,5 +1,6 @@
 namespace TemporalioSamples.SignalsQueries;
 
+using Microsoft.Extensions.Logging;
 using Temporalio.Activities;
 
 public class MyActivities

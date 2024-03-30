@@ -41,6 +41,9 @@ async Task RunWorkerAsync()
 
 async Task ExecuteWorkflowAsync()
 {
+    // If the workflow is already running from a previous run, terminate it
+    await client.GetWorkflowHandle("signals-queries-workflow-id").TerminateAsync();
+
     Console.WriteLine("Executing workflow");
     var handle = await client.StartWorkflowAsync(
         (LoyaltyProgram wf) => wf.RunAsync("user-id-123"),
@@ -52,7 +55,7 @@ async Task ExecuteWorkflowAsync()
     await handle.SignalAsync(wf => wf.NotifyPurchaseAsync(3_000));
 
     var points = await handle.QueryAsync(wf => wf.Points);
-    Console.WriteLine("Remaining points: {Points}", points);
+    Console.WriteLine("Remaining points: {0}", points);
 }
 
 switch (args.ElementAtOrDefault(0))
