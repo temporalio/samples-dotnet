@@ -21,7 +21,7 @@ public class Subscription
                 Workflow.Logger.LogInformation("Activity result: {Result}", result);
             }
         }
-        catch (OperationCanceledException)
+        catch (Exception e) when (TemporalException.IsCanceledException(e))
         {
             Workflow.Logger.LogInformation("Workflow cancelled, cleaning up...");
             // Handle any cleanup here
