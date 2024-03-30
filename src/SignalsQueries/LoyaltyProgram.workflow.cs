@@ -3,10 +3,12 @@ namespace TemporalioSamples.SignalsQueries;
 using Microsoft.Extensions.Logging;
 using Temporalio.Workflows;
 
+public record Purchase(string Id, int TotalCents);
+
 [Workflow]
 public class LoyaltyProgram
 {
-    private string? userId;
+    private readonly Queue<Purchase> toProcess = new();
 
     [WorkflowQuery]
     public int Points { get; private set; }
@@ -14,24 +16,31 @@ public class LoyaltyProgram
     [WorkflowRun]
     public async Task RunAsync(string userId)
     {
-        this.userId = userId;
+        while (true)
+        {
+            // Wait for purchase
+            await Workflow.WaitConditionAsync(() => toProcess.Count > 0);
 
-        // Keep this workflow running forever
-        await Workflow.WaitConditionAsync(() => false);
+            // Process
+            var purchase = toProcess.Dequeue();
+            Points += purchase.TotalCents;
+            Workflow.Logger.LogInformation("Added {TotalCents} points, total: {Points}", purchase.TotalCents, Points);
+            if (Points >= 10_000)
+            {
+                await Workflow.ExecuteActivityAsync(
+                    () => MyActivities.SendCoupon(userId),
+                    new() { ScheduleToCloseTimeout = TimeSpan.FromMinutes(5) });
+                Points -= 10_000;
+            }
+        }
     }
 
     [WorkflowSignal]
-    public async Task NotifyPurchaseAsync(int purchaseTotalCents)
+    public async Task NotifyPurchaseAsync(Purchase purchase)
     {
-        Points += purchaseTotalCents;
-        Workflow.Logger.LogInformation("Added {Result} points, total: {Total}", purchaseTotalCents, Points);
-
-        if (Points >= 10_000)
+        if (!toProcess.Contains(purchase))
         {
-            Points -= 10_000;
-            await Workflow.ExecuteActivityAsync(
-                () => MyActivities.SendCoupon(userId),
-                new() { ScheduleToCloseTimeout = TimeSpan.FromMinutes(5) });
+            toProcess.Enqueue(purchase);
         }
     }
 }
