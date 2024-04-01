@@ -31,6 +31,7 @@ public class LoyaltyProgram
                     () => MyActivities.SendCoupon(userId),
                     new() { ScheduleToCloseTimeout = TimeSpan.FromMinutes(5) });
                 Points -= 10_000;
+                Workflow.Logger.LogInformation("Remaining points: {Points}", Points);
             }
         }
     }

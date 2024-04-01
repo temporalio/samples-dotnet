@@ -46,7 +46,7 @@ async Task ExecuteWorkflowAsync()
     {
         await client.GetWorkflowHandle("signals-queries-workflow-id").TerminateAsync();
     }
-    catch
+    catch (Temporalio.Exceptions.RpcException ex) when (ex.Code == Temporalio.Exceptions.RpcException.StatusCode.NotFound)
     {
         // Ignore
     }

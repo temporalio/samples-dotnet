@@ -3,7 +3,7 @@ namespace TemporalioSamples.SignalsQueries;
 using Microsoft.Extensions.Logging;
 using Temporalio.Activities;
 
-public class MyActivities
+public static class MyActivities
 {
     [Activity]
     public static void SendCoupon(string? userId)
