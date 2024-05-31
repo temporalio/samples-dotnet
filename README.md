@@ -17,6 +17,7 @@ Prerequisites:
 * [ActivityWorker](src/ActivityWorker) - Use .NET activities from a workflow in another language.
 * [AspNet](src/AspNet) - Demonstration of a generic host worker and an ASP.NET workflow starter.
 * [ClientMtls](src/ClientMtls) - How to use client certificate authentication, e.g. for Temporal Cloud.
+* [ContextPropagation](src/ContextPropagation) - Context propagation via interceptors.
 * [DependencyInjection](src/DependencyInjection) - How to inject dependencies in activities and use generic hosts for workers
 * [Encryption](src/Encryption) - End-to-end encryption with Temporal payload codecs.
 * [Mutex](src/Mutex) - How to implement a mutex as a workflow. Demonstrates how to avoid race conditions or parallel mutually exclusive operations on the same resource.
