@@ -71,7 +71,7 @@ public sealed class EncryptionCodec : IPayloadCodec
         RandomNumberGenerator.Fill(nonceSpan);
 
         // Perform encryption
-        using (var aes = new AesGcm(key))
+        using (var aes = new AesGcm(key, TagSize))
         {
             aes.Encrypt(nonceSpan, data, bytes.AsSpan(NonceSize + TagSize), bytes.AsSpan(NonceSize, TagSize));
             return bytes;
@@ -82,7 +82,7 @@ public sealed class EncryptionCodec : IPayloadCodec
     {
         var bytes = new byte[data.Length - NonceSize - TagSize];
 
-        using (var aes = new AesGcm(key))
+        using (var aes = new AesGcm(key, TagSize))
         {
             aes.Decrypt(
                 data.AsSpan(0, NonceSize), data.AsSpan(NonceSize + TagSize), data.AsSpan(NonceSize, TagSize), bytes.AsSpan());
