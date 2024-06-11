@@ -49,7 +49,7 @@ async Task RunWorkerAsync()
     {
         try
         {
-            tokenSource.Cancel();
+            await tokenSource.CancelAsync();
             await Task.WhenAll(tasks);
         }
         catch (Exception ex)
