@@ -15,6 +15,7 @@ Prerequisites:
 * [ActivityHeartbeatingCancellation](src/ActivityHeartbeatingCancellation) - How to use heartbeating and cancellation handling in an activity.
 * [ActivitySimple](src/ActivitySimple) - Simple workflow that runs simple activities.
 * [ActivityWorker](src/ActivityWorker) - Use .NET activities from a workflow in another language.
+* [AtomicMessageHandlers](src/AtomicMessageHandlers) - Use `SemaphoreSlim` to ensure operations are atomically processed in a workflow.
 * [AspNet](src/AspNet) - Demonstration of a generic host worker and an ASP.NET workflow starter.
 * [ClientMtls](src/ClientMtls) - How to use client certificate authentication, e.g. for Temporal Cloud.
 * [ContextPropagation](src/ContextPropagation) - Context propagation via interceptors.
