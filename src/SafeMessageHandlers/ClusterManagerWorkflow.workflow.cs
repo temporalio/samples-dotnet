@@ -1,11 +1,11 @@
-namespace TemporalioSamples.AtomicMessageHandlers;
+namespace TemporalioSamples.SafeMessageHandlers;
 
 using Microsoft.Extensions.Logging;
 using Temporalio.Exceptions;
 using Temporalio.Workflows;
 
 [Workflow]
-public sealed class ClusterManagerWorkflow : IDisposable
+public class ClusterManagerWorkflow
 {
     public record State
     {
@@ -29,7 +29,7 @@ public sealed class ClusterManagerWorkflow : IDisposable
         int MaxAssignedNodes,
         int NumAssignedNodes);
 
-    private readonly SemaphoreSlim nodesLock = new(1, 1);
+    private readonly Semaphore nodesLock = new(1);
     private readonly int maxHistoryLength;
     private readonly TimeSpan sleepInterval;
 
@@ -166,8 +166,6 @@ public sealed class ClusterManagerWorkflow : IDisposable
             nodesLock.Release();
         }
     }
-
-    public void Dispose() => nodesLock.Dispose();
 
     private int NumAssignedNodes =>
         CurrentState.Nodes.Count(kvp => kvp.Value is { } val && val != "BAD!");

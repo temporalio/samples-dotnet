@@ -1,7 +1,7 @@
-# Atomic Message Handlers
+# Safe Message Handlers
 
-This sample shows a workflow using `SemaphoreSlim` to atomically process certain blocks of workflow code to prevent data
-race issues. The sample code demonstrates assigning cluster nodes to jobs atomically.
+This sample shows a workflow using `Temporalio.Workflows.Semaphore` to atomically process certain blocks of workflow
+code to prevent data race issues. The sample code demonstrates assigning cluster nodes to jobs atomically.
 
 To run, first see [README.md](../../README.md) for prerequisites. Then, run the following from this directory
 in a separate terminal to start the worker:

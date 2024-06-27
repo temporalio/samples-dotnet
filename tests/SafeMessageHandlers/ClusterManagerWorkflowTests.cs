@@ -1,8 +1,8 @@
-namespace TemporalioSamples.AtomicMessageHandlers;
+namespace TemporalioSamples.Tests.SafeMessageHandlers;
 
 using Temporalio.Client;
 using Temporalio.Worker;
-using TemporalioSamples.Tests;
+using TemporalioSamples.SafeMessageHandlers;
 using Xunit;
 using Xunit.Abstractions;
 

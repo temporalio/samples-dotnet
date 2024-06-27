@@ -1,4 +1,4 @@
-namespace TemporalioSamples.AtomicMessageHandlers;
+namespace TemporalioSamples.SafeMessageHandlers;
 
 using Microsoft.Extensions.Logging;
 using Temporalio.Activities;

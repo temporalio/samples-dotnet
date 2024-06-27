@@ -2,7 +2,7 @@ using Microsoft.Extensions.Logging;
 using Temporalio.Api.Enums.V1;
 using Temporalio.Client;
 using Temporalio.Worker;
-using TemporalioSamples.AtomicMessageHandlers;
+using TemporalioSamples.SafeMessageHandlers;
 
 // Create a client to localhost on default namespace
 using var loggerFactory = LoggerFactory.Create(builder =>

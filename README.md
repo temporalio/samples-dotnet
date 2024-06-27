@@ -15,7 +15,6 @@ Prerequisites:
 * [ActivityHeartbeatingCancellation](src/ActivityHeartbeatingCancellation) - How to use heartbeating and cancellation handling in an activity.
 * [ActivitySimple](src/ActivitySimple) - Simple workflow that runs simple activities.
 * [ActivityWorker](src/ActivityWorker) - Use .NET activities from a workflow in another language.
-* [AtomicMessageHandlers](src/AtomicMessageHandlers) - Use `SemaphoreSlim` to ensure operations are atomically processed in a workflow.
 * [AspNet](src/AspNet) - Demonstration of a generic host worker and an ASP.NET workflow starter.
 * [ClientMtls](src/ClientMtls) - How to use client certificate authentication, e.g. for Temporal Cloud.
 * [ContextPropagation](src/ContextPropagation) - Context propagation via interceptors.
@@ -23,6 +22,7 @@ Prerequisites:
 * [Encryption](src/Encryption) - End-to-end encryption with Temporal payload codecs.
 * [Mutex](src/Mutex) - How to implement a mutex as a workflow. Demonstrates how to avoid race conditions or parallel mutually exclusive operations on the same resource.
 * [Polling](src/Polling) - Recommended implementation of an activity that needs to periodically poll an external resource waiting its successful completion.
+* [SafeMessageHandlers](src/SafeMessageHandlers) - Use `Semaphore` to ensure operations are atomically processed in a workflow.
 * [Saga](src/Saga) - Demonstrates how to implement a saga pattern.
 * [Schedules](src/Schedules) - How to schedule workflows to be run at specific times in the future.
 * [SignalsQueries](src/SignalsQueries) - A loyalty program using Signals and Queries.
