@@ -1,30 +1,33 @@
+namespace TemporalioSamples.Tests.ContextPropagation;
+
 using Temporalio.Activities;
 using Temporalio.Client;
 using Temporalio.Converters;
 using Temporalio.Exceptions;
-using Temporalio.Testing;
 using Temporalio.Worker;
 using TemporalioSamples.ContextPropagation;
 using Xunit;
+using Xunit.Abstractions;
 
-namespace TemporalioSamples.Tests.ContextPropagation;
-
-public class SayHelloWorkflowTests
+public class SayHelloWorkflowTests : WorkflowEnvironmentTestBase
 {
+    public SayHelloWorkflowTests(ITestOutputHelper output, WorkflowEnvironment env)
+        : base(output, env)
+    {
+    }
+
     [Fact]
     public async Task RunAsync_ContextPropagation_ReachesActivity()
     {
-        await using var env = await WorkflowEnvironment.StartLocalAsync();
-
         // Update the client to use the interceptor
-        var clientOptions = (TemporalClientOptions)env.Client.Options.Clone();
-        clientOptions.Interceptors = new[]
-        {
+        var clientOptions = (TemporalClientOptions)Client.Options.Clone();
+        clientOptions.Interceptors =
+        [
             new ContextPropagationInterceptor<string>(
                 MyContext.UserId,
                 DataConverter.Default.PayloadConverter),
-        };
-        var client = new TemporalClient(env.Client.Connection, clientOptions);
+        ];
+        var client = new TemporalClient(Client.Connection, clientOptions);
 
         // Mock out the activity to assert the context value
         [Activity]
@@ -44,7 +47,7 @@ public class SayHelloWorkflowTests
         // Run worker
         using var worker = new TemporalWorker(
             client,
-            new TemporalWorkerOptions("my-task-queue").
+            new TemporalWorkerOptions($"tq-{Guid.NewGuid()}").
                 AddActivity(SayHello).
                 AddWorkflow<SayHelloWorkflow>());
         await worker.ExecuteAsync(async () =>
