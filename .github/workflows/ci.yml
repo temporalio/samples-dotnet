@@ -17,7 +17,7 @@ jobs:
             checkTarget: true
           - os: ubuntu-latest
           - os: ubuntu-arm
-            runsOn: buildjet-4vcpu-ubuntu-2204-arm
+            runsOn: ubuntu-24.04-arm64-2-core
     runs-on: ${{ matrix.runsOn || matrix.os }}
     steps:
       - name: Print build information
