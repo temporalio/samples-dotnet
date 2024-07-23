@@ -21,7 +21,7 @@ public class SimpleCounterWorkerInterceptor : IWorkerInterceptor
 
         public override void Init(WorkflowOutboundInterceptor outbound)
         {
-           base.Init(new WorkflowOutbound(root, outbound));
+            base.Init(new WorkflowOutbound(root, outbound));
         }
 
         public override Task<object?> ExecuteWorkflowAsync(ExecuteWorkflowInput input)
