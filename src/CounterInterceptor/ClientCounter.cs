@@ -1,4 +1,4 @@
-namespace TermporalioSamples.CounterInterceptor;
+namespace TemporalioSamples.CounterInterceptor;
 
 using System.Numerics;
 
@@ -26,17 +26,17 @@ public class ClientCounter
         return result;
     }
 
-    public BigInteger? NumOfWorkflowExecutions(string workflowId)
+    public static BigInteger? NumOfWorkflowExecutions(string workflowId)
     {
         return perWorkflowIdDictionary[workflowId][NumberOfWorkflowExecutions];
     }
 
-    public BigInteger? NumOfSignals(string workflowId)
+    public static BigInteger? NumOfSignals(string workflowId)
     {
         return perWorkflowIdDictionary[workflowId][NumberOfSignals];
     }
 
-    public BigInteger? NumOfQueries(string workflowId)
+    public static BigInteger? NumOfQueries(string workflowId)
     {
         return perWorkflowIdDictionary[workflowId][NumberOfQueries];
     }

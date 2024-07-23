@@ -1,4 +1,4 @@
-namespace TermporalioSamples.CounterInterceptor;
+namespace TemporalioSamples.CounterInterceptor;
 
 using System.Diagnostics;
 using Temporalio.Activities;

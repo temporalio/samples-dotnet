@@ -1,4 +1,4 @@
-namespace TermporalioSamples.CounterInterceptor;
+namespace TemporalioSamples.CounterInterceptor;
 
 public static class Constants
 {
