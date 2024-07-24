@@ -1,0 +1,12 @@
+{
+  "profiles": {
+    "Worker": {
+      "commandName": "Project",
+      "commandLineArgs": "worker"
+    },
+    "Workflow": {
+      "commandName": "Project",
+      "commandLineArgs": "workflow"
+    }
+  }
+}
