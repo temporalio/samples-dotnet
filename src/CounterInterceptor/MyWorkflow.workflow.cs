@@ -10,21 +10,18 @@ public class MyWorkflow
     private bool exit; // automatically defaults to false
 
     [WorkflowRun]
-    public async Task<string> ExecAsync()
+    public async Task<string> RunAsync()
     {
         // wait for greeting info
         await Workflow.WaitConditionAsync(() => name != null && title != null);
 
         // Execute Child Workflow
-        string result = await Workflow.ExecuteChildWorkflowAsync(
-            (MyChildWorkflow wf) => wf.ExecChildAsync(name, title),
-            new()
-            {
-                Id = Constants.ChildWorkflowId,
-            });
+        var result = await Workflow.ExecuteChildWorkflowAsync(
+            (MyChildWorkflow wf) => wf.RunAsync(name, title),
+            new() { Id = "counter-interceptor-child" });
 
         // Wait for exit signal
-        await Workflow.WaitConditionAsync(() => exit != false);
+        await Workflow.WaitConditionAsync(() => exit);
 
         return result;
     }
@@ -37,20 +34,11 @@ public class MyWorkflow
     }
 
     [WorkflowQuery]
-    public string QueryName()
-    {
-        return name;
-    }
+    public string Name { get; private set; } = string.Empty;
 
     [WorkflowQuery]
-    public string QueryTitle()
-    {
-        return title;
-    }
+    public string Title { get; private set; } = string.Empty;
 
     [WorkflowSignal]
-    public async Task ExitAsync()
-    {
-        this.exit = true;
-    }
+    public async Task ExitAsync() => exit = true;
 }

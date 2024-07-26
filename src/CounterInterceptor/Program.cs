@@ -7,35 +7,9 @@ internal class Program
 {
     private static async Task Main(string[] args)
     {
-        static string GetEnvVarWithDefault(string envName, string defaultValue)
-        {
-            string? value = Environment.GetEnvironmentVariable(envName);
-            if (string.IsNullOrEmpty(value))
-            {
-                return defaultValue;
-            }
-            return value;
-        }
-
-        var address = GetEnvVarWithDefault("TEMPORAL_ADDRESS", "127.0.0.1:7233");
-        var temporalNamespace = GetEnvVarWithDefault("TEMPORAL_NAMESPACE", "default");
-        var tlsCertPath = GetEnvVarWithDefault("TEMPORAL_TLS_CERT", string.Empty);
-        var tlsKeyPath = GetEnvVarWithDefault("TEMPORAL_TLS_KEY", string.Empty);
-        TlsOptions? tls = null;
-        if (!string.IsNullOrEmpty(tlsCertPath) && !string.IsNullOrEmpty(tlsKeyPath))
-        {
-            tls = new()
-            {
-                ClientCert = await File.ReadAllBytesAsync(tlsCertPath),
-                ClientPrivateKey = await File.ReadAllBytesAsync(tlsKeyPath),
-            };
-        }
-
         var client = await TemporalClient.ConnectAsync(
-            options: new(address)
+            options: new("localhost:7233")
             {
-                Namespace = temporalNamespace,
-                Tls = tls,
                 Interceptors = new[]
                 {
                     new SimpleClientCallsInterceptor(),
@@ -51,7 +25,9 @@ internal class Program
 
         var activities = new MyActivities();
 
-        var workerOptions = new TemporalWorkerOptions(Constants.TaskQueue).
+        var taskQueue = "CounterInterceptorTaskQueue";
+
+        var workerOptions = new TemporalWorkerOptions(taskQueue).
                 AddAllActivities(activities).
                 AddWorkflow<MyWorkflow>().
                 AddWorkflow<MyChildWorkflow>();
@@ -69,18 +45,18 @@ internal class Program
             // Start the workers
             var workerResult = worker.ExecuteAsync(tokenSource.Token);
 
-            // start the workflow
+            // Start the workflow
             var handle = await client.StartWorkflowAsync(
-                (MyWorkflow wf) => wf.ExecAsync(),
-                new(id: Guid.NewGuid().ToString(), taskQueue: Constants.TaskQueue));
+                (MyWorkflow wf) => wf.RunAsync(),
+                new(id: Guid.NewGuid().ToString(), taskQueue: taskQueue));
 
             Console.WriteLine("Sending name and title to workflow");
             await handle.SignalAsync(wf => wf.SignalNameAndTitleAsync("John", "Customer"));
 
-            var name = await handle.QueryAsync(wf => wf.QueryName());
-            var title = await handle.QueryAsync(wf => wf.QueryTitle());
+            var name = await handle.QueryAsync(wf => wf.Name);
+            var title = await handle.QueryAsync(wf => wf.Title);
 
-            // send exit signal to workflow
+            // Send exit signal to workflow
             await handle.SignalAsync(wf => wf.ExitAsync());
 
             var result = await handle.GetResultAsync();
@@ -91,11 +67,11 @@ internal class Program
             Console.WriteLine("Name: " + name);
             Console.WriteLine("Title: " + title);
 
-            // print worker counter info
+            // Print worker counter info
             Console.WriteLine("Collected Worker Counter Info: ");
             Console.WriteLine(WorkerCounter.Info());
 
-            // print client counter info
+            // Print client counter info
             Console.WriteLine();
             Console.WriteLine("Collected Client Counter Info:");
             Console.WriteLine(ClientCounter.Info());

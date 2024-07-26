@@ -7,8 +7,8 @@ public class ClientCounter
     private const string NumberOfWorkflowExecutions = "numOfWorkflowExec";
     private const string NumberOfSignals = "numOfSignals";
     private const string NumberOfQueries = "numOfQueries";
-    private static Dictionary<string, Dictionary<string, BigInteger?>> perWorkflowIdDictionary =
-        new Dictionary<string, Dictionary<string, BigInteger?>>();
+    private static Dictionary<string, Dictionary<string, uint>> perWorkflowIdDictionary =
+        new();
 
     public static string Info()
     {
@@ -26,17 +26,17 @@ public class ClientCounter
         return result;
     }
 
-    public static BigInteger? NumOfWorkflowExecutions(string workflowId)
+    public static uint NumOfWorkflowExecutions(string workflowId)
     {
         return perWorkflowIdDictionary[workflowId][NumberOfWorkflowExecutions];
     }
 
-    public static BigInteger? NumOfSignals(string workflowId)
+    public static uint NumOfSignals(string workflowId)
     {
         return perWorkflowIdDictionary[workflowId][NumberOfSignals];
     }
 
-    public static BigInteger? NumOfQueries(string workflowId)
+    public static uint NumOfQueries(string workflowId)
     {
         return perWorkflowIdDictionary[workflowId][NumberOfQueries];
     }
@@ -57,9 +57,9 @@ public class ClientCounter
     }
 
     // Creates a default counter info map for a workflowid
-    private static Dictionary<string, BigInteger?> GetDefaultInfoMap()
+    private static Dictionary<string, uint> GetDefaultInfoMap()
     {
-        return new Dictionary<string, BigInteger?>()
+        return new Dictionary<string, uint>()
         {
             { NumberOfWorkflowExecutions, 0 },
             { NumberOfSignals, 0 },
@@ -69,21 +69,14 @@ public class ClientCounter
 
     private void Add(string workflowId, string type)
     {
-        if (!perWorkflowIdDictionary.TryGetValue(workflowId, out Dictionary<string, BigInteger?>? value))
+        if (!perWorkflowIdDictionary.TryGetValue(workflowId, out Dictionary<string, uint>? value))
         {
             value = GetDefaultInfoMap();
             perWorkflowIdDictionary.Add(workflowId, value);
         }
 
-        if (value[type] == null)
-        {
-            value[type] = 1;
-        }
-        else
-        {
-            var current = value[type];
-            var next = current + 1;
-            value[type] = next;
-        }
+        var current = value[type];
+        var next = current + 1;
+        value[type] = next;
     }
 }
