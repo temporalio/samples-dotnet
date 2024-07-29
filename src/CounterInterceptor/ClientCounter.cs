@@ -1,44 +1,49 @@
 namespace TemporalioSamples.CounterInterceptor;
+public record ClientCounts
+{
+    public uint Executions { get; internal set; }
 
-using System.Numerics;
+    public uint Signals { get; internal set; }
+
+    public uint Queries { get; internal set; }
+
+    public override string ToString()
+    {
+        return
+                "\n\tTotal Number of Workflow Exec: " + Executions +
+                "\n\tTotal Number of Signals: " + Signals +
+                "\n\tTotal Number of Queries: " + Queries;
+    }
+}
 
 public class ClientCounter
 {
     private const string NumberOfWorkflowExecutions = "numOfWorkflowExec";
     private const string NumberOfSignals = "numOfSignals";
     private const string NumberOfQueries = "numOfQueries";
-    private static Dictionary<string, Dictionary<string, uint>> perWorkflowIdDictionary =
+    private static Dictionary<string, ClientCounts> perWorkflowIdDictionary =
         new();
 
     public static string Info()
     {
-        string result = string.Empty;
-        foreach (var item in perWorkflowIdDictionary)
-        {
-            var info = item.Value;
-            result = result +
-                "\n** Workflow ID: " + item.Key +
-                "\n\tTotal Number of Workflow Exec: " + info[NumberOfWorkflowExecutions] +
-                "\n\tTotal Number of Signals: " + info[NumberOfSignals] +
-                "\n\tTotal Number of Queries: " + info[NumberOfQueries];
-        }
-
-        return result;
+        return string.Join(
+            "\n",
+            perWorkflowIdDictionary.Select(kvp => $"** Workflow ID: {kvp.Key} {kvp.Value}"));
     }
 
     public static uint NumOfWorkflowExecutions(string workflowId)
     {
-        return perWorkflowIdDictionary[workflowId][NumberOfWorkflowExecutions];
+        return perWorkflowIdDictionary[workflowId].Executions;
     }
 
     public static uint NumOfSignals(string workflowId)
     {
-        return perWorkflowIdDictionary[workflowId][NumberOfSignals];
+        return perWorkflowIdDictionary[workflowId].Signals;
     }
 
     public static uint NumOfQueries(string workflowId)
     {
-        return perWorkflowIdDictionary[workflowId][NumberOfQueries];
+        return perWorkflowIdDictionary[workflowId].Queries;
     }
 
     public void AddStartInvocation(string workflowId)
@@ -56,27 +61,27 @@ public class ClientCounter
         Add(workflowId, NumberOfQueries);
     }
 
-    // Creates a default counter info map for a workflowid
-    private static Dictionary<string, uint> GetDefaultInfoMap()
-    {
-        return new Dictionary<string, uint>()
-        {
-            { NumberOfWorkflowExecutions, 0 },
-            { NumberOfSignals, 0 },
-            { NumberOfQueries, 0 },
-        };
-    }
-
     private void Add(string workflowId, string type)
     {
-        if (!perWorkflowIdDictionary.TryGetValue(workflowId, out Dictionary<string, uint>? value))
+        if (!perWorkflowIdDictionary.TryGetValue(workflowId, out ClientCounts? value))
         {
-            value = GetDefaultInfoMap();
+            value = new ClientCounts();
             perWorkflowIdDictionary.Add(workflowId, value);
         }
 
-        var current = value[type];
-        var next = current + 1;
-        value[type] = next;
+        switch (type)
+        {
+            case NumberOfWorkflowExecutions:
+                value.Executions++;
+                break;
+            case NumberOfQueries:
+                value.Queries++;
+                break;
+            case NumberOfSignals:
+                value.Signals++;
+                break;
+            default:
+                throw new NotImplementedException("Unknown type: " + type);
+        }
     }
 }

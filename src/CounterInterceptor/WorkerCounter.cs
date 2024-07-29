@@ -1,6 +1,26 @@
 namespace TemporalioSamples.CounterInterceptor;
+public record WorkflowCounts
+{
+    public uint Executions { get; internal set; }
 
-using System.Numerics;
+    public uint Signals { get; internal set; }
+
+    public uint Queries { get; internal set; }
+
+    public uint ChildExecutions { get; internal set; }
+
+    public uint ActivityExecutions { get; internal set; }
+
+    public override string ToString()
+    {
+        return
+                "\n\tTotal Number of Workflow Exec: " + Executions +
+                "\n\tTotal Number of Child Worflow Exec: " + ChildExecutions +
+                "\n\tTotal Number of Activity Exec: " + ActivityExecutions +
+                "\n\tTotal Number of Signals: " + Signals +
+                "\n\tTotal Number of Queries: " + Queries;
+    }
+}
 
 public static class WorkerCounter
 {
@@ -10,75 +30,68 @@ public static class WorkerCounter
     public const string NumberOfSignals = "numOfSignals";
     public const string NumberOfQueries = "numOfQueries";
 
-    private static Dictionary<string, Dictionary<string, uint>> perWorkflowIdDictionary =
-        new Dictionary<string, Dictionary<string, uint>>();
+    private static Dictionary<string, WorkflowCounts> perWorkflowIdDictionary =
+        new Dictionary<string, WorkflowCounts>();
 
     public static void Add(string workflowId, string type)
     {
-        if (!perWorkflowIdDictionary.TryGetValue(workflowId, out Dictionary<string, uint>? value))
+        if (!perWorkflowIdDictionary.TryGetValue(workflowId, out WorkflowCounts? value))
         {
-            value = DefaultInfoMap();
+            value = new WorkflowCounts();
             perWorkflowIdDictionary.Add(workflowId, value);
         }
 
-        var current = value[type];
-        var next = current + 1;
-        value[type] = next;
+        switch (type)
+        {
+            case NumberOfActivityExecutions:
+                value.ActivityExecutions++;
+                break;
+            case NumberOfChildWorkflowExecutions:
+                value.ChildExecutions++;
+                break;
+            case NumberOfQueries:
+                value.Queries++;
+                break;
+            case NumberOfSignals:
+                value.Signals++;
+                break;
+            case NumberOfWorkflowExecutions:
+                value.Executions++;
+                break;
+            default:
+                throw new NotImplementedException($"Unknown type: " + type);
+        }
     }
 
     public static uint NumOfWorkflowExecutions(string workflowId)
     {
-        return perWorkflowIdDictionary[workflowId][NumberOfWorkflowExecutions];
+        return perWorkflowIdDictionary[workflowId].Executions;
     }
 
     public static uint NumOfChildWorkflowExecutions(string workflowId)
     {
-        return perWorkflowIdDictionary[workflowId][NumberOfChildWorkflowExecutions];
+        return perWorkflowIdDictionary[workflowId].ChildExecutions;
     }
 
     public static uint NumOfActivityExecutions(string workflowId)
     {
-        return perWorkflowIdDictionary[workflowId][NumberOfActivityExecutions];
+        return perWorkflowIdDictionary[workflowId].ActivityExecutions;
     }
 
     public static uint NumOfSignals(string workflowId)
     {
-        return perWorkflowIdDictionary[workflowId][NumberOfSignals];
+        return perWorkflowIdDictionary[workflowId].Signals;
     }
 
     public static uint NumOfQueries(string workflowId)
     {
-        return perWorkflowIdDictionary[workflowId][NumberOfQueries];
+        return perWorkflowIdDictionary[workflowId].Queries;
     }
 
     public static string Info()
     {
-        string result = string.Empty;
-        foreach (var item in perWorkflowIdDictionary)
-        {
-            var itemInfo = item.Value;
-            result = result +
-                "\n** Workflow ID: " + item.Key +
-                "\n\tTotal Number of Workflow Exec: " + itemInfo[NumberOfWorkflowExecutions] +
-                "\n\tTotal Number of Child Worflow Exec: " + itemInfo[NumberOfChildWorkflowExecutions] +
-                "\n\tTotal Number of Activity Exec: " + itemInfo[NumberOfActivityExecutions] +
-                "\n\tTotal Number of Signals: " + itemInfo[NumberOfSignals] +
-                "\n\tTotal Number of Queries: " + itemInfo[NumberOfQueries];
-        }
-
-        return result;
-    }
-
-    // Creates a default counter info map for a workflowId
-    private static Dictionary<string, uint> DefaultInfoMap()
-    {
-        return new Dictionary<string, uint>()
-        {
-            { NumberOfWorkflowExecutions, 0 },
-            { NumberOfChildWorkflowExecutions, 0 },
-            { NumberOfActivityExecutions, 0 },
-            { NumberOfSignals, 0 },
-            { NumberOfQueries, 0 },
-        };
+        return string.Join(
+            "\n",
+            perWorkflowIdDictionary.Select(kvp => $"** Workflow ID: {kvp.Key} {kvp.Value}"));
     }
 }

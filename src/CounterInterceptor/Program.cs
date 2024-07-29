@@ -64,8 +64,8 @@ internal class Program
             Console.WriteLine($"Workflow result is {result}", result);
 
             Console.WriteLine("Query results: ");
-            Console.WriteLine("Name: " + name);
-            Console.WriteLine("Title: " + title);
+            Console.WriteLine($"\tName: {name}", name);
+            Console.WriteLine($"\tTitle: {title}", title);
 
             // Print worker counter info
             Console.WriteLine("Collected Worker Counter Info: ");

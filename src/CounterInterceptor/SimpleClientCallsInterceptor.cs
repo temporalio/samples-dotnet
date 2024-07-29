@@ -53,13 +53,7 @@ public class SimpleClientCallsInterceptor : IClientInterceptor
 
         private static string CheckId(string? id)
         {
-            var returnValue = "None";
-            if (id != null)
-            {
-                returnValue = id;
-            }
-
-            return returnValue;
+            return id ??= "None";
         }
     }
 }

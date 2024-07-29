@@ -34,10 +34,10 @@ public class MyWorkflow
     }
 
     [WorkflowQuery]
-    public string Name { get; private set; } = string.Empty;
+    public string Name { get => name; }
 
     [WorkflowQuery]
-    public string Title { get; private set; } = string.Empty;
+    public string Title { get => title; }
 
     [WorkflowSignal]
     public async Task ExitAsync() => exit = true;

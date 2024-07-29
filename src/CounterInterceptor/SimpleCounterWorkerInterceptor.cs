@@ -21,7 +21,7 @@ public class SimpleCounterWorkerInterceptor : IWorkerInterceptor
 
         public override void Init(WorkflowOutboundInterceptor outbound)
         {
-            base.Init(new WorkflowOutbound(root, outbound));
+            base.Init(new WorkflowOutbound(outbound));
         }
 
         public override Task<object?> ExecuteWorkflowAsync(ExecuteWorkflowInput input)
@@ -41,20 +41,14 @@ public class SimpleCounterWorkerInterceptor : IWorkerInterceptor
             WorkerCounter.Add(Workflow.Info.WorkflowId, WorkerCounter.NumberOfQueries);
             return base.HandleQuery(input);
         }
-
-        public override void ValidateUpdate(HandleUpdateInput input)
-        {
-            // not monitoring
-            base.ValidateUpdate(input);
-        }
     }
 
     private sealed class WorkflowOutbound : WorkflowOutboundInterceptor
     {
-        private readonly SimpleCounterWorkerInterceptor root;
-
-        internal WorkflowOutbound(SimpleCounterWorkerInterceptor root, WorkflowOutboundInterceptor next)
-            : base(next) => this.root = root;
+        internal WorkflowOutbound(WorkflowOutboundInterceptor next)
+            : base(next)
+        {
+        }
 
         public override Task<TResult> ScheduleActivityAsync<TResult>(
             ScheduleActivityInput input)
