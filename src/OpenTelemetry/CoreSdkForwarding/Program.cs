@@ -1,7 +1,6 @@
 ﻿using System.Diagnostics.Metrics;
 using Microsoft.Extensions.Logging;
 using Temporalio.Client;
-using Temporalio.Extensions.OpenTelemetry;
 using Temporalio.Runtime;
 using Temporalio.Worker;
 using TemporalioSamples.OpenTelemetry.Common;
@@ -17,7 +16,6 @@ var client = await TemporalClient.ConnectAsync(new("localhost:7233")
         builder.
             AddSimpleConsole(options => options.TimestampFormat = "[HH:mm:ss] ").
             SetMinimumLevel(LogLevel.Information)),
-    Interceptors = new[] { new TracingInterceptor() },
     Runtime = new TemporalRuntime(new TemporalRuntimeOptions()
     {
         Telemetry = new TelemetryOptions()

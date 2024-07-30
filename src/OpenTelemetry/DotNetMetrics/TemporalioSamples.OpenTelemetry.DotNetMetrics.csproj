@@ -8,8 +8,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Include="..\Common\Activities.cs" Link="Activities.cs" />
-    <Compile Include="..\Common\MyWorkflow.workflow.cs" Link="MyWorkflow.workflow.cs" />
+    <Compile Include="..\Common\**\*.cs" />
   </ItemGroup>
 
   <ItemGroup>
