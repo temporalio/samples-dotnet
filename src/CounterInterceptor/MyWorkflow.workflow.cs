@@ -5,19 +5,17 @@ using Temporalio.Workflows;
 [Workflow]
 public class MyWorkflow
 {
-    private string name = string.Empty;
-    private string title = string.Empty;
     private bool exit; // automatically defaults to false
 
     [WorkflowRun]
     public async Task<string> RunAsync()
     {
         // wait for greeting info
-        await Workflow.WaitConditionAsync(() => name != null && title != null);
+        await Workflow.WaitConditionAsync(() => Name != null && Title != null);
 
         // Execute Child Workflow
         var result = await Workflow.ExecuteChildWorkflowAsync(
-            (MyChildWorkflow wf) => wf.RunAsync(name, title),
+            (MyChildWorkflow wf) => wf.RunAsync(Name, Title),
             new() { Id = "counter-interceptor-child" });
 
         // Wait for exit signal
@@ -29,15 +27,15 @@ public class MyWorkflow
     [WorkflowSignal]
     public async Task SignalNameAndTitleAsync(string name, string title)
     {
-        this.name = name;
-        this.title = title;
+        Name = name;
+        Title = title;
     }
 
     [WorkflowQuery]
-    public string Name { get => name; }
+    public string Name { get; private set; } = string.Empty;
 
     [WorkflowQuery]
-    public string Title { get => title; }
+    public string Title { get; private set; } = string.Empty;
 
     [WorkflowSignal]
     public async Task ExitAsync() => exit = true;
