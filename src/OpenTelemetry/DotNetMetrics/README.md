@@ -1,10 +1,14 @@
-# OpenTelemetry
+# OpenTelemetry - .NET Metrics
 
-This sample shows how to configure OpenTelemetry to capture workflow traces and SDK metrics.
+This sample shows how to configure OpenTelemetry to capture workflow traces and SDK metrics using the .NET metrics API.
 
-To run, first see [README.md](../../README.md) for prerequisites.
+The main advantage over forwarding metrics directly from the Core SDK is greater customizability; as an example, tags can be re-named as needed, or the metrics can be processed/exported consistently with other .NET code.
 
-Then, run the following from this directory to start the .NET Aspire Dashboard which will collect telemetry. The dashboard UI is available at http://localhost:18888.
+This sample also shows how to configure custom metrics from both an activity and a workflow in a replay-safe manner.
+
+To run, first see [README.md](../../../README.md) for prerequisites.
+
+Then, run the following from [one directory up ](../docker-compose.yaml) to start the .NET Aspire Dashboard which will collect telemetry. The dashboard UI is available at http://localhost:18888.
 
     docker compose up
 
