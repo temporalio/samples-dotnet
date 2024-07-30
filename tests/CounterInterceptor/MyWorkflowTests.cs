@@ -22,7 +22,7 @@ public class MyWorkflowTests
 
         var client = new TemporalClient(env.Client.Connection, clientOptions);
 
-        var taskQueue = "counter-interceptor-test-task-queue";
+        var taskQueue = Guid.NewGuid().ToString();
 
         var workerOptions = new TemporalWorkerOptions(taskQueue).
                 AddAllActivities(new MyActivities()).
