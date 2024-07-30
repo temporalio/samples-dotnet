@@ -13,7 +13,7 @@ public class MyWorkflowTests
     {
         await using var env = await WorkflowEnvironment.StartLocalAsync();
 
-        // add the interceptor to the client
+        // Add the interceptor to the client
         var clientOptions = (TemporalClientOptions)env.Client.Options.Clone();
         clientOptions.Interceptors = new[]
         {
@@ -49,27 +49,27 @@ public class MyWorkflowTests
             var name = await handle.QueryAsync(wf => wf.Name);
             var title = await handle.QueryAsync(wf => wf.Title);
 
-            // send exit signal to workflow
+            // Send exit signal to workflow
             await handle.SignalAsync(wf => wf.ExitAsync());
 
             // Wait for the workflow to complete
             var result = await handle.GetResultAsync();
 
-            // validate that the worker counters have the correct numbers for the parent
+            // Validate that the worker counters have the correct numbers for the parent
             Assert.Equal(1U, WorkerCounter.NumOfWorkflowExecutions(parentWorkflowId));
             Assert.Equal(1U, WorkerCounter.NumOfChildWorkflowExecutions(parentWorkflowId));
             Assert.Equal(0U, WorkerCounter.NumOfActivityExecutions(parentWorkflowId));
             Assert.Equal(2U, WorkerCounter.NumOfSignals(parentWorkflowId));
             Assert.Equal(2U, WorkerCounter.NumOfQueries(parentWorkflowId));
 
-            // validate the worker counters have the correct numbers for the child
+            // Validate the worker counters have the correct numbers for the child
             Assert.Equal(1U, WorkerCounter.NumOfWorkflowExecutions(childWorkflowId));
             Assert.Equal(0U, WorkerCounter.NumOfChildWorkflowExecutions(childWorkflowId));
             Assert.Equal(2U, WorkerCounter.NumOfActivityExecutions(childWorkflowId));
             Assert.Equal(0U, WorkerCounter.NumOfSignals(childWorkflowId));
             Assert.Equal(0U, WorkerCounter.NumOfQueries(childWorkflowId));
 
-            // validate the client counters have correct numbers
+            // Validate the client counters have correct numbers
             Assert.Equal(1U, ClientCounter.NumOfWorkflowExecutions(parentWorkflowId));
             Assert.Equal(2U, ClientCounter.NumOfSignals(parentWorkflowId));
             Assert.Equal(2U, ClientCounter.NumOfQueries(parentWorkflowId));

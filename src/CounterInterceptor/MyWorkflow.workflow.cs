@@ -5,12 +5,12 @@ using Temporalio.Workflows;
 [Workflow]
 public class MyWorkflow
 {
-    private bool exit; // automatically defaults to false
+    private bool exit; // Automatically defaults to false
 
     [WorkflowRun]
     public async Task<string> RunAsync()
     {
-        // wait for greeting info
+        // Wait for greeting info
         await Workflow.WaitConditionAsync(() => Name != null && Title != null);
 
         // Execute Child Workflow

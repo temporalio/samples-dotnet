@@ -47,7 +47,7 @@ public class SimpleClientCallsInterceptor : IClientInterceptor
         public override Task<WorkflowUpdateHandle<TResult>> StartWorkflowUpdateAsync<TResult>(
             StartWorkflowUpdateInput input)
         {
-            // not tracking this
+            // Not tracking this
             return base.StartWorkflowUpdateAsync<TResult>(input);
         }
 
