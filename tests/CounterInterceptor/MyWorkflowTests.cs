@@ -13,11 +13,13 @@ public class MyWorkflowTests
     {
         await using var env = await WorkflowEnvironment.StartLocalAsync();
 
+        var clientInterceptor = new SimpleClientCallsInterceptor();
+
         // Add the interceptor to the client
         var clientOptions = (TemporalClientOptions)env.Client.Options.Clone();
         clientOptions.Interceptors = new[]
         {
-            new SimpleClientCallsInterceptor(),
+            clientInterceptor,
         };
 
         var client = new TemporalClient(env.Client.Connection, clientOptions);
@@ -29,7 +31,8 @@ public class MyWorkflowTests
                 AddWorkflow<MyWorkflow>().
                 AddWorkflow<MyChildWorkflow>();
 
-        workerOptions.Interceptors = new[] { new SimpleCounterWorkerInterceptor() };
+        var workerInterceptor = new SimpleCounterWorkerInterceptor();
+        workerOptions.Interceptors = new[] { workerInterceptor };
 
         var parentWorkflowId = "ParentWorkflowId";
         // Be sure that this matches the ID in the Workflow
@@ -56,23 +59,23 @@ public class MyWorkflowTests
             var result = await handle.GetResultAsync();
 
             // Validate that the worker counters have the correct numbers for the parent
-            Assert.Equal(1U, WorkerCounter.NumOfWorkflowExecutions(parentWorkflowId));
-            Assert.Equal(1U, WorkerCounter.NumOfChildWorkflowExecutions(parentWorkflowId));
-            Assert.Equal(0U, WorkerCounter.NumOfActivityExecutions(parentWorkflowId));
-            Assert.Equal(2U, WorkerCounter.NumOfSignals(parentWorkflowId));
-            Assert.Equal(2U, WorkerCounter.NumOfQueries(parentWorkflowId));
+            Assert.Equal(1U, workerInterceptor.NumOfWorkflowExecutions(parentWorkflowId));
+            Assert.Equal(1U, workerInterceptor.NumOfChildWorkflowExecutions(parentWorkflowId));
+            Assert.Equal(0U, workerInterceptor.NumOfActivityExecutions(parentWorkflowId));
+            Assert.Equal(2U, workerInterceptor.NumOfSignals(parentWorkflowId));
+            Assert.Equal(2U, workerInterceptor.NumOfQueries(parentWorkflowId));
 
             // Validate the worker counters have the correct numbers for the child
-            Assert.Equal(1U, WorkerCounter.NumOfWorkflowExecutions(childWorkflowId));
-            Assert.Equal(0U, WorkerCounter.NumOfChildWorkflowExecutions(childWorkflowId));
-            Assert.Equal(2U, WorkerCounter.NumOfActivityExecutions(childWorkflowId));
-            Assert.Equal(0U, WorkerCounter.NumOfSignals(childWorkflowId));
-            Assert.Equal(0U, WorkerCounter.NumOfQueries(childWorkflowId));
+            Assert.Equal(1U, workerInterceptor.NumOfWorkflowExecutions(childWorkflowId));
+            Assert.Equal(0U, workerInterceptor.NumOfChildWorkflowExecutions(childWorkflowId));
+            Assert.Equal(2U, workerInterceptor.NumOfActivityExecutions(childWorkflowId));
+            Assert.Equal(0U, workerInterceptor.NumOfSignals(childWorkflowId));
+            Assert.Equal(0U, workerInterceptor.NumOfQueries(childWorkflowId));
 
             // Validate the client counters have correct numbers
-            Assert.Equal(1U, ClientCounter.NumOfWorkflowExecutions(parentWorkflowId));
-            Assert.Equal(2U, ClientCounter.NumOfSignals(parentWorkflowId));
-            Assert.Equal(2U, ClientCounter.NumOfQueries(parentWorkflowId));
+            Assert.Equal(1U, clientInterceptor.NumOfWorkflowExecutions(parentWorkflowId));
+            Assert.Equal(2U, clientInterceptor.NumOfSignals(parentWorkflowId));
+            Assert.Equal(2U, clientInterceptor.NumOfQueries(parentWorkflowId));
         });
     }
 }

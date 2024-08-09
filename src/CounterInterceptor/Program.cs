@@ -7,12 +7,13 @@ internal class Program
 {
     private static async Task Main(string[] args)
     {
+        var clientInterceptor = new SimpleClientCallsInterceptor();
         var client = await TemporalClient.ConnectAsync(
             options: new("localhost:7233")
             {
                 Interceptors = new[]
                 {
-                    new SimpleClientCallsInterceptor(),
+                    clientInterceptor,
                 },
             });
 
@@ -32,7 +33,8 @@ internal class Program
                 AddWorkflow<MyWorkflow>().
                 AddWorkflow<MyChildWorkflow>();
 
-        workerOptions.Interceptors = new[] { new SimpleCounterWorkerInterceptor() };
+        var workerInterceptor = new SimpleCounterWorkerInterceptor();
+        workerOptions.Interceptors = new[] { workerInterceptor };
 
         using var worker = new TemporalWorker(
             client,
@@ -69,12 +71,12 @@ internal class Program
 
             // Print worker counter info
             Console.WriteLine("Collected Worker Counter Info: ");
-            Console.WriteLine(WorkerCounter.Info());
+            Console.WriteLine(workerInterceptor.Info());
 
             // Print client counter info
             Console.WriteLine();
             Console.WriteLine("Collected Client Counter Info:");
-            Console.WriteLine(ClientCounter.Info());
+            Console.WriteLine(clientInterceptor.Info());
         }
         catch (OperationCanceledException)
         {
