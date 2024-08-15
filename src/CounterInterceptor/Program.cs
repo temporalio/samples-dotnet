@@ -7,13 +7,13 @@ internal class Program
 {
     private static async Task Main(string[] args)
     {
-        var clientInterceptor = new SimpleClientCallsInterceptor();
+        var counterInterceptor = new MyCounterInterceptor();
         var client = await TemporalClient.ConnectAsync(
             options: new("localhost:7233")
             {
                 Interceptors = new[]
                 {
-                    clientInterceptor,
+                    counterInterceptor,
                 },
             });
 
@@ -33,9 +33,7 @@ internal class Program
                 AddWorkflow<MyWorkflow>().
                 AddWorkflow<MyChildWorkflow>();
 
-        var workerInterceptor = new SimpleCounterWorkerInterceptor();
-        workerOptions.Interceptors = new[] { workerInterceptor };
-
+        // workerOptions.Interceptors = new[] { counterInterceptor };
         using var worker = new TemporalWorker(
             client,
             workerOptions);
@@ -63,20 +61,21 @@ internal class Program
 
             var result = await handle.GetResultAsync();
 
-            Console.WriteLine($"Workflow result is {result}", result);
+            Console.WriteLine($"Workflow result is {result}");
 
             Console.WriteLine("Query results: ");
-            Console.WriteLine($"\tName: {name}", name);
-            Console.WriteLine($"\tTitle: {title}", title);
+            Console.WriteLine($"\tName: {name}");
+            Console.WriteLine($"\tTitle: {title}");
 
             // Print worker counter info
-            Console.WriteLine("Collected Worker Counter Info: ");
-            Console.WriteLine(workerInterceptor.Info());
+            Console.WriteLine("\nCollected Worker Counter Info:\n");
+            Console.WriteLine(counterInterceptor.WorkerInfo());
+            Console.WriteLine($"Number of workers: {counterInterceptor.Counts.Count}");
 
             // Print client counter info
             Console.WriteLine();
-            Console.WriteLine("Collected Client Counter Info:");
-            Console.WriteLine(clientInterceptor.Info());
+            Console.WriteLine("Collected Client Counter Info:\n");
+            Console.WriteLine(counterInterceptor.ClientInfo());
         }
         catch (OperationCanceledException)
         {

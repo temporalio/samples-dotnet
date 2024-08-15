@@ -15,14 +15,3 @@ temporal server start-dev
 # make sure you have temporal server running (see section above)
 dotnet run
 ```
-
-## Run Worker using Temporal Cloud
-```bash
-# set up environment variables
-export TEMPORAL_NAMESPACE=<namespace>.<accountId>
-export TEMPORAL_ADDRESS=<namespace>.<accountId>.tmprl.cloud:7233
-export TEMPORAL_TLS_CERT=/path/to/cert
-export TEMPORAL_TLS_KEY=/path/to/key
-# run the worker
-dotnet run
-```
