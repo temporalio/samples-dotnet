@@ -96,6 +96,7 @@ dotnet_diagnostic.SA1515.severity = none
 
 # Do not require XML doc in samples
 dotnet_diagnostic.SA1600.severity = none
+dotnet_diagnostic.SA1602.severity = none
 
 # Do not require file header
 dotnet_diagnostic.SA1633.severity = none
