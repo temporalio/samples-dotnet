@@ -1,28 +1,31 @@
 using Temporalio.Client;
-using Temporalio.Testing;
 using Temporalio.Worker;
 using TemporalioSamples.CounterInterceptor;
 using Xunit;
+using Xunit.Abstractions;
 
 namespace TemporalioSamples.Tests.CounterInterceptor;
 
-public class MyWorkflowTests
+public class MyWorkflowTests : WorkflowEnvironmentTestBase
 {
+    public MyWorkflowTests(ITestOutputHelper output, WorkflowEnvironment env)
+        : base(output, env)
+    {
+    }
+
     [Fact]
     public async Task RunAsync_CounterInterceptor()
     {
-        await using var env = await WorkflowEnvironment.StartLocalAsync();
-
         var counterInterceptor = new MyCounterInterceptor();
 
         // Add the interceptor to the client
-        var clientOptions = (TemporalClientOptions)env.Client.Options.Clone();
+        var clientOptions = (TemporalClientOptions)Client.Options.Clone();
         clientOptions.Interceptors = new[]
         {
             counterInterceptor,
         };
 
-        var client = new TemporalClient(env.Client.Connection, clientOptions);
+        var client = new TemporalClient(Client.Connection, clientOptions);
 
         var taskQueue = Guid.NewGuid().ToString();
 
