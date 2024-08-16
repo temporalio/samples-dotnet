@@ -1,17 +1,6 @@
-public record Counts
+namespace TemporalioSamples.CounterInterceptor;
+public class Counts
 {
-    public Counts()
-    {
-        clientExecutions = 0;
-        clientQueries = 0;
-        clientSignals = 0;
-        workflowReplays = 0;
-        workflowSignals = 0;
-        workflowQueries = 0;
-        workflowChildExecutions = 0;
-        workflowActivityExecutions = 0;
-    }
-
     private uint clientExecutions;
     private uint clientQueries;
     private uint clientSignals;

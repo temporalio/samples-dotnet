@@ -7,11 +7,9 @@ public class MyActivities
 {
     [Activity]
     public string SayHello(string name, string title) =>
-        "Hello " + title + " " + name;
+        $"Hello {title} {name}";
 
     [Activity]
-    public string SayGoodBye(string name, string title)
-    {
-        return "Goodbye " + title + " " + name;
-    }
+    public string SayGoodBye(string name, string title) =>
+        $"Goodby {title} {name}";
 }
