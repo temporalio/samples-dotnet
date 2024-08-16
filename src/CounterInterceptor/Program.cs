@@ -17,13 +17,6 @@ internal class Program
                 },
             });
 
-        using var tokenSource = new CancellationTokenSource();
-        Console.CancelKeyPress += (_, eventArgs) =>
-        {
-            tokenSource.Cancel();
-            eventArgs.Cancel = true;
-        };
-
         var activities = new MyActivities();
 
         var taskQueue = "CounterInterceptorTaskQueue";
@@ -40,11 +33,10 @@ internal class Program
 
         // Run worker until cancelled
         Console.WriteLine("Running worker...");
-        try
-        {
-            // Start the workers
-            var workerResult = worker.ExecuteAsync(tokenSource.Token);
 
+        // Start the workers
+        await worker.ExecuteAsync(async () =>
+        {
             // Start the workflow
             var handle = await client.StartWorkflowAsync(
                 (MyWorkflow wf) => wf.RunAsync(),
@@ -76,10 +68,6 @@ internal class Program
             Console.WriteLine();
             Console.WriteLine("Collected Client Counter Info:\n");
             Console.WriteLine(counterInterceptor.ClientInfo());
-        }
-        catch (OperationCanceledException)
-        {
-            Console.WriteLine("Worker cancelled");
-        }
+        });
     }
 }

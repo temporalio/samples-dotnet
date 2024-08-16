@@ -11,7 +11,8 @@ public class MyWorkflow
     public async Task<string> RunAsync()
     {
         // Wait for greeting info
-        await Workflow.WaitConditionAsync(() => Name != null && Title != null);
+        await Workflow.WaitConditionAsync(() =>
+            !string.IsNullOrEmpty(Name) && !string.IsNullOrEmpty(Title));
 
         // Execute Child Workflow
         var result = await Workflow.ExecuteChildWorkflowAsync(

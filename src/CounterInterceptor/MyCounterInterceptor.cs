@@ -9,19 +9,17 @@ using Temporalio.Workflows;
 
 public class MyCounterInterceptor : IClientInterceptor, IWorkerInterceptor
 {
-    private ConcurrentDictionary<string, Counts> counts = new();
-
-    public ConcurrentDictionary<string, Counts> Counts => counts;
+    public ConcurrentDictionary<string, Counts> Counts { get; } = new();
 
     public string WorkerInfo() =>
         string.Join(
                 "\n",
-                counts.Select(kvp => $"** Workflow ID: {kvp.Key} {kvp.Value.WorkflowInfo()}"));
+                Counts.Select(kvp => $"** Workflow ID: {kvp.Key} {kvp.Value.WorkflowInfo()}"));
 
     public string ClientInfo() =>
         string.Join(
                 "\n",
-                counts.Select(kvp => $"** Workflow ID: {kvp.Key} {kvp.Value.ClientInfo()}"));
+                Counts.Select(kvp => $"** Workflow ID: {kvp.Key} {kvp.Value.ClientInfo()}"));
 
     public ClientOutboundInterceptor InterceptClient(ClientOutboundInterceptor nextInterceptor) =>
         new ClientOutbound(this, nextInterceptor);
@@ -31,6 +29,9 @@ public class MyCounterInterceptor : IClientInterceptor, IWorkerInterceptor
 
     public ActivityInboundInterceptor InterceptActivity(ActivityInboundInterceptor nextInterceptor) =>
         new ActivityInbound(this, nextInterceptor);
+
+    private void Increment(string id, Action<Counts> increment) =>
+        increment(Counts.GetOrAdd(id, _ => new()));
 
     private sealed class ClientOutbound : ClientOutboundInterceptor
     {
@@ -43,25 +44,21 @@ public class MyCounterInterceptor : IClientInterceptor, IWorkerInterceptor
             StartWorkflowInput input)
         {
             var id = input.Options.Id ?? "None";
-            // Need to add an empty record if none exists
-            // we don't care if it doesn't add it as we will
-            // still increment the current value.
-            root.counts.TryAdd(id, new Counts());
-            Interlocked.Increment(ref root.counts[id].ClientExecutions);
+            root.Increment(id, c => Interlocked.Increment(ref root.Counts[id].ClientExecutions));
             return base.StartWorkflowAsync<TWorkflow, TResult>(input);
         }
 
         public override Task SignalWorkflowAsync(SignalWorkflowInput input)
         {
-            var id = input.Id ?? "None";
-            Interlocked.Increment(ref root.counts[id].ClientSignals);
+            var id = input.Id;
+            root.Increment(id, c => Interlocked.Increment(ref root.Counts[id].ClientSignals));
             return base.SignalWorkflowAsync(input);
         }
 
         public override Task<TResult> QueryWorkflowAsync<TResult>(QueryWorkflowInput input)
         {
-            var id = input.Id ?? "None";
-            Interlocked.Increment(ref root.counts[id].ClientQueries);
+            var id = input.Id;
+            root.Increment(id, c => Interlocked.Increment(ref root.Counts[id].ClientQueries));
             return base.QueryWorkflowAsync<TResult>(input);
         }
     }
@@ -73,33 +70,27 @@ public class MyCounterInterceptor : IClientInterceptor, IWorkerInterceptor
         internal WorkflowInbound(MyCounterInterceptor root, WorkflowInboundInterceptor next)
             : base(next) => this.root = root;
 
-        public override void Init(WorkflowOutboundInterceptor outbound)
-        {
+        public override void Init(WorkflowOutboundInterceptor outbound) =>
             base.Init(new WorkflowOutbound(root, outbound));
-        }
 
         public override Task<object?> ExecuteWorkflowAsync(ExecuteWorkflowInput input)
         {
             var id = Workflow.Info.WorkflowId;
-            // Need to add an empty record if none exists
-            // we don't care if it doesn't add it as we will
-            // still increment the current value.
-            root.counts.TryAdd(id, new Counts());
-            Interlocked.Increment(ref root.counts[id].WorkflowExecutions);
+            root.Increment(id, c => Interlocked.Increment(ref root.Counts[id].WorkflowReplays));
             return base.ExecuteWorkflowAsync(input);
         }
 
         public override Task HandleSignalAsync(HandleSignalInput input)
         {
             var id = Workflow.Info.WorkflowId;
-            Interlocked.Increment(ref root.counts[id].WorkflowSignals);
+            root.Increment(id, c => Interlocked.Increment(ref root.Counts[id].WorkflowSignals));
             return base.HandleSignalAsync(input);
         }
 
         public override object? HandleQuery(HandleQueryInput input)
         {
             var id = Workflow.Info.WorkflowId;
-            Interlocked.Increment(ref root.counts[id].WorkflowQueries);
+            root.Increment(id, c => Interlocked.Increment(ref root.Counts[id].WorkflowQueries));
             return base.HandleQuery(input);
         }
     }
@@ -115,7 +106,7 @@ public class MyCounterInterceptor : IClientInterceptor, IWorkerInterceptor
             StartChildWorkflowInput input)
         {
             var id = Workflow.Info.WorkflowId;
-            Interlocked.Increment(ref root.counts[id].WorkflowChildExecutions);
+            root.Increment(id, c => Interlocked.Increment(ref root.Counts[id].WorkflowChildExecutions));
             return base.StartChildWorkflowAsync<TWorkflow, TResult>(input);
         }
     }
@@ -130,7 +121,7 @@ public class MyCounterInterceptor : IClientInterceptor, IWorkerInterceptor
         public override Task<object?> ExecuteActivityAsync(ExecuteActivityInput input)
         {
             var id = ActivityExecutionContext.Current.Info.WorkflowId;
-            Interlocked.Increment(ref root.counts[id].WorkflowActivityExecutions);
+            root.Increment(id, c => Interlocked.Increment(ref root.Counts[id].WorkflowActivityExecutions));
             return base.ExecuteActivityAsync(input);
         }
     }

@@ -59,14 +59,14 @@ public class MyWorkflowTests : WorkflowEnvironmentTestBase
             var result = await handle.GetResultAsync();
 
             // Validate that the worker counters have the correct numbers for the parent
-            Assert.Equal(1U, counterInterceptor.Counts[parentWorkflowId].WorkflowExecutions);
+            Assert.Equal(1U, counterInterceptor.Counts[parentWorkflowId].WorkflowReplays);
             Assert.Equal(1U, counterInterceptor.Counts[parentWorkflowId].WorkflowChildExecutions);
             Assert.Equal(0U, counterInterceptor.Counts[parentWorkflowId].WorkflowActivityExecutions);
             Assert.Equal(2U, counterInterceptor.Counts[parentWorkflowId].WorkflowSignals);
             Assert.Equal(2U, counterInterceptor.Counts[parentWorkflowId].WorkflowQueries);
 
             // Validate the worker counters have the correct numbers for the child
-            Assert.Equal(1U, counterInterceptor.Counts[childWorkflowId].WorkflowExecutions);
+            Assert.Equal(1U, counterInterceptor.Counts[childWorkflowId].WorkflowReplays);
             Assert.Equal(0U, counterInterceptor.Counts[childWorkflowId].WorkflowChildExecutions);
             Assert.Equal(2U, counterInterceptor.Counts[childWorkflowId].WorkflowActivityExecutions);
             Assert.Equal(0U, counterInterceptor.Counts[childWorkflowId].WorkflowSignals);

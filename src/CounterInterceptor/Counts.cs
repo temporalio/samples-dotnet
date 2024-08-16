@@ -5,7 +5,7 @@ public record Counts
         clientExecutions = 0;
         clientQueries = 0;
         clientSignals = 0;
-        workflowExecutions = 0;
+        workflowReplays = 0;
         workflowSignals = 0;
         workflowQueries = 0;
         workflowChildExecutions = 0;
@@ -15,7 +15,7 @@ public record Counts
     private uint clientExecutions;
     private uint clientQueries;
     private uint clientSignals;
-    private uint workflowExecutions;
+    private uint workflowReplays;
     private uint workflowSignals;
     private uint workflowQueries;
     private uint workflowChildExecutions;
@@ -32,7 +32,7 @@ public record Counts
         $"Total Number of Signals: {ClientSignals}\n\t" +
         $"Total Number of Queries: {ClientQueries}";
 
-    public ref uint WorkflowExecutions => ref workflowExecutions;
+    public ref uint WorkflowReplays => ref workflowReplays;
 
     public ref uint WorkflowSignals => ref workflowSignals;
 
@@ -43,7 +43,7 @@ public record Counts
     public ref uint WorkflowActivityExecutions => ref workflowActivityExecutions;
 
     public string WorkflowInfo() =>
-        $"\n\tTotal Number of Workflow Exec: {WorkflowExecutions}\n\t" +
+        $"\n\tTotal Number of Workflow Replays: {WorkflowReplays}\n\t" +
         $"Total Number of Child Workflow Exec: {WorkflowChildExecutions}\n\t" +
         $"Total Number of Activity Exec: {WorkflowActivityExecutions}\n\t" +
         $"Total Number of Signals: {WorkflowSignals}\n\t" +
