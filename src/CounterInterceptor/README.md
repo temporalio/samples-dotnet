@@ -15,3 +15,9 @@ temporal server start-dev
 # make sure you have temporal server running (see section above)
 dotnet run
 ```
+
+## Run the tests
+```bash
+# cd ../../test
+dotnet test
+```
