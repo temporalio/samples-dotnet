@@ -75,22 +75,34 @@ public class MyCounterInterceptor : IClientInterceptor, IWorkerInterceptor
 
         public override Task<object?> ExecuteWorkflowAsync(ExecuteWorkflowInput input)
         {
-            var id = Workflow.Info.WorkflowId;
-            root.Increment(id, c => Interlocked.Increment(ref root.Counts[id].WorkflowReplays));
+            // Count only if we're not replaying
+            if (!Workflow.Unsafe.IsReplaying)
+            {
+                var id = Workflow.Info.WorkflowId;
+                root.Increment(id, c => Interlocked.Increment(ref root.Counts[id].WorkflowReplays));
+            }
             return base.ExecuteWorkflowAsync(input);
         }
 
         public override Task HandleSignalAsync(HandleSignalInput input)
         {
-            var id = Workflow.Info.WorkflowId;
-            root.Increment(id, c => Interlocked.Increment(ref root.Counts[id].WorkflowSignals));
+            // Count only if we're not replaying
+            if (!Workflow.Unsafe.IsReplaying)
+            {
+                var id = Workflow.Info.WorkflowId;
+                root.Increment(id, c => Interlocked.Increment(ref root.Counts[id].WorkflowSignals));
+            }
             return base.HandleSignalAsync(input);
         }
 
         public override object? HandleQuery(HandleQueryInput input)
         {
-            var id = Workflow.Info.WorkflowId;
-            root.Increment(id, c => Interlocked.Increment(ref root.Counts[id].WorkflowQueries));
+            // Count only if we're not replaying
+            if (!Workflow.Unsafe.IsReplaying)
+            {
+                var id = Workflow.Info.WorkflowId;
+                root.Increment(id, c => Interlocked.Increment(ref root.Counts[id].WorkflowQueries));
+            }
             return base.HandleQuery(input);
         }
     }
@@ -105,8 +117,12 @@ public class MyCounterInterceptor : IClientInterceptor, IWorkerInterceptor
         public override Task<ChildWorkflowHandle<TWorkflow, TResult>> StartChildWorkflowAsync<TWorkflow, TResult>(
             StartChildWorkflowInput input)
         {
-            var id = Workflow.Info.WorkflowId;
-            root.Increment(id, c => Interlocked.Increment(ref root.Counts[id].WorkflowChildExecutions));
+            // Count only if we're not replaying
+            if (!Workflow.Unsafe.IsReplaying)
+            {
+                var id = Workflow.Info.WorkflowId;
+                root.Increment(id, c => Interlocked.Increment(ref root.Counts[id].WorkflowChildExecutions));
+            }
             return base.StartChildWorkflowAsync<TWorkflow, TResult>(input);
         }
     }
