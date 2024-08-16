@@ -62,7 +62,7 @@ internal class Program
             // Print worker counter info
             Console.WriteLine("\nCollected Worker Counter Info:\n");
             Console.WriteLine(counterInterceptor.WorkerInfo());
-            Console.WriteLine($"Number of workers: {counterInterceptor.Counts.Count}");
+            Console.WriteLine($"Number of unique workflows: {counterInterceptor.Counts.Count}");
 
             // Print client counter info
             Console.WriteLine();
