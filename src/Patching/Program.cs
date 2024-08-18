@@ -22,10 +22,9 @@ async Task RunWorkerAsync()
         eventArgs.Cancel = true;
     };
 
-    // Create an activity instance with some state
-    var activities = new Activities();
-
-    var workerOptions = new TemporalWorkerOptions(taskQueue: "patching-task-queue").AddAllActivities(activities);
+    var workerOptions = new TemporalWorkerOptions(taskQueue: "patching-task-queue")
+        .AddActivity(Activities.PrePatchActivity)
+        .AddActivity(Activities.PostPatchActivity);
 
     switch (args.ElementAtOrDefault(2))
     {

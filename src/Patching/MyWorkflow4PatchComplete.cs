@@ -10,7 +10,7 @@ public class MyWorkflow4PatchComplete
     [WorkflowRun]
     public async Task RunAsync()
     {
-        result = await Workflow.ExecuteActivityAsync((Activities act) => act.PostPatchActivity(), new() { ScheduleToCloseTimeout = TimeSpan.FromMinutes(5) });
+        result = await Workflow.ExecuteActivityAsync(() => Activities.PostPatchActivity(), new() { ScheduleToCloseTimeout = TimeSpan.FromMinutes(5) });
     }
 
     [WorkflowQuery]

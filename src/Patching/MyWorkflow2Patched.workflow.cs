@@ -12,11 +12,11 @@ public class MyWorkflow2Patched
     {
         if (Workflow.Patched("my-patch"))
         {
-            result = await Workflow.ExecuteActivityAsync((Activities act) => act.PostPatchActivity(), new() { ScheduleToCloseTimeout = TimeSpan.FromMinutes(5) });
+            result = await Workflow.ExecuteActivityAsync(() => Activities.PostPatchActivity(), new() { ScheduleToCloseTimeout = TimeSpan.FromMinutes(5) });
         }
         else
         {
-            result = await Workflow.ExecuteActivityAsync((Activities act) => act.PrePatchActivity(), new() { ScheduleToCloseTimeout = TimeSpan.FromMinutes(5) });
+            result = await Workflow.ExecuteActivityAsync(() => Activities.PrePatchActivity(), new() { ScheduleToCloseTimeout = TimeSpan.FromMinutes(5) });
         }
     }
 

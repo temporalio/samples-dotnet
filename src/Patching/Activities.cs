@@ -2,11 +2,11 @@ using Temporalio.Activities;
 
 namespace TemporalioSamples.Patching;
 
-public sealed class Activities
+public static class Activities
 {
     [Activity]
-    public string PrePatchActivity() => "pre-patch";
+    public static string PrePatchActivity() => "pre-patch";
 
     [Activity]
-    public string PostPatchActivity() => "post-patch";
+    public static string PostPatchActivity() => "post-patch";
 }

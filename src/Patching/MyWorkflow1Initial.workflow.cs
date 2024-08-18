@@ -10,9 +10,12 @@ public class MyWorkflow1Initial
     [WorkflowRun]
     public async Task RunAsync()
     {
-        result = await Workflow.ExecuteActivityAsync((Activities act) => act.PrePatchActivity(), new() { ScheduleToCloseTimeout = TimeSpan.FromMinutes(5) });
+        result = await Workflow.ExecuteActivityAsync(() => Activities.PrePatchActivity(), new() { ScheduleToCloseTimeout = TimeSpan.FromMinutes(5) });
     }
 
     [WorkflowQuery]
-    public string? Result() => result;
+    public string? Result()
+    {
+        return result;
+    }
 }

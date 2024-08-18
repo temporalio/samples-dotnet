@@ -11,7 +11,7 @@ public class MyWorkflow3PatchDeprecated
     public async Task RunAsync()
     {
         Workflow.DeprecatePatch("my-patch");
-        result = await Workflow.ExecuteActivityAsync((Activities act) => act.PostPatchActivity(), new() { ScheduleToCloseTimeout = TimeSpan.FromMinutes(5) });
+        result = await Workflow.ExecuteActivityAsync(() => Activities.PostPatchActivity(), new() { ScheduleToCloseTimeout = TimeSpan.FromMinutes(5) });
     }
 
     [WorkflowQuery]
