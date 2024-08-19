@@ -52,6 +52,12 @@ with:
 
     dotnet run worker --workflow patch-deprecated
 
+If we query a workflow in "Stage 1" we should get an error. This will output "Unhandled exception. 
+Temporalio.Exceptions.WorkflowQueryFailedException: [TMPRL1100] Nondeterminism error: Activity type of scheduled event 
+'PrePatchActivity' does not match activity type of activity command 'PostPatchActivity'"
+
+    dotnet run starter --query-workflow initial-workflow-id
+
 All workflows in "Stage 2" and any new workflows will work. Now let's start another workflow with this patch deprecated
 code:
 
