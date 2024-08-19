@@ -4,20 +4,10 @@ The sample demonstrates:
 off of the [Java sample](https://github.com/temporalio/samples-java/tree/main) located [here](https://github.com/temporalio/samples-java/tree/main/core/src/main/java/io/temporal/samples/countinterceptor)
 - the use of a Client Workflow Interceptor that counts the number of Workflow Executions and the number of Signals and Queries.
 
-## Start local Temporal Server
-```bash
-# run only once
-temporal server start-dev
-```
+To run, first see [README.md](https://github.com/temporalio/samples-dotnet/blob/main/README.md) for prerequisites
 
-## Run Worker Locally
+## Run Worker and Client 
 ```bash
-# make sure you have temporal server running (see section above)
+# make sure you have temporal server running 
 dotnet run
-```
-
-## Run the tests
-```bash
-# cd ../../test
-dotnet test
 ```
