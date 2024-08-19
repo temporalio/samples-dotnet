@@ -70,20 +70,20 @@ async Task RunStarterAsync()
     switch (args.ElementAtOrDefault(1))
     {
         case "--start-workflow":
-        {
-            // Since it's just used for typing purposes, it doesn't matter which one we start
-            var handle = await client.StartWorkflowAsync((MyWorkflow1Initial wf) => wf.RunAsync(), new(id: workflowId, taskQueue: "patching-task-queue"));
-            Console.WriteLine($"Started workflow with ID {handle.Id} and run ID {handle.ResultRunId}");
-            break;
-        }
+            {
+                // Since it's just used for typing purposes, it doesn't matter which one we start
+                var handle = await client.StartWorkflowAsync((MyWorkflow1Initial wf) => wf.RunAsync(), new(id: workflowId, taskQueue: "patching-task-queue"));
+                Console.WriteLine($"Started workflow with ID {handle.Id} and run ID {handle.ResultRunId}");
+                break;
+            }
         case "--query-workflow":
-        {
-            // Since it's just used for typing purposes, it doesn't matter which one we query
-            var handle = client.GetWorkflowHandle(workflowId);
-            var result = await handle.QueryAsync((MyWorkflow1Initial wf) => wf.Result);
-            Console.WriteLine($"Query result for ID {handle.Id}: {result}");
-            break;
-        }
+            {
+                // Since it's just used for typing purposes, it doesn't matter which one we query
+                var handle = client.GetWorkflowHandle(workflowId);
+                var result = await handle.QueryAsync((MyWorkflow1Initial wf) => wf.Result);
+                Console.WriteLine($"Query result for ID {handle.Id}: {result}");
+                break;
+            }
         default:
             throw new ArgumentException("Either --start-workflow or --query-workflow is required");
     }
