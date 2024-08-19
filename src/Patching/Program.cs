@@ -64,7 +64,7 @@ async Task RunStarterAsync()
     var workflowId = args.ElementAtOrDefault(2);
     if (workflowId is null)
     {
-        throw new ArgumentException("workflow id is required");
+        throw new ArgumentException("Workflow id is required");
     }
 
     switch (args.ElementAtOrDefault(1))
@@ -80,7 +80,7 @@ async Task RunStarterAsync()
         {
             // Since it's just used for typing purposes, it doesn't matter which one we query
             var handle = client.GetWorkflowHandle(workflowId);
-            var result = await handle.QueryAsync((MyWorkflow1Initial wf) => wf.Result());
+            var result = await handle.QueryAsync((MyWorkflow1Initial wf) => wf.Result);
             Console.WriteLine($"Query result for ID {handle.Id}: {result}");
             break;
         }
