@@ -22,6 +22,7 @@
     <ProjectReference Include="..\src\ActivitySimple\TemporalioSamples.ActivitySimple.csproj" />
     <ProjectReference Include="..\src\ActivityWorker\TemporalioSamples.ActivityWorker.csproj" />
     <ProjectReference Include="..\src\ContextPropagation\TemporalioSamples.ContextPropagation.csproj" />
+    <ProjectReference Include="..\src\CounterInterceptor\TemporalioSamples.CounterInterceptor.csproj" />
     <ProjectReference Include="..\src\Encryption\Codec\TemporalioSamples.Encryption.Codec.csproj" />
     <ProjectReference Include="..\src\Encryption\CodecServer\TemporalioSamples.Encryption.CodecServer.csproj" />
     <ProjectReference Include="..\src\SafeMessageHandlers\TemporalioSamples.SafeMessageHandlers.csproj" />
