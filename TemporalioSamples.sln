@@ -59,6 +59,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TemporalioSamples.SafeMessa
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TemporalioSamples.CounterInterceptor", "src\CounterInterceptor\TemporalioSamples.CounterInterceptor.csproj", "{F9C44936-8BF9-4919-BB66-8F1888E22AEB}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TemporalioSamples.Patching", "src\Patching\TemporalioSamples.Patching.csproj", "{751E0AF8-62EE-4220-A571-D1C53DD0D45A}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -161,6 +163,10 @@ Global
 		{F9C44936-8BF9-4919-BB66-8F1888E22AEB}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F9C44936-8BF9-4919-BB66-8F1888E22AEB}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F9C44936-8BF9-4919-BB66-8F1888E22AEB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{751E0AF8-62EE-4220-A571-D1C53DD0D45A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{751E0AF8-62EE-4220-A571-D1C53DD0D45A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{751E0AF8-62EE-4220-A571-D1C53DD0D45A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{751E0AF8-62EE-4220-A571-D1C53DD0D45A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -192,5 +198,6 @@ Global
 		{7B797D20-485F-441D-8E71-AF7E315FA9CF} = {1A647B41-53D0-4638-AE5A-6630BAAE45FC}
 		{FAF5984A-5B1C-4686-B056-A4F2AC0E8EB7} = {1A647B41-53D0-4638-AE5A-6630BAAE45FC}
 		{F9C44936-8BF9-4919-BB66-8F1888E22AEB} = {1A647B41-53D0-4638-AE5A-6630BAAE45FC}
+		{751E0AF8-62EE-4220-A571-D1C53DD0D45A} = {1A647B41-53D0-4638-AE5A-6630BAAE45FC}
 	EndGlobalSection
 EndGlobal
