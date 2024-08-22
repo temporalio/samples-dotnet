@@ -10,6 +10,9 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TemporalioSamples.Tests", "tests\TemporalioSamples.Tests.csproj", "{3FA7E5DF-03B7-4586-A980-85C155B376C5}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "AspNet", "AspNet", "{E431D279-E02B-4670-B934-3DB9F15D8CCC}"
+	ProjectSection(SolutionItems) = preProject
+		src\AspNet\README.md = src\AspNet\README.md
+	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TemporalioSamples.AspNet.Web", "src\AspNet\Web\TemporalioSamples.AspNet.Web.csproj", "{31EC2647-6A5A-42D1-B7B5-02804B340726}"
 EndProject
@@ -18,6 +21,9 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TemporalioSamples.ActivitySimple", "src\ActivitySimple\TemporalioSamples.ActivitySimple.csproj", "{7608AFB5-CFD1-427F-81FE-81C7EFE8AFBE}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Encryption", "Encryption", "{2E1FF71C-0BE3-478E-9984-C6896A11DD3A}"
+	ProjectSection(SolutionItems) = preProject
+		src\Encryption\README.md = src\Encryption\README.md
+	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TemporalioSamples.Encryption.Codec", "src\Encryption\Codec\TemporalioSamples.Encryption.Codec.csproj", "{F25A0BB4-6FF5-4187-932B-5189987C4B4A}"
 EndProject
@@ -38,6 +44,9 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TemporalioSamples.Polling.Frequent", "src\Polling\Frequent\TemporalioSamples.Polling.Frequent.csproj", "{6935B8AC-160F-463D-BE03-AD6FF31585A3}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Polling", "Polling", "{AE21E7F4-B114-4761-81B1-8FA63E9F6BB8}"
+	ProjectSection(SolutionItems) = preProject
+		src\Polling\README.md = src\Polling\README.md
+	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TemporalioSamples.Polling.Infrequent", "src\Polling\Infrequent\TemporalioSamples.Polling.Infrequent.csproj", "{DD2DE0CF-C127-461B-B4F1-D4E13BDD3B5D}"
 EndProject
@@ -60,6 +69,13 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TemporalioSamples.CounterInterceptor", "src\CounterInterceptor\TemporalioSamples.CounterInterceptor.csproj", "{F9C44936-8BF9-4919-BB66-8F1888E22AEB}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TemporalioSamples.Patching", "src\Patching\TemporalioSamples.Patching.csproj", "{751E0AF8-62EE-4220-A571-D1C53DD0D45A}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Bedrock", "Bedrock", "{5339989C-3791-4D75-A9F1-42620C443D4A}"
+	ProjectSection(SolutionItems) = preProject
+		src\Bedrock\README.md = src\Bedrock\README.md
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TemporalioSamples.Bedrock.Basic", "src\Bedrock\Basic\TemporalioSamples.Bedrock.Basic.csproj", "{DC145E89-7F10-4337-A440-8EF6873C923E}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -167,6 +183,10 @@ Global
 		{751E0AF8-62EE-4220-A571-D1C53DD0D45A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{751E0AF8-62EE-4220-A571-D1C53DD0D45A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{751E0AF8-62EE-4220-A571-D1C53DD0D45A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DC145E89-7F10-4337-A440-8EF6873C923E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DC145E89-7F10-4337-A440-8EF6873C923E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DC145E89-7F10-4337-A440-8EF6873C923E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DC145E89-7F10-4337-A440-8EF6873C923E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -199,5 +219,7 @@ Global
 		{FAF5984A-5B1C-4686-B056-A4F2AC0E8EB7} = {1A647B41-53D0-4638-AE5A-6630BAAE45FC}
 		{F9C44936-8BF9-4919-BB66-8F1888E22AEB} = {1A647B41-53D0-4638-AE5A-6630BAAE45FC}
 		{751E0AF8-62EE-4220-A571-D1C53DD0D45A} = {1A647B41-53D0-4638-AE5A-6630BAAE45FC}
+		{5339989C-3791-4D75-A9F1-42620C443D4A} = {1A647B41-53D0-4638-AE5A-6630BAAE45FC}
+		{DC145E89-7F10-4337-A440-8EF6873C923E} = {5339989C-3791-4D75-A9F1-42620C443D4A}
 	EndGlobalSection
 EndGlobal
