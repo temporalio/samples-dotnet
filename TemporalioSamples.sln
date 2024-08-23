@@ -75,7 +75,11 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Bedrock", "Bedrock", "{5339
 		src\Bedrock\README.md = src\Bedrock\README.md
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TemporalioSamples.Bedrock.Basic", "src\Bedrock\Basic\TemporalioSamples.Bedrock.Basic.csproj", "{DC145E89-7F10-4337-A440-8EF6873C923E}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TemporalioSamples.SignalsQueries", "src\SignalsQueries\TemporalioSamples.SignalsQueries.csproj", "{4EA37A92-E4D5-4348-AF2F-0CAE37A1E079}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TemporalioSamples.Bedrock.Basic", "src\Bedrock\Basic\TemporalioSamples.Bedrock.Basic.csproj", "{CC3487CB-F795-4CA9-A4F6-28C145AE383B}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TemporalioSamples.Bedrock.SignalsAndQueries", "src\Bedrock\SignalsAndQueries\TemporalioSamples.Bedrock.SignalsAndQueries.csproj", "{4E69DE72-E972-4155-B4D1-ABFE0B054ECF}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -183,10 +187,18 @@ Global
 		{751E0AF8-62EE-4220-A571-D1C53DD0D45A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{751E0AF8-62EE-4220-A571-D1C53DD0D45A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{751E0AF8-62EE-4220-A571-D1C53DD0D45A}.Release|Any CPU.Build.0 = Release|Any CPU
-		{DC145E89-7F10-4337-A440-8EF6873C923E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{DC145E89-7F10-4337-A440-8EF6873C923E}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{DC145E89-7F10-4337-A440-8EF6873C923E}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{DC145E89-7F10-4337-A440-8EF6873C923E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4EA37A92-E4D5-4348-AF2F-0CAE37A1E079}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4EA37A92-E4D5-4348-AF2F-0CAE37A1E079}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4EA37A92-E4D5-4348-AF2F-0CAE37A1E079}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4EA37A92-E4D5-4348-AF2F-0CAE37A1E079}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CC3487CB-F795-4CA9-A4F6-28C145AE383B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CC3487CB-F795-4CA9-A4F6-28C145AE383B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CC3487CB-F795-4CA9-A4F6-28C145AE383B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CC3487CB-F795-4CA9-A4F6-28C145AE383B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4E69DE72-E972-4155-B4D1-ABFE0B054ECF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4E69DE72-E972-4155-B4D1-ABFE0B054ECF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4E69DE72-E972-4155-B4D1-ABFE0B054ECF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4E69DE72-E972-4155-B4D1-ABFE0B054ECF}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -220,6 +232,8 @@ Global
 		{F9C44936-8BF9-4919-BB66-8F1888E22AEB} = {1A647B41-53D0-4638-AE5A-6630BAAE45FC}
 		{751E0AF8-62EE-4220-A571-D1C53DD0D45A} = {1A647B41-53D0-4638-AE5A-6630BAAE45FC}
 		{5339989C-3791-4D75-A9F1-42620C443D4A} = {1A647B41-53D0-4638-AE5A-6630BAAE45FC}
-		{DC145E89-7F10-4337-A440-8EF6873C923E} = {5339989C-3791-4D75-A9F1-42620C443D4A}
+		{4EA37A92-E4D5-4348-AF2F-0CAE37A1E079} = {1A647B41-53D0-4638-AE5A-6630BAAE45FC}
+		{CC3487CB-F795-4CA9-A4F6-28C145AE383B} = {5339989C-3791-4D75-A9F1-42620C443D4A}
+		{4E69DE72-E972-4155-B4D1-ABFE0B054ECF} = {5339989C-3791-4D75-A9F1-42620C443D4A}
 	EndGlobalSection
 EndGlobal

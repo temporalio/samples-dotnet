@@ -9,13 +9,13 @@ namespace TemporalioSamples.Bedrock.Basic;
 public record PromptBedrockActivityArgs(string Prompt);
 public record PromptBedrockActivityResult(string Response);
 
-public interface IBasicBedrockActivities
+public interface IBedrockActivities
 {
     [Activity]
     Task<PromptBedrockActivityResult> PromptBedrockAsync(PromptBedrockActivityArgs args);
 }
 
-public class BasicBedrockActivities(IAmazonBedrockRuntime bedrock) : IBasicBedrockActivities
+public class BedrockActivities(IAmazonBedrockRuntime bedrock) : IBedrockActivities
 {
     [Activity]
     public async Task<PromptBedrockActivityResult> PromptBedrockAsync(PromptBedrockActivityArgs args)

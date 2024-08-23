@@ -3,19 +3,19 @@ using Temporalio.Workflows;
 
 namespace TemporalioSamples.Bedrock.Basic;
 
-public record BasicBedrockWorkflowArgs(string Prompt);
-public record BasicBedrockWorkflowResult(string Response);
+public record BedrockWorkflowArgs(string Prompt);
+public record BedrockWorkflowResult(string Response);
 
 [Workflow]
-public class BasicBedrockWorkflow
+public class BedrockWorkflow
 {
     [WorkflowRun]
-    public async Task<BasicBedrockWorkflowResult> RunAsync(BasicBedrockWorkflowArgs args)
+    public async Task<BedrockWorkflowResult> RunAsync(BedrockWorkflowArgs args)
     {
         Workflow.Logger.LogInformation("Prompt: {Prompt}", args.Prompt);
 
         var promptResult = await Workflow.ExecuteActivityAsync(
-            (IBasicBedrockActivities activities) => activities.PromptBedrockAsync(new(args.Prompt)),
+            (IBedrockActivities activities) => activities.PromptBedrockAsync(new(args.Prompt)),
             new()
             {
                 StartToCloseTimeout = TimeSpan.FromSeconds(20),

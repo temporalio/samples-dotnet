@@ -4,7 +4,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Temporalio.Client;
 using Temporalio.Extensions.Hosting;
-using TemporalioSamples.Bedrock.Basic;
+using TemporalioSamples.Bedrock.SignalsAndQueries;
 
 // Create a client to localhost on default namespace
 var client = await TemporalClient.ConnectAsync(new("localhost:7233")
@@ -45,13 +45,36 @@ async Task SendMessageAsync()
         return;
     }
 
-    var workflowId = "basic-bedrock-workflow";
+    var workflowId = "bedrock-workflow-with-signals";
+    var inactivityTimeoutMinutes = 1;
 
-    // Start the workflow
-    await client.StartWorkflowAsync(
-        (BedrockWorkflow workflow) =>
-        workflow.RunAsync(new BedrockWorkflowArgs(prompt)),
-        new WorkflowOptions(workflowId, "bedrock-task-queue"));
+    // Sends a signal to the workflow (and starts it if needed)
+    var workflowOptions = new WorkflowOptions(workflowId, "bedrock-task-queue");
+    workflowOptions.SignalWithStart((BedrockWorkflow workflow) => workflow.UserPromptAsync(new(prompt)));
+    await client.StartWorkflowAsync((BedrockWorkflow workflow) => workflow.RunAsync(new(inactivityTimeoutMinutes)), workflowOptions);
+}
+
+async Task GetHistoryAsync()
+{
+    var workflowId = "bedrock-workflow-with-signals";
+    var handle = client.GetWorkflowHandle<BedrockWorkflow>(workflowId);
+
+    // Queries the workflow for the conversation history
+    var history = await handle.QueryAsync(workflow => workflow.ConversationHistory);
+
+    Console.WriteLine("Conversation History:");
+    foreach (var entry in history)
+    {
+        Console.WriteLine($"{entry.Speaker}: {entry.Message}");
+    }
+
+    // Queries the workflow for the conversation summary
+    var summary = await handle.QueryAsync(workflow => workflow.ConversationSummary);
+    if (summary is not null)
+    {
+        Console.WriteLine("Conversation Summary:");
+        Console.WriteLine(summary);
+    }
 }
 
 switch (args.ElementAtOrDefault(0))
@@ -61,6 +84,9 @@ switch (args.ElementAtOrDefault(0))
         break;
     case "send-message":
         await SendMessageAsync();
+        break;
+    case "get-history":
+        await GetHistoryAsync();
         break;
     default:
         throw new ArgumentException("Must pass 'worker' or 'send-message' as the single argument");
