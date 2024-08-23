@@ -1,6 +1,6 @@
-# Amazon Bedrock workflow using Signals and Queries
+# Multi-turn chat with Amazon Bedrock Entity Workflow
 
-Adding signals & queries to the [basic Bedrock sample](../Basic). Starts a workflow with a prompt, allows follow-up prompts to be given using Temporal signals, and allows the conversation history to be queried using Temporal queries.
+Multi-Turn Chat using an Entity Workflow. The workflow runs forever unless explicitly ended. The workflow continues as new after a configurable number of chat turns to keep the prompt size small and the Temporal event history small. Each continued-as-new workflow receives a summary of the conversation history so far for context.
 
 To run, first see `Bedrock` [README.md](../README.md) for prerequisites specific to this sample. Once set up, run the following from this directory:
 
@@ -13,7 +13,7 @@ To run, first see `Bedrock` [README.md](../README.md) for prerequisites specific
 4. Give followup prompts by signaling the workflow.
 
    Example: `dotnet run send-message 'Do they lay eggs?'`
-5. Get the conversation history by querying the workflow.
+5. Get the conversation history summary by querying the workflow.
 
    Example: `dotnet run get-history`
-6. The workflow will timeout after inactivity.
+6. To end the chat session, run `dotnet run end-chat`

@@ -29,7 +29,7 @@ public class BedrockWorkflow
                 // Fetch next user prompt and add to conversation history
                 while (promptQueue.TryDequeue(out var prompt))
                 {
-                    ConversationHistory.Add(new(Speaker: "user", prompt));
+                    ConversationHistory.Add(new(Speaker: "user", Message: prompt));
                     Workflow.Logger.LogInformation("Prompt: {Prompt}", prompt);
 
                     // Send the prompt to Amazon Bedrock
@@ -43,7 +43,7 @@ public class BedrockWorkflow
                     Workflow.Logger.LogInformation("Response:\n{Response}", promptResult.Response);
 
                     // Append the response to the conversation history
-                    ConversationHistory.Add(new(Speaker: "response", promptResult.Response));
+                    ConversationHistory.Add(new(Speaker: "response", Message: promptResult.Response));
                 }
             }
             else
