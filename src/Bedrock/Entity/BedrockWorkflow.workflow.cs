@@ -4,17 +4,19 @@ using Temporalio.Workflows;
 
 namespace TemporalioSamples.Bedrock.Entity;
 
-public record BedrockWorkflowArgs(string? ConversationSummary = null, Queue<string>? PromptQueue = null);
-public record BedrockWorkflowResult(Collection<ConversationEntry> ConversationHistory);
-public record BedrockUserPromptSignal(string Prompt);
-
-public record ConversationEntry(string Speaker, string Message);
-
 [Workflow]
 public class BedrockWorkflow
 {
+    public record BedrockWorkflowArgs(string? ConversationSummary = null, Queue<string>? PromptQueue = null, bool? ChatEnded = null);
+
+    public record BedrockWorkflowResult(Collection<ConversationEntry> ConversationHistory);
+
+    public record BedrockUserPromptSignal(string Prompt);
+
+    public record ConversationEntry(string Speaker, string Message);
+
+    private const int ContinueAsNewPerTurns = 6;
     private readonly Queue<string> promptQueue = new();
-    private readonly int continueAsNewPerTurns = 6;
     private bool chatEnded;
 
     [WorkflowRun]
@@ -34,6 +36,11 @@ public class BedrockWorkflow
             }
         }
 
+        if (args.ChatEnded is not null)
+        {
+            chatEnded = args.ChatEnded.Value;
+        }
+
         while (true)
         {
             Workflow.Logger.LogInformation("Waiting for prompts...");
@@ -49,7 +56,7 @@ public class BedrockWorkflow
 
                 // Send the prompt to Amazon Bedrock
                 var promptResult = await Workflow.ExecuteActivityAsync(
-                    (IBedrockActivities activities) => activities.PromptBedrockAsync(new(PromptWithHistory(prompt))),
+                    (BedrockActivities activities) => activities.PromptBedrockAsync(new(PromptWithHistory(prompt))),
                     new()
                     {
                         StartToCloseTimeout = TimeSpan.FromSeconds(20),
@@ -67,21 +74,21 @@ public class BedrockWorkflow
 
                 // We summarize the chat to date and use that as input to the
                 // new workflow
-                if (ConversationHistory.Count >= continueAsNewPerTurns)
+                if (ConversationHistory.Count >= ContinueAsNewPerTurns)
                 {
                     // Summarize the conversation to date using Amazon Bedrock
                     var summaryResult = await Workflow.ExecuteActivityAsync(
-                        (IBedrockActivities activities) => activities.PromptBedrockAsync(new(PromptSummaryFromHistory())),
+                        (BedrockActivities activities) => activities.PromptBedrockAsync(new(PromptSummaryFromHistory())),
                         new()
                         {
                             StartToCloseTimeout = TimeSpan.FromSeconds(20),
                         });
 
                     ConversationSummary = summaryResult.Response;
-                    Workflow.Logger.LogInformation("Continuing as new due to {ContinueAsNewPerTurns} conversational turns.", continueAsNewPerTurns);
+                    Workflow.Logger.LogInformation("Continuing as new due to {ContinueAsNewPerTurns} conversational turns.", ContinueAsNewPerTurns);
 
                     throw Workflow.CreateContinueAsNewException<BedrockWorkflow>(workflow =>
-                        workflow.RunAsync(new(ConversationSummary, promptQueue)));
+                        workflow.RunAsync(new(ConversationSummary, promptQueue, chatEnded)));
                 }
             }
 
@@ -94,16 +101,17 @@ public class BedrockWorkflow
                 if (ConversationHistory.Count > 1)
                 {
                     var summaryResult = await Workflow.ExecuteActivityAsync(
-                        (IBedrockActivities activities) => activities.PromptBedrockAsync(new(PromptSummaryFromHistory())),
+                        (BedrockActivities activities) => activities.PromptBedrockAsync(new(PromptSummaryFromHistory())),
                         new()
                         {
                             StartToCloseTimeout = TimeSpan.FromSeconds(20),
                         });
 
                     ConversationSummary = summaryResult.Response;
-                    Workflow.Logger.LogInformation("Chat ended. Conversation summary:\n{ConversationSummary}", ConversationSummary);
-                    return new BedrockWorkflowResult(ConversationHistory);
                 }
+
+                Workflow.Logger.LogInformation("Chat ended. Conversation summary:\n{ConversationSummary}", ConversationSummary);
+                return new BedrockWorkflowResult(ConversationHistory);
             }
         }
     }

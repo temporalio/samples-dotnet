@@ -6,15 +6,6 @@ using Temporalio.Client;
 using Temporalio.Extensions.Hosting;
 using TemporalioSamples.Bedrock.SignalsAndQueries;
 
-// Create a client to localhost on default namespace
-var client = await TemporalClient.ConnectAsync(new("localhost:7233")
-{
-    LoggerFactory = LoggerFactory.Create(builder =>
-        builder.
-            AddSimpleConsole(options => options.TimestampFormat = "[HH:mm:ss] ").
-            SetMinimumLevel(LogLevel.Information)),
-});
-
 async Task RunWorkerAsync()
 {
     var builder = Host.CreateApplicationBuilder(args);
@@ -24,11 +15,11 @@ async Task RunWorkerAsync()
         AddSimpleConsole(options => options.SingleLine = true);
 
     builder.Services.AddSingleton<IAmazonBedrockRuntime>(_ => new AmazonBedrockRuntimeClient());
-    builder.Services.AddSingleton<IBedrockActivities, BedrockActivities>();
+    builder.Services.AddSingleton<BedrockActivities>();
 
     builder.Services.
-        AddHostedTemporalWorker(clientTargetHost: "localhost:7233", clientNamespace: "default", taskQueue: "bedrock-task-queue").
-        AddSingletonActivities<IBedrockActivities>().
+        AddHostedTemporalWorker(clientTargetHost: "localhost:7233", clientNamespace: "default", taskQueue: "with-signals-bedrock-task-queue").
+        AddSingletonActivities<BedrockActivities>().
         AddWorkflow<BedrockWorkflow>();
 
     var app = builder.Build();
@@ -45,17 +36,19 @@ async Task SendMessageAsync()
         return;
     }
 
+    var client = await CreateClientAsync();
     var workflowId = "bedrock-workflow-with-signals";
     var inactivityTimeoutMinutes = 1;
 
     // Sends a signal to the workflow (and starts it if needed)
-    var workflowOptions = new WorkflowOptions(workflowId, "bedrock-task-queue");
+    var workflowOptions = new WorkflowOptions(workflowId, "with-signals-bedrock-task-queue");
     workflowOptions.SignalWithStart((BedrockWorkflow workflow) => workflow.UserPromptAsync(new(prompt)));
     await client.StartWorkflowAsync((BedrockWorkflow workflow) => workflow.RunAsync(new(inactivityTimeoutMinutes)), workflowOptions);
 }
 
 async Task GetHistoryAsync()
 {
+    var client = await CreateClientAsync();
     var workflowId = "bedrock-workflow-with-signals";
     var handle = client.GetWorkflowHandle<BedrockWorkflow>(workflowId);
 
@@ -76,6 +69,15 @@ async Task GetHistoryAsync()
         Console.WriteLine(summary);
     }
 }
+
+async Task<ITemporalClient> CreateClientAsync() =>
+    await TemporalClient.ConnectAsync(new("localhost:7233")
+    {
+        LoggerFactory = LoggerFactory.Create(builder =>
+            builder.
+                AddSimpleConsole(options => options.TimestampFormat = "[HH:mm:ss] ").
+                SetMinimumLevel(LogLevel.Information)),
+    });
 
 switch (args.ElementAtOrDefault(0))
 {

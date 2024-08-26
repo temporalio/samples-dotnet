@@ -6,17 +6,12 @@ using Temporalio.Activities;
 
 namespace TemporalioSamples.Bedrock.Basic;
 
-public record PromptBedrockActivityArgs(string Prompt);
-public record PromptBedrockActivityResult(string Response);
-
-public interface IBedrockActivities
+public class BedrockActivities(IAmazonBedrockRuntime bedrock)
 {
-    [Activity]
-    Task<PromptBedrockActivityResult> PromptBedrockAsync(PromptBedrockActivityArgs args);
-}
+    public record PromptBedrockActivityArgs(string Prompt);
 
-public class BedrockActivities(IAmazonBedrockRuntime bedrock) : IBedrockActivities
-{
+    public record PromptBedrockActivityResult(string Response);
+
     [Activity]
     public async Task<PromptBedrockActivityResult> PromptBedrockAsync(PromptBedrockActivityArgs args)
     {

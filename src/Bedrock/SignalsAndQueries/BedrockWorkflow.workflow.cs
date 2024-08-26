@@ -4,15 +4,17 @@ using Temporalio.Workflows;
 
 namespace TemporalioSamples.Bedrock.SignalsAndQueries;
 
-public record BedrockWorkflowArgs(int InactivityTimeoutMinutes);
-public record BedrockWorkflowResult(Collection<ConversationEntry> ConversationHistory);
-public record BedrockUserPromptSignal(string Prompt);
-
-public record ConversationEntry(string Speaker, string Message);
-
 [Workflow]
 public class BedrockWorkflow
 {
+    public record BedrockWorkflowArgs(int InactivityTimeoutMinutes);
+
+    public record BedrockWorkflowResult(Collection<ConversationEntry> ConversationHistory);
+
+    public record BedrockUserPromptSignal(string Prompt);
+
+    public record ConversationEntry(string Speaker, string Message);
+
     private readonly Queue<string> promptQueue = new();
     private bool chatTimeout;
 
@@ -34,7 +36,7 @@ public class BedrockWorkflow
 
                     // Send the prompt to Amazon Bedrock
                     var promptResult = await Workflow.ExecuteActivityAsync(
-                        (IBedrockActivities activities) => activities.PromptBedrockAsync(new(PromptWithHistory(prompt))),
+                        (BedrockActivities activities) => activities.PromptBedrockAsync(new(PromptWithHistory(prompt))),
                         new()
                         {
                             StartToCloseTimeout = TimeSpan.FromSeconds(20),
@@ -59,7 +61,7 @@ public class BedrockWorkflow
 
         // Generate a summary before ending the workflow
         var summaryResult = await Workflow.ExecuteActivityAsync(
-            (IBedrockActivities activities) => activities.PromptBedrockAsync(new(PromptSummaryFromHistory())),
+            (BedrockActivities activities) => activities.PromptBedrockAsync(new(PromptSummaryFromHistory())),
             new()
             {
                 StartToCloseTimeout = TimeSpan.FromSeconds(20),
