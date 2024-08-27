@@ -61,9 +61,9 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TemporalioSamples.CounterIn
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TemporalioSamples.Patching", "src\Patching\TemporalioSamples.Patching.csproj", "{751E0AF8-62EE-4220-A571-D1C53DD0D45A}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Bedrock", "Bedrock", "{5339989C-3791-4D75-A9F1-42620C443D4A}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TemporalioSamples.SignalsQueries", "src\SignalsQueries\TemporalioSamples.SignalsQueries.csproj", "{4EA37A92-E4D5-4348-AF2F-0CAE37A1E079}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Bedrock", "Bedrock", "{5339989C-3791-4D75-A9F1-42620C443D4A}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TemporalioSamples.Bedrock.Basic", "src\Bedrock\Basic\TemporalioSamples.Bedrock.Basic.csproj", "{CC3487CB-F795-4CA9-A4F6-28C145AE383B}"
 EndProject
