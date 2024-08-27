@@ -15,7 +15,6 @@ async Task RunWorkerAsync()
         AddSimpleConsole(options => options.SingleLine = true);
 
     builder.Services.AddSingleton<IAmazonBedrockRuntime>(_ => new AmazonBedrockRuntimeClient());
-    builder.Services.AddSingleton<BedrockActivities>();
 
     builder.Services.
         AddHostedTemporalWorker(clientTargetHost: "localhost:7233", clientNamespace: "default", taskQueue: "basic-bedrock-task-queue").
