@@ -6,7 +6,7 @@ Demonstrates how Temporal and Amazon Bedrock can be used to quickly build bullet
 
 * [Basic](Basic) - A basic Bedrock workflow to process a single prompt.
 * [SignalsAndQueries](SignalsAndQueries) - Extension to the basic workflow to allow multiple prompts through signals & queries.
-* [Entity](Entity) - Full multi-Turn chat using an entity workflow..
+* [Entity](Entity) - Full multi-Turn chat using an entity workflow.
 
 ## Pre-requisites
 
