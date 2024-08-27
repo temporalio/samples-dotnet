@@ -8,12 +8,12 @@ namespace TemporalioSamples.Bedrock.Entity;
 
 public class BedrockActivities(IAmazonBedrockRuntime bedrock)
 {
-    public record PromptBedrockActivityArgs(string Prompt);
+    public record PromptArgs(string Prompt);
 
-    public record PromptBedrockActivityResult(string Response);
+    public record PromptResult(string Response);
 
     [Activity]
-    public async Task<PromptBedrockActivityResult> PromptBedrockAsync(PromptBedrockActivityArgs args)
+    public async Task<PromptResult> PromptBedrockAsync(PromptArgs args)
     {
         var body = JsonSerializer.Serialize(new
         {

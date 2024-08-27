@@ -7,11 +7,11 @@ namespace TemporalioSamples.Bedrock.SignalsAndQueries;
 [Workflow]
 public class BedrockWorkflow
 {
-    public record BedrockWorkflowArgs(int InactivityTimeoutMinutes);
+    public record WorkflowArgs(int InactivityTimeoutMinutes);
 
-    public record BedrockWorkflowResult(Collection<ConversationEntry> ConversationHistory);
+    public record WorkflowResult(Collection<ConversationEntry> ConversationHistory);
 
-    public record BedrockUserPromptSignal(string Prompt);
+    public record UserPrompt(string Prompt);
 
     public record ConversationEntry(string Speaker, string Message);
 
@@ -19,7 +19,7 @@ public class BedrockWorkflow
     private bool chatTimeout;
 
     [WorkflowRun]
-    public async Task<BedrockWorkflowResult> RunAsync(BedrockWorkflowArgs args)
+    public async Task<WorkflowResult> RunAsync(WorkflowArgs args)
     {
         while (true)
         {
@@ -69,7 +69,7 @@ public class BedrockWorkflow
 
         ConversationSummary = summaryResult.Response;
         Workflow.Logger.LogInformation("Conversation summary:\n{ConversationSummary}", ConversationSummary);
-        return new BedrockWorkflowResult(ConversationHistory);
+        return new WorkflowResult(ConversationHistory);
     }
 
     [WorkflowQuery]
@@ -79,7 +79,7 @@ public class BedrockWorkflow
     public Collection<ConversationEntry> ConversationHistory { get; } = new();
 
     [WorkflowSignal]
-    public Task UserPromptAsync(BedrockUserPromptSignal signal)
+    public Task UserPromptAsync(UserPrompt signal)
     {
         // Chat timed out but the workflow is waiting for a chat summary to be generated
         if (chatTimeout)

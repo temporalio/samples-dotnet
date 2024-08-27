@@ -6,12 +6,12 @@ namespace TemporalioSamples.Bedrock.Basic;
 [Workflow]
 public class BedrockWorkflow
 {
-    public record BedrockWorkflowArgs(string Prompt);
+    public record WorkflowArgs(string Prompt);
 
-    public record BedrockWorkflowResult(string Response);
+    public record WorkflowResult(string Response);
 
     [WorkflowRun]
-    public async Task<BedrockWorkflowResult> RunAsync(BedrockWorkflowArgs args)
+    public async Task<WorkflowResult> RunAsync(WorkflowArgs args)
     {
         Workflow.Logger.LogInformation("Prompt: {Prompt}", args.Prompt);
 

@@ -121,16 +121,17 @@ public class BedrockEntityWorkflowTests(ITestOutputHelper output) : TestBase(out
         private int count;
 
         [Activity]
-        public Task<BedrockActivities.PromptBedrockActivityResult> PromptBedrockAsync(BedrockActivities.PromptBedrockActivityArgs args)
+        public Task<BedrockActivities.PromptResult> PromptBedrockAsync(BedrockActivities.PromptArgs args)
         {
             count++;
-            var result = count switch {
-                1 => new BedrockActivities.PromptBedrockActivityResult(
+            var result = count switch
+            {
+                1 => new BedrockActivities.PromptResult(
                     "Marsupials are a group of mammals that give birth to underdeveloped young."),
-                2 => new BedrockActivities.PromptBedrockActivityResult(
+                2 => new BedrockActivities.PromptResult(
                     "No, marsupials do not lay eggs. They are mammals, which means they give birth to live young."),
-                3 => new BedrockActivities.PromptBedrockActivityResult("No, I am not a chicken."),
-                4 => new BedrockActivities.PromptBedrockActivityResult("This is the summary."),
+                3 => new BedrockActivities.PromptResult("No, I am not a chicken."),
+                4 => new BedrockActivities.PromptResult("This is the summary."),
                 _ => throw new InvalidOperationException("Should not get called"),
             };
             return Task.FromResult(result);

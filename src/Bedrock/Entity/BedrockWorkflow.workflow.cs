@@ -7,11 +7,11 @@ namespace TemporalioSamples.Bedrock.Entity;
 [Workflow]
 public class BedrockWorkflow
 {
-    public record BedrockWorkflowArgs(string? ConversationSummary = null, Queue<string>? PromptQueue = null, bool? ChatEnded = null);
+    public record WorkflowArgs(string? ConversationSummary = null, Queue<string>? PromptQueue = null, bool? ChatEnded = null);
 
-    public record BedrockWorkflowResult(Collection<ConversationEntry> ConversationHistory);
+    public record WorkflowResult(Collection<ConversationEntry> ConversationHistory);
 
-    public record BedrockUserPromptSignal(string Prompt);
+    public record UserPrompt(string Prompt);
 
     public record ConversationEntry(string Speaker, string Message);
 
@@ -20,7 +20,7 @@ public class BedrockWorkflow
     private bool chatEnded;
 
     [WorkflowRun]
-    public async Task<BedrockWorkflowResult> RunAsync(BedrockWorkflowArgs args)
+    public async Task<WorkflowResult> RunAsync(WorkflowArgs args)
     {
         if (args.ConversationSummary is not null)
         {
@@ -111,7 +111,7 @@ public class BedrockWorkflow
                 }
 
                 Workflow.Logger.LogInformation("Chat ended. Conversation summary:\n{ConversationSummary}", ConversationSummary);
-                return new BedrockWorkflowResult(ConversationHistory);
+                return new WorkflowResult(ConversationHistory);
             }
         }
     }
@@ -123,7 +123,7 @@ public class BedrockWorkflow
     public Collection<ConversationEntry> ConversationHistory { get; } = new();
 
     [WorkflowSignal]
-    public Task UserPromptAsync(BedrockUserPromptSignal signal)
+    public Task UserPromptAsync(UserPrompt signal)
     {
         // Chat timed out but the workflow is waiting for a chat summary to be generated
         if (chatEnded)
