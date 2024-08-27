@@ -137,11 +137,7 @@ public class BedrockWorkflow
     }
 
     [WorkflowSignal]
-    public Task EndChatAsync()
-    {
-        chatEnded = true;
-        return Task.CompletedTask;
-    }
+    public async Task EndChatAsync() => chatEnded = true;
 
     private string FormatHistory() => string.Join(" ", ConversationHistory.Select(x => x.Message));
 
