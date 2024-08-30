@@ -37,7 +37,7 @@ public class ClusterManagerWorkflow
     public ClusterManagerWorkflow(Input input)
     {
         CurrentState = input.State;
-        maxHistoryLength = input.TestContinueAsNew ? 120 : int.MaxValue;
+        maxHistoryLength = input.TestContinueAsNew ? 40 : int.MaxValue;
         sleepInterval = TimeSpan.FromSeconds(input.TestContinueAsNew ? 1 : 600);
     }
 
