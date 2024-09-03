@@ -51,9 +51,13 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TemporalioSamples.Mutex", "
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TemporalioSamples.Saga", "src\Saga\TemporalioSamples.Saga.csproj", "{B79F07F7-3429-4C58-84C3-08587F748B2D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TemporalioSamples.WorkflowUpdate", "src\WorkflowUpdate\TemporalioSamples.WorkflowUpdate.csproj", "{B3DB7B8C-7BD3-4A53-A809-AB6279B1A630}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TemporalioSamples.WorkflowUpdate", "src\WorkflowUpdate\TemporalioSamples.WorkflowUpdate.csproj", "{B3DB7B8C-7BD3-4A53-A809-AB6279B1A630}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TemporalioSamples.ContextPropagation", "src\ContextPropagation\TemporalioSamples.ContextPropagation.csproj", "{7B797D20-485F-441D-8E71-AF7E315FA9CF}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TemporalioSamples.ContextPropagation", "src\ContextPropagation\TemporalioSamples.ContextPropagation.csproj", "{7B797D20-485F-441D-8E71-AF7E315FA9CF}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TemporalioSamples.OpenTelemetry.DotNetMetrics", "src\OpenTelemetry\DotNetMetrics\TemporalioSamples.OpenTelemetry.DotNetMetrics.csproj", "{6E32CC8F-7008-42A5-96A7-F182B9A6DC03}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TemporalioSamples.OpenTelemetry.CoreSdkForwarding", "src\OpenTelemetry\CoreSdkForwarding\TemporalioSamples.OpenTelemetry.CoreSdkForwarding.csproj", "{785AA9A8-C440-4A62-B778-FD52423A6EDF}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TemporalioSamples.SafeMessageHandlers", "src\SafeMessageHandlers\TemporalioSamples.SafeMessageHandlers.csproj", "{FAF5984A-5B1C-4686-B056-A4F2AC0E8EB7}"
 EndProject
@@ -165,6 +169,18 @@ Global
 		{7B797D20-485F-441D-8E71-AF7E315FA9CF}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7B797D20-485F-441D-8E71-AF7E315FA9CF}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7B797D20-485F-441D-8E71-AF7E315FA9CF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CDFAD7B0-FC43-4ECD-9E36-1023322294C9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CDFAD7B0-FC43-4ECD-9E36-1023322294C9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CDFAD7B0-FC43-4ECD-9E36-1023322294C9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CDFAD7B0-FC43-4ECD-9E36-1023322294C9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6E32CC8F-7008-42A5-96A7-F182B9A6DC03}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6E32CC8F-7008-42A5-96A7-F182B9A6DC03}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6E32CC8F-7008-42A5-96A7-F182B9A6DC03}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6E32CC8F-7008-42A5-96A7-F182B9A6DC03}.Release|Any CPU.Build.0 = Release|Any CPU
+		{785AA9A8-C440-4A62-B778-FD52423A6EDF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{785AA9A8-C440-4A62-B778-FD52423A6EDF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{785AA9A8-C440-4A62-B778-FD52423A6EDF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{785AA9A8-C440-4A62-B778-FD52423A6EDF}.Release|Any CPU.Build.0 = Release|Any CPU
 		{FAF5984A-5B1C-4686-B056-A4F2AC0E8EB7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{FAF5984A-5B1C-4686-B056-A4F2AC0E8EB7}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{FAF5984A-5B1C-4686-B056-A4F2AC0E8EB7}.Release|Any CPU.ActiveCfg = Release|Any CPU
