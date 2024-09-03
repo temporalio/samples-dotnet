@@ -1,10 +1,8 @@
-# OpenTelemetry - .NET Metrics
+# OpenTelemetry - .Core SDK Forwarding
 
 This sample shows how to configure the SDK to forward metrics from the Core SDK.
 
-The main advantage over using .NET metrics is simplicity; additionally, there is no need to take a dependency on the .NET OpenTelemetry libraries.
-
-Note that in order to set up tracing, .NET OpenTelemetry must be used. See the [DotNetMetrics](../DotNetMetrics) sample for an example of how to set up tracing.
+The main advantage over using .NET metrics is simplicity.
 
 This sample also shows how to configure custom metrics from both an activity and a workflow in a replay-safe manner.
 
@@ -23,6 +21,14 @@ Then in another terminal, run the workflow from this directory:
     dotnet run workflow
 
 The workflow will complete.
+
+## Traces
+
+Traces can be viewed at http://localhost:18888/traces.
+
+You can select either `worker` or `workflow` for traces; both should show the same trace. The workflow should appear and when clicked, may look something like:
+
+![Tracing Screenshot](tracing-screenshot.png)
 
 ## Metrics
 

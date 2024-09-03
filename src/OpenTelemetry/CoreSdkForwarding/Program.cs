@@ -1,13 +1,28 @@
-﻿using System.Diagnostics.Metrics;
-using Microsoft.Extensions.Logging;
+﻿using Microsoft.Extensions.Logging;
+using OpenTelemetry;
+using OpenTelemetry.Metrics;
+using OpenTelemetry.Resources;
+using OpenTelemetry.Trace;
 using Temporalio.Client;
+using Temporalio.Extensions.OpenTelemetry;
 using Temporalio.Runtime;
 using Temporalio.Worker;
 using TemporalioSamples.OpenTelemetry.Common;
 
 var assemblyName = typeof(TemporalClient).Assembly.GetName();
 
-using var meter = new Meter(assemblyName.Name!, assemblyName.Version!.ToString());
+var instanceId = args.ElementAtOrDefault(0) ?? throw new ArgumentException("Must pass 'worker' or 'workflow' as the single argument");
+
+var resourceBuilder = ResourceBuilder.
+    CreateDefault().
+    AddService("TemporalioSamples.OpenTelemetry", serviceInstanceId: instanceId);
+
+using var tracerProvider = Sdk.
+    CreateTracerProviderBuilder().
+    SetResourceBuilder(resourceBuilder).
+    AddSource(TracingInterceptor.ClientSource.Name, TracingInterceptor.WorkflowsSource.Name, TracingInterceptor.ActivitiesSource.Name).
+    AddOtlpExporter().
+    Build();
 
 // Create a client to localhost on default namespace
 var client = await TemporalClient.ConnectAsync(new("localhost:7233")
@@ -16,6 +31,7 @@ var client = await TemporalClient.ConnectAsync(new("localhost:7233")
         builder.
             AddSimpleConsole(options => options.TimestampFormat = "[HH:mm:ss] ").
             SetMinimumLevel(LogLevel.Information)),
+    Interceptors = new[] { new TracingInterceptor() },
     Runtime = new TemporalRuntime(new TemporalRuntimeOptions()
     {
         Telemetry = new TelemetryOptions()

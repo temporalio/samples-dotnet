@@ -39,13 +39,13 @@ async Task RunWorkerAsync()
     }
 }
 
-async Task ExecuteWorkflowsWithMutex(string resourceId)
+async Task ExecuteWorkflowsWithMutexAsync(string resourceId)
 {
-    await Task.WhenAll(Execute(), Execute());
+    await Task.WhenAll(ExecuteAsync(), ExecuteAsync());
 
     return;
 
-    async Task Execute()
+    async Task ExecuteAsync()
     {
         var workflowId = "test-" + Guid.NewGuid();
         Console.WriteLine($"Starting test workflow with id '{workflowId}'. Connecting to lock workflow '{resourceId}'");
@@ -68,7 +68,7 @@ switch (args.ElementAtOrDefault(0))
         await RunWorkerAsync();
         break;
     case "workflow":
-        await ExecuteWorkflowsWithMutex(args.ElementAtOrDefault(1) ?? "locked-resource-id");
+        await ExecuteWorkflowsWithMutexAsync(args.ElementAtOrDefault(1) ?? "locked-resource-id");
         break;
     default:
         throw new ArgumentException("Must pass 'worker' or 'workflow' as the first argument");
