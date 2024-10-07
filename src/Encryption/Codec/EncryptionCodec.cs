@@ -61,8 +61,8 @@ public sealed class EncryptionCodec : IPayloadCodec
 
     private byte[] Encrypt(byte[] data)
     {
-        // Our byte array will have a const-length nonce, const-length tag, and
-        // then the encrypted data. In real-world use, one may want to put nonce
+        // Our byte array will have a const-length nonce, the encrypted data, and
+        // then a const-length tag. In real-world use, one may want to put nonce
         // and/or tag lengths in here.
         var bytes = new byte[NonceSize + TagSize + data.Length];
 
@@ -73,7 +73,7 @@ public sealed class EncryptionCodec : IPayloadCodec
         // Perform encryption
         using (var aes = new AesGcm(key, TagSize))
         {
-            aes.Encrypt(nonceSpan, data, bytes.AsSpan(NonceSize + TagSize), bytes.AsSpan(NonceSize, TagSize));
+            aes.Encrypt(nonceSpan, data, bytes.AsSpan(NonceSize, data.Length), bytes.AsSpan(NonceSize + data.Length, TagSize));
             return bytes;
         }
     }
@@ -85,7 +85,7 @@ public sealed class EncryptionCodec : IPayloadCodec
         using (var aes = new AesGcm(key, TagSize))
         {
             aes.Decrypt(
-                data.AsSpan(0, NonceSize), data.AsSpan(NonceSize + TagSize), data.AsSpan(NonceSize, TagSize), bytes.AsSpan());
+                data.AsSpan(0, NonceSize), data.AsSpan(NonceSize, bytes.Length), data.AsSpan(NonceSize + bytes.Length, TagSize), bytes.AsSpan());
             return bytes;
         }
     }
