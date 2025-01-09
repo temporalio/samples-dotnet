@@ -48,6 +48,9 @@ dotnet_diagnostic.CA1307.severity = none
 dotnet_diagnostic.CA1310.severity = none
 dotnet_diagnostic.CA1311.severity = none
 
+# In samples, we do not care about making public things internal
+dotnet_diagnostic.CA1515.severity = none
+
 # Don't need to worry about name clashes across samples
 dotnet_diagnostic.CA1724.severity = none
 
