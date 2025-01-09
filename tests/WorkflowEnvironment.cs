@@ -21,6 +21,9 @@ public class WorkflowEnvironment : IAsyncLifetime
                 [
                     "--dynamic-config-value",
                     "frontend.enableUpdateWorkflowExecution=true",
+                    // Enable multi-op
+                    "--dynamic-config-value",
+                    "frontend.enableExecuteMultiOperation=true"
                 ],
             },
         });

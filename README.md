@@ -31,6 +31,8 @@ Prerequisites:
 * [Schedules](src/Schedules) - How to schedule workflows to be run at specific times in the future.
 * [SignalsQueries](src/SignalsQueries) - A loyalty program using Signals and Queries.
 * [Timer](src/Timer) - Use a timer to implement a monthly subscription; handle workflow cancellation.
+* [UpdateWithStartEarlyReturn](src/UpdateWithStartEarlyReturn) - Use update with start to get an early return, letting the rest of the workflow complete in the background.
+* [UpdateWithStartLazyInit](src/UpdateWithStartLazyInit) - Use update with start to lazily start a workflow before sending update.
 * [WorkerSpecificTaskQueues](src/WorkerSpecificTaskQueues) - Use a unique task queue per Worker to have certain Activities only run on that specific Worker.
 * [WorkerVersioning](src/WorkerVersioning) - How to use the Worker Versioning feature to more easily deploy changes to Workflow & other code.
 * [WorkflowUpdate](src/WorkflowUpdate) - How to use the Workflow Update feature while blocking in update method for concurrent updates.
