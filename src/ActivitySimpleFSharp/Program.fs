@@ -31,6 +31,8 @@ module Workflows =
         member this.RunAsync() =
             task {
                 // Run an async instance method activity.
+                // Note that in F# the generic types can not be inferred since the Temporal API
+                // uses overloads which leads to overload resolution ambiguity. We need to specify the generic types explicitly.
                 let! result1 = Workflow.ExecuteActivityAsync<Activities.MyActivities, string>(
                     (fun (act: Activities.MyActivities) -> act.SelectFromDatabaseAsync("some-db-table")),
                     ActivityOptions( StartToCloseTimeout = TimeSpan.FromSeconds(5)))
