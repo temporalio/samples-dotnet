@@ -1,8 +1,8 @@
 # Update with Start - Early Return
 
-This sample demonstrates a how to start a workflow and wait for only part of it to complete, letting the rest of the
+This sample demonstrates how to start a workflow and wait for only part of it to complete, letting the rest of the
 workflow run in the background. This is demonstrated with a simple payment processing workflow that returns after
-authorization while continuing the rest of the payment processing in the background
+authorization while continuing the rest of the payment processing in the background.
 
 To run, first see [README.md](../../README.md) for prerequisites. Then, run the following from this directory in a
 separate terminal to start the worker:
