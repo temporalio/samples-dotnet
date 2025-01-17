@@ -16,17 +16,17 @@ public class SagaWorkflow
 
         try
         {
-            await Workflow.ExecuteActivityAsync(() => Activities.Withdraw(transfer), options);
-
             compensations.Add(async () => await Workflow.ExecuteActivityAsync(
-                                  () => Activities.WithdrawCompensation(transfer),
-                                  options));
+                        () => Activities.WithdrawCompensation(transfer),
+                        options));
 
-            await Workflow.ExecuteActivityAsync(() => Activities.Deposit(transfer), options);
+            await Workflow.ExecuteActivityAsync(() => Activities.Withdraw(transfer), options);
 
             compensations.Add(async () => await Workflow.ExecuteActivityAsync(
                        () => Activities.DepositCompensation(transfer),
                        options));
+
+            await Workflow.ExecuteActivityAsync(() => Activities.Deposit(transfer), options);
 
             // throw new Exception
             await Workflow.ExecuteActivityAsync(() => Activities.StepWithError(transfer), options);
