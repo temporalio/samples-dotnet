@@ -1,6 +1,7 @@
 namespace TemporalioSamples.Timer;
 
 using Microsoft.Extensions.Logging;
+using Temporalio.Exceptions;
 using Temporalio.Workflows;
 
 [Workflow]
