@@ -6,28 +6,24 @@ using Temporalio.Workflows;
 [Workflow]
 public class SleepForDaysWorkflow
 {
-    private bool isComplete;
+    private bool complete;
 
     [WorkflowRun]
     public async Task RunAsync()
     {
-        isComplete = false;
-        while (!isComplete)
+        while (!complete)
         {
             await Workflow.ExecuteActivityAsync(
-                (SleepForDaysActivities act) => act.SendEmail("Sleeping for 30 days"),
-                new() { StartToCloseTimeout = TimeSpan.FromSeconds(10) });
-            await Task.WhenAny(
+                (Activities act) => act.SendEmail("Sleeping for 30 days"),
+                new() { StartToCloseTimeout = TimeSpan.FromDays(30) });
+            await Workflow.WhenAny(
                 Workflow.DelayAsync(TimeSpan.FromSeconds(30)),
-                Workflow.WaitConditionAsync(() => isComplete));
+                Workflow.WaitConditionAsync(() => complete));
         }
 
         Workflow.Logger.LogInformation("done!");
     }
 
     [WorkflowSignal]
-    public async Task CompleteAsync()
-    {
-        isComplete = true;
-    }
+    public async Task CompleteAsync() => complete = true;
 }

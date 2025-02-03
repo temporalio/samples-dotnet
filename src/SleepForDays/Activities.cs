@@ -3,7 +3,7 @@ namespace TemporalioSamples.SleepForDays;
 using Microsoft.Extensions.Logging;
 using Temporalio.Activities;
 
-public class SleepForDaysActivities
+public class Activities
 {
     // Stub for an actual implementation for sending emails.
     [Activity]

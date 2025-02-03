@@ -23,7 +23,7 @@ async Task RunWorkerAsync()
     };
 
     // Create an activity instance with some state
-    var activities = new SleepForDaysActivities();
+    var activities = new Activities();
 
     // Run worker until cancelled
     Console.WriteLine("Running worker");
