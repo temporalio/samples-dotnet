@@ -42,31 +42,24 @@ public class SleepForDaysWorkflowTests : TestBase
                 new(id: $"wf-{Guid.NewGuid()}", taskQueue: worker.Options.TaskQueue!));
 
             // Continuously check history to see if timer has started.
-            bool timerStarted = false;
-            while (!timerStarted)
+            await AssertMore.EventuallyAsync(async () =>
             {
                 var history = await handle.FetchHistoryAsync();
-                foreach (var e in history.Events)
-                {
-                    if (e.TimerStartedEventAttributes != null && (TimeSpan.FromDays(30) == e.TimerStartedEventAttributes.StartToFireTimeout.ToTimeSpan()))
-                    {
-                        timerStarted = true;
-                        break;
-                    }
-                }
-            }
+                Assert.Contains(history.Events, e =>
+                    e.TimerStartedEventAttributes != null &&
+                    (TimeSpan.FromDays(30) == e.TimerStartedEventAttributes.StartToFireTimeout.ToTimeSpan()));
+            });
 
-            // Sanity check - timer should have started.
-            Assert.True(timerStarted);
-
+            // The sleep timer has started, we should expect an activity execution.
+            Assert.Equal(1, activityExecutions);
             // Sleep for 90 days
             await env.DelayAsync(TimeSpan.FromDays(90));
             // Expect 3 activity executions
-            Assert.Equal(3, activityExecutions);
+            Assert.Equal(4, activityExecutions);
             // Signal the workflow to complete
             await handle.SignalAsync(wf => wf.CompleteAsync());
             // Expect the same number of activity executions
-            Assert.Equal(3, activityExecutions);
+            Assert.Equal(4, activityExecutions);
             // Assert at least 90 days of time have passed
             Assert.True((await env.GetCurrentTimeAsync() - startTime) >= TimeSpan.FromDays(90));
         });
