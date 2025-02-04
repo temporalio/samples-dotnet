@@ -15,9 +15,9 @@ public class SleepForDaysWorkflow
         {
             await Workflow.ExecuteActivityAsync(
                 (Activities act) => act.SendEmail("Sleeping for 30 days"),
-                new() { StartToCloseTimeout = TimeSpan.FromDays(30) });
+                new() { StartToCloseTimeout = TimeSpan.FromSeconds(10) });
             await Workflow.WhenAnyAsync(
-                Workflow.DelayAsync(TimeSpan.FromSeconds(30)),
+                Workflow.DelayAsync(TimeSpan.FromDays(30)),
                 Workflow.WaitConditionAsync(() => complete));
         }
 

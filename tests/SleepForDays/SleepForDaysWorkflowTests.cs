@@ -1,5 +1,6 @@
 namespace TemporalioSamples.Tests.SleepForDays;
 
+using Microsoft.Extensions.Logging;
 using Temporalio.Activities;
 using Temporalio.Client;
 using Temporalio.Testing;
@@ -19,7 +20,7 @@ public class SleepForDaysWorkflowTests : TestBase
     public async Task RunAsync_SleepForDays_Succeeds()
     {
         await using var env = await WorkflowEnvironment.StartTimeSkippingAsync();
-        var activities = new SleepForDaysActivities();
+        var activities = new Activities();
 
         var activityExecutions = 0;
         // Mock out the activity to assert number of executions
@@ -41,6 +42,25 @@ public class SleepForDaysWorkflowTests : TestBase
             var handle = await env.Client.StartWorkflowAsync(
                 (SleepForDaysWorkflow wf) => wf.RunAsync(),
                 new(id: $"wf-{Guid.NewGuid()}", taskQueue: worker.Options.TaskQueue!));
+
+            // Continuously check history to see if timer has started.
+            bool timerStarted = false;
+            while (!timerStarted)
+            {
+                var history = await handle.FetchHistoryAsync();
+                foreach (var e in history.Events)
+                {
+                    if (e.TimerStartedEventAttributes != null && (TimeSpan.FromDays(30) == e.TimerStartedEventAttributes.StartToFireTimeout.ToTimeSpan()))
+                    {
+                        timerStarted = true;
+                        break;
+                    }
+                }
+            }
+
+            // Sanity check - timer should have started.
+            Assert.True(timerStarted);
+
             // Sleep for 90 days
             await env.DelayAsync(TimeSpan.FromDays(90));
             // Expect 3 activity executions
@@ -48,7 +68,7 @@ public class SleepForDaysWorkflowTests : TestBase
             // Signal the workflow to complete
             await handle.SignalAsync(wf => wf.CompleteAsync());
             // Expect the same number of activity executions
-            Assert.Equal(3123123, activityExecutions);
+            Assert.Equal(3, activityExecutions);
             // Assert at least 90 days of time have passed
             Assert.True((await env.GetCurrentTimeAsync() - startTime) >= TimeSpan.FromDays(90));
         });
