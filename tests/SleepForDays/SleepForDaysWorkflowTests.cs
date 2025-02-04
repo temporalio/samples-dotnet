@@ -14,7 +14,7 @@ public class SleepForDaysWorkflowTests : TestBase
     {
     }
 
-    [Fact]
+    [TimeSkippingServerFact]
     public async Task RunAsync_SleepForDays_Succeeds()
     {
         await using var env = await WorkflowEnvironment.StartTimeSkippingAsync();
