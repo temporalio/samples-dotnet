@@ -1,8 +1,6 @@
 namespace TemporalioSamples.Tests.SleepForDays;
 
-using Microsoft.Extensions.Logging;
 using Temporalio.Activities;
-using Temporalio.Client;
 using Temporalio.Testing;
 using Temporalio.Worker;
 using TemporalioSamples.SleepForDays;
