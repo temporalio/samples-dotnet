@@ -79,6 +79,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TemporalioSamples.UpdateWit
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TemporalioSamples.UpdateWithStartEarlyReturn", "src\UpdateWithStartEarlyReturn\TemporalioSamples.UpdateWithStartEarlyReturn.csproj", "{69C72FEE-D1A1-4F3F-9B1A-462C9FF91B16}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TemporalioSamples.SleepForDays", "src\SleepForDays\TemporalioSamples.SleepForDays.csproj", "{60EDA2A6-04ED-460F-9EB1-EC397B095E41}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -221,6 +223,10 @@ Global
 		{69C72FEE-D1A1-4F3F-9B1A-462C9FF91B16}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{69C72FEE-D1A1-4F3F-9B1A-462C9FF91B16}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{69C72FEE-D1A1-4F3F-9B1A-462C9FF91B16}.Release|Any CPU.Build.0 = Release|Any CPU
+		{60EDA2A6-04ED-460F-9EB1-EC397B095E41}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{60EDA2A6-04ED-460F-9EB1-EC397B095E41}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{60EDA2A6-04ED-460F-9EB1-EC397B095E41}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{60EDA2A6-04ED-460F-9EB1-EC397B095E41}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -260,5 +266,6 @@ Global
 		{AE18875F-B7D2-4A3C-8784-15B76277D508} = {5339989C-3791-4D75-A9F1-42620C443D4A}
 		{B99AA6E8-4224-4BAB-84BC-0A6D6095B9BA} = {1A647B41-53D0-4638-AE5A-6630BAAE45FC}
 		{69C72FEE-D1A1-4F3F-9B1A-462C9FF91B16} = {1A647B41-53D0-4638-AE5A-6630BAAE45FC}
+		{60EDA2A6-04ED-460F-9EB1-EC397B095E41} = {1A647B41-53D0-4638-AE5A-6630BAAE45FC}
 	EndGlobalSection
 EndGlobal

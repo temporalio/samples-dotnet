@@ -30,6 +30,7 @@
     <ProjectReference Include="..\src\UpdateWithStartEarlyReturn\TemporalioSamples.UpdateWithStartEarlyReturn.csproj" />
     <ProjectReference Include="..\src\UpdateWithStartLazyInit\TemporalioSamples.UpdateWithStartLazyInit.csproj" />
     <ProjectReference Include="..\src\WorkflowUpdate\TemporalioSamples.WorkflowUpdate.csproj" />
+    <ProjectReference Include="..\src\SleepForDays\TemporalioSamples.SleepForDays.csproj" />
   </ItemGroup>
 
 </Project>

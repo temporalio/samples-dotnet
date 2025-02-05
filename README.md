@@ -30,6 +30,7 @@ Prerequisites:
 * [Saga](src/Saga) - Demonstrates how to implement a saga pattern.
 * [Schedules](src/Schedules) - How to schedule workflows to be run at specific times in the future.
 * [SignalsQueries](src/SignalsQueries) - A loyalty program using Signals and Queries.
+* [SleepForDays](src/SleepForDays/) - Use a timer to send an email every 30 days.
 * [Timer](src/Timer) - Use a timer to implement a monthly subscription; handle workflow cancellation.
 * [UpdateWithStartEarlyReturn](src/UpdateWithStartEarlyReturn) - Use update with start to get an early return, letting the rest of the workflow complete in the background.
 * [UpdateWithStartLazyInit](src/UpdateWithStartLazyInit) - Use update with start to lazily start a workflow before sending update.
