@@ -1,3 +1,4 @@
+using Microsoft.Extensions.Logging;
 using Temporalio.Workflows;
 
 namespace TemporalioSamples.WorkerSpecificTaskQueues;
@@ -6,7 +7,40 @@ namespace TemporalioSamples.WorkerSpecificTaskQueues;
 public class FileProcessingWorkflow
 {
     [WorkflowRun]
-    public async Task RunAsync(int maxAttempts = 5)
+    public async Task RunAsync(int maxAttempts)
+    {
+        // When using a worker-specific task queue, if a failure occurs, we want to retry all of the
+        // worker-specific logic, so wrap all the logic here in a loop.
+        var attempt = 0;
+        while (true)
+        {
+            attempt++;
+            try
+            {
+                await ProcessFileAsync();
+                return;
+            }
+            catch (Exception e)
+            {
+                // If it's at max attempts, re-throw to fail the workflow
+                if (attempt >= maxAttempts)
+                {
+                    Workflow.Logger.LogError(
+                        e,
+                        "File processing failed and reached {Attempt} attempts, failing workflow",
+                        attempt);
+                    throw;
+                }
+                // Otherwise, just warn and continue
+                Workflow.Logger.LogWarning(
+                    e,
+                    "File processing failed on attempt {Attempt}, trying again",
+                    attempt);
+            }
+        }
+    }
+
+    private async Task ProcessFileAsync()
     {
         var uniqueWorkerTaskQueue = await Workflow.ExecuteActivityAsync(
             (NormalActivities act) => act.GetUniqueTaskQueue(),

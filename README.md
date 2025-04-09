@@ -68,3 +68,7 @@ Can add options like:
 * `--logger "console;verbosity=detailed"` to show logs
 * `--filter "FullyQualifiedName=TemporalioSamples.Tests.ActivityWorker.ActivityWorkerTests.Main_RunActivity_Succeeds"`
   to run a specific test
+
+There is also a standalone project for running tests so output is more visible. To use it, run
+`dotnet run --project tests/TemporalioSamples.Tests.csproj` and can pass options after `--`, e.g. `-- -verbose` and/or
+`-- -method "*.RunAsync_SimpleRun_SucceedsAfterRetry"`.
