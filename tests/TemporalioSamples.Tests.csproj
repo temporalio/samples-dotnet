@@ -29,6 +29,7 @@
     <ProjectReference Include="..\src\SafeMessageHandlers\TemporalioSamples.SafeMessageHandlers.csproj" />
     <ProjectReference Include="..\src\UpdateWithStartEarlyReturn\TemporalioSamples.UpdateWithStartEarlyReturn.csproj" />
     <ProjectReference Include="..\src\UpdateWithStartLazyInit\TemporalioSamples.UpdateWithStartLazyInit.csproj" />
+    <ProjectReference Include="..\src\WorkerSpecificTaskQueues\TemporalioSamples.WorkerSpecificTaskQueues.csproj" />
     <ProjectReference Include="..\src\WorkflowUpdate\TemporalioSamples.WorkflowUpdate.csproj" />
     <ProjectReference Include="..\src\SleepForDays\TemporalioSamples.SleepForDays.csproj" />
   </ItemGroup>
