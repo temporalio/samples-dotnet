@@ -172,7 +172,7 @@ public class ClusterManagerWorkflow
 
     private bool ShouldContinueAsNew =>
         // Don't continue as new while update running
-        nodesLock.CurrentCount > 0 &&
+        Workflow.AllHandlersFinished &&
         // Continue if suggested or, for ease of testing, max history reached
         (Workflow.ContinueAsNewSuggested || Workflow.CurrentHistoryLength > maxHistoryLength);
 
