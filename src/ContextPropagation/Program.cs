@@ -1,5 +1,6 @@
 using Microsoft.Extensions.Logging;
 using Temporalio.Client;
+using Temporalio.Client.Interceptors;
 using Temporalio.Converters;
 using Temporalio.Worker;
 using TemporalioSamples.ContextPropagation;
@@ -15,11 +16,12 @@ var client = await TemporalClient.ConnectAsync(new("localhost:7233")
 {
     LoggerFactory = loggerFactory,
     // This is where we set the interceptor to propagate context
-    Interceptors = new[]
+    Interceptors = new IClientInterceptor[]
     {
-        new ContextPropagationInterceptor<string>(
-            MyContext.UserId,
+        new ContextPropagationInterceptor<Identity>(
+            IdentityContext.User,
             DataConverter.Default.PayloadConverter),
+        new BusinessContextInterceptor(),
     },
 });
 
@@ -52,8 +54,13 @@ async Task RunWorkerAsync()
 
 async Task ExecuteWorkflowAsync()
 {
+    IdentityContext.User.Value = new Identity
+    {
+        ClientId = Guid.NewGuid().ToString(), UserId = Guid.NewGuid().ToString(),
+    };
+    // MyContext.User.Value.UserId = Guid.NewGuid().ToString();
     // Set our user ID that can be accessed in the workflow and activity
-    MyContext.UserId.Value = "some-user";
+    // MyContext.UserId.Value = "some-user";
 
     // Start workflow, send signal, wait for completion, issue query
     logger.LogInformation("Executing workflow");

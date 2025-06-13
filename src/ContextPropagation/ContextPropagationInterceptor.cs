@@ -1,3 +1,5 @@
+using System.Diagnostics;
+
 namespace TemporalioSamples.ContextPropagation;
 
 using System.Threading.Tasks;
@@ -163,7 +165,9 @@ public class ContextPropagationInterceptor<T> : IClientInterceptor, IWorkerInter
             ContextPropagationInterceptor<T> root, ActivityInboundInterceptor next)
             : base(next) => this.root = root;
 
-        public override Task<object?> ExecuteActivityAsync(ExecuteActivityInput input) =>
-            root.WithHeadersApplied(input.Headers, () => Next.ExecuteActivityAsync(input));
+        public override Task<object?> ExecuteActivityAsync(ExecuteActivityInput input)
+        {
+            return root.WithHeadersApplied(input.Headers, () => Next.ExecuteActivityAsync(input));
+        }
     }
 }

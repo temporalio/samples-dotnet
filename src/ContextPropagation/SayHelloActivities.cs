@@ -9,8 +9,14 @@ public class SayHelloActivities
     public string SayHello(string name)
     {
         ActivityExecutionContext.Current.Logger.LogInformation(
-            "Activity called by user {UserId}",
-            MyContext.UserId.Value);
-        return $"Hello, {name}!";
+            "Activity called by user {User}",
+            IdentityContext.User.ToString());
+
+        var principaledName = BusinessContext.CurrentPrincipal.Value?.Identity?.Name;
+        ActivityExecutionContext.Current.Logger.LogInformation(
+            "Activity called with principal {Principal}",
+            BusinessContext.CurrentPrincipal.Value?.Identity?.Name);
+
+        return $"Hello, {name} {principaledName}!";
     }
 }

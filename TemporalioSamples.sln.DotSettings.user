@@ -1,0 +1,6 @@
+﻿<wpf:ResourceDictionary xml:space="preserve" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:s="clr-namespace:System;assembly=mscorlib" xmlns:ss="urn:shemas-jetbrains-com:settings-storage-xaml" xmlns:wpf="http://schemas.microsoft.com/winfx/2006/xaml/presentation">
+	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=4d459288_002De7ee_002D4700_002Db64a_002D91676576bf38/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" IsActive="True" Name="MyWorkflowTests" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;
+  &lt;TestAncestor&gt;
+    &lt;TestId&gt;xUnit::3FA7E5DF-03B7-4586-A980-85C155B376C5::net8.0::TemporalioSamples.Tests.WorkflowUpdate.WorkflowUpdateTests.SimpleRun_Succeed&lt;/TestId&gt;
+  &lt;/TestAncestor&gt;
+&lt;/SessionState&gt;</s:String></wpf:ResourceDictionary>

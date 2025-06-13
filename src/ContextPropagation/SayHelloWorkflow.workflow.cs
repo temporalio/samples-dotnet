@@ -12,8 +12,8 @@ public class SayHelloWorkflow
     public async Task<string> RunAsync(string name)
     {
         Workflow.Logger.LogInformation(
-            "Workflow called by user {UserId}",
-            MyContext.UserId.Value);
+            "Workflow called by user {User}",
+            IdentityContext.User.Value);
 
         // Wait for signal then run activity
         await Workflow.WaitConditionAsync(() => complete);
@@ -27,7 +27,7 @@ public class SayHelloWorkflow
     {
         Workflow.Logger.LogInformation(
             "Signal called by user {UserId}",
-            MyContext.UserId.Value);
+            IdentityContext.User.Value);
         complete = true;
     }
 
@@ -36,7 +36,7 @@ public class SayHelloWorkflow
     {
         Workflow.Logger.LogInformation(
             "Query called by user {UserId}",
-            MyContext.UserId.Value);
+            IdentityContext.User.Value);
         return complete;
     }
 }

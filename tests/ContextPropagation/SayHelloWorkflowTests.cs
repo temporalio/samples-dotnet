@@ -24,7 +24,7 @@ public class SayHelloWorkflowTests : WorkflowEnvironmentTestBase
         clientOptions.Interceptors =
         [
             new ContextPropagationInterceptor<string>(
-                MyContext.UserId,
+                IdentityContext.UserId,
                 DataConverter.Default.PayloadConverter),
         ];
         var client = new TemporalClient(Client.Connection, clientOptions);
@@ -35,7 +35,7 @@ public class SayHelloWorkflowTests : WorkflowEnvironmentTestBase
         {
             try
             {
-                Assert.Equal("test-user", MyContext.UserId.Value);
+                Assert.Equal("test-user", IdentityContext.UserId.Value);
             }
             catch (Exception e)
             {
@@ -53,11 +53,11 @@ public class SayHelloWorkflowTests : WorkflowEnvironmentTestBase
         await worker.ExecuteAsync(async () =>
         {
             // Set context value, start workflow, set to something else
-            MyContext.UserId.Value = "test-user";
+            IdentityContext.UserId.Value = "test-user";
             var handle = await client.StartWorkflowAsync(
                 (SayHelloWorkflow wf) => wf.RunAsync("some-name"),
                 new(id: $"workflow-{Guid.NewGuid()}", taskQueue: worker.Options.TaskQueue!));
-            MyContext.UserId.Value = "some-other-value";
+            IdentityContext.UserId.Value = "some-other-value";
 
             // Send signal, check result
             await handle.SignalAsync(wf => wf.SignalCompleteAsync());
