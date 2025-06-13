@@ -1,5 +1,8 @@
 namespace TemporalioSamples.ContextPropagation;
 
+// Identity must be serializable.
+// We are using this to pass (via headers) the properties we'd use to
+// fetch IPrincipal, DbContext, etc
 public class Identity
 {
     public string ClientId { get; set; } = string.Empty;

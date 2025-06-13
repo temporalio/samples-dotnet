@@ -1,5 +1,6 @@
 using System.Diagnostics;
 using System.Security.Principal;
+using Microsoft.EntityFrameworkCore;
 
 namespace TemporalioSamples.ContextPropagation;
 
@@ -50,10 +51,14 @@ public class BusinessContextInterceptor : IWorkerInterceptor, IClientInterceptor
 
         public override Task<object?> ExecuteActivityAsync(ExecuteActivityInput input)
         {
+            // Yank out the identity that has been passed down (serialized) from the caller
             var name = $"{IdentityContext.User.Value?.UserId} : {IdentityContext.User.Value?.ClientId}";
+            // Here is where we could fetch the Principal from a database or other source
+            // the same as you'd do to set the `Application.CurrentPrincipal` in a web app.
             var id = new GenericIdentity(name);
             var roles = new[] { "admin", "user" };
             BusinessContext.CurrentPrincipal.Value = new GenericPrincipal(id, roles);
+            // BusinessContext.CurrentDbContext.Value = new DbContext(new DbContextOptions<>())
             return Next.ExecuteActivityAsync(input);
         }
     }
