@@ -19,7 +19,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Temporalio" Version="1.6.0" />
+    <PackageReference Include="Temporalio" Version="1.7.0" />
     <PackageReference Include="Temporalio.Extensions.DiagnosticSource" Version="1.6.0" />
     <PackageReference Include="Temporalio.Extensions.Hosting" Version="1.6.0" />
     <PackageReference Include="Temporalio.Extensions.OpenTelemetry" Version="1.6.0" />
