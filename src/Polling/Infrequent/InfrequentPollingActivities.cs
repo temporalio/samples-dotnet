@@ -2,6 +2,8 @@ namespace TemporalioSamples.Polling.Infrequent;
 
 using Microsoft.Extensions.Logging;
 using Temporalio.Activities;
+using Temporalio.Api.Enums.V1;
+using Temporalio.Exceptions;
 
 public class InfrequentPollingActivities
 {
@@ -16,11 +18,11 @@ public class InfrequentPollingActivities
         {
             return await service.GetServiceResultAsync(ActivityExecutionContext.Current.CancellationToken);
         }
-        catch (TestServiceException)
+        catch (TestServiceException e)
         {
             ActivityExecutionContext.Current.Logger.LogInformation("Test service was down");
             // We want to rethrow the service exception so we can poll via activity retries
-            throw;
+            throw new ApplicationFailureException("Service is down", inner: e, category: ApplicationErrorCategory.Benign);
         }
     }
 }
