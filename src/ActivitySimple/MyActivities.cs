@@ -1,3 +1,5 @@
+using Temporalio.Exceptions;
+
 namespace TemporalioSamples.ActivitySimple;
 
 using Temporalio.Activities;
@@ -12,8 +14,14 @@ public class MyActivities
 
     // Activities can be methods that can access state
     [Activity]
-    public Task<string> SelectFromDatabaseAsync(string table) =>
-        dbClient.SelectValueAsync(table);
+    public Task<string> SelectFromDatabaseAsync(string table)
+    {
+        if (table == "fail hard")
+        {
+            throw new ApplicationFailureException("This is a test exception", "TestError", true);
+        }
+        return dbClient.SelectValueAsync(table);
+    }
 
     public class MyDatabaseClient
     {

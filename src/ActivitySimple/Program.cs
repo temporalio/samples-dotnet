@@ -47,7 +47,7 @@ async Task ExecuteWorkflowAsync()
 {
     Console.WriteLine("Executing workflow");
     await client.ExecuteWorkflowAsync(
-        (MyWorkflow wf) => wf.RunAsync(),
+        (MyWorkflow wf) => wf.RunAsync(false),
         new(id: "activity-simple-workflow-id", taskQueue: "activity-simple-sample"));
 }
 

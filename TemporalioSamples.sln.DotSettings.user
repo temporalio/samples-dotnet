@@ -1,0 +1,8 @@
+﻿<wpf:ResourceDictionary xml:space="preserve" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:s="clr-namespace:System;assembly=mscorlib" xmlns:ss="urn:shemas-jetbrains-com:settings-storage-xaml" xmlns:wpf="http://schemas.microsoft.com/winfx/2006/xaml/presentation">
+	<s:String x:Key="/Default/CodeInspection/ExcludedFiles/FilesAndFoldersToSkip2/=7020124F_002D9FFC_002D4AC3_002D8F3D_002DAAB8E0240759_002Ff_003AActivityFailureException_002Ecs_002Fl_003A_002E_002E_003F_002E_002E_003FLibrary_003FApplication_0020Support_003FJetBrains_003FRider2025_002E1_003Fresharper_002Dhost_003FSourcesCache_003Fc767f65bf0983835d716112fe6312a7603ae799778ff99f1a21551aeceffc35_003FActivityFailureException_002Ecs/@EntryIndexedValue">ForceIncluded</s:String>
+	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=0a97c933_002D16ca_002D4354_002D8551_002Dff1e39038fdf/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" IsActive="True" Name="RunAsync_SimpleRun_FailsAsExpected" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;
+  &lt;TestAncestor&gt;
+    &lt;TestId&gt;xUnit::3FA7E5DF-03B7-4586-A980-85C155B376C5::net8.0::TemporalioSamples.Tests.ActivitySimple.MyWorkflowTests.RunAsync_SimpleRun_FailsAsExpected&lt;/TestId&gt;
+    &lt;TestId&gt;xUnit::3FA7E5DF-03B7-4586-A980-85C155B376C5::net8.0::TemporalioSamples.Tests.ActivitySimple.MyWorkflowTests.RunAsync_SimpleRun_Succeeds&lt;/TestId&gt;
+  &lt;/TestAncestor&gt;
+&lt;/SessionState&gt;</s:String></wpf:ResourceDictionary>
