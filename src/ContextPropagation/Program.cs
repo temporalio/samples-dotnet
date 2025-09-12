@@ -15,12 +15,12 @@ var client = await TemporalClient.ConnectAsync(new("localhost:7233")
 {
     LoggerFactory = loggerFactory,
     // This is where we set the interceptor to propagate context
-    Interceptors = new[]
-    {
-        new ContextPropagationInterceptor<string>(
-            MyContext.UserId,
+    Interceptors =
+    [
+        new ContextPropagationInterceptor<string?>(
+            MyContext.UserIdLocal,
             DataConverter.Default.PayloadConverter),
-    },
+    ],
 });
 
 async Task RunWorkerAsync()
@@ -53,7 +53,7 @@ async Task RunWorkerAsync()
 async Task ExecuteWorkflowAsync()
 {
     // Set our user ID that can be accessed in the workflow and activity
-    MyContext.UserId.Value = "some-user";
+    MyContext.UserId = "some-user";
 
     // Start workflow, send signal, wait for completion, issue query
     logger.LogInformation("Executing workflow");

@@ -1,0 +1,12 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="$(MSBuildThisFileDirectory)..\ContextPropagation\TemporalioSamples.ContextPropagation.csproj" />
+    <ProjectReference Include="$(MSBuildThisFileDirectory)..\..\..\nexus-sdk-dotnet\src\NexusRpc\NexusRpc.csproj" />
+  </ItemGroup>
+
+</Project>

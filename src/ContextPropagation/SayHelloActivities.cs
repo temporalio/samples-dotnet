@@ -9,8 +9,7 @@ public class SayHelloActivities
     public string SayHello(string name)
     {
         ActivityExecutionContext.Current.Logger.LogInformation(
-            "Activity called by user {UserId}",
-            MyContext.UserId.Value);
+            "Activity called by user {UserId}", MyContext.UserId);
         return $"Hello, {name}!";
     }
 }
