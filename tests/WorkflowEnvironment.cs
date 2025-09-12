@@ -8,6 +8,9 @@ public class WorkflowEnvironment : IAsyncLifetime
 {
     private Temporalio.Testing.WorkflowEnvironment? env;
 
+    public Temporalio.Testing.WorkflowEnvironment TestEnv =>
+        env ?? throw new InvalidOperationException("Environment not created");
+
     public ITemporalClient Client =>
         env?.Client ?? throw new InvalidOperationException("Environment not created");
 
