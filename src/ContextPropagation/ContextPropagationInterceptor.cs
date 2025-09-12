@@ -16,7 +16,6 @@ using Temporalio.Workflows;
 /// <typeparam name="T">Context data type.</typeparam>
 public class ContextPropagationInterceptor<T> : IClientInterceptor, IWorkerInterceptor
 {
-    private readonly AsyncLocal<T> context;
     private readonly IPayloadConverter payloadConverter;
     private readonly string headerKey;
 
@@ -25,10 +24,12 @@ public class ContextPropagationInterceptor<T> : IClientInterceptor, IWorkerInter
         IPayloadConverter payloadConverter,
         string headerKey = "__my_context_key")
     {
-        this.context = context;
+        Context = context;
         this.payloadConverter = payloadConverter;
         this.headerKey = headerKey;
     }
+
+    protected AsyncLocal<T> Context { get; private init; }
 
     public ClientOutboundInterceptor InterceptClient(ClientOutboundInterceptor nextInterceptor) =>
         new ContextPropagationClientOutboundInterceptor(this, nextInterceptor);
@@ -43,7 +44,7 @@ public class ContextPropagationInterceptor<T> : IClientInterceptor, IWorkerInter
     {
         var ret = existing != null ?
             new Dictionary<string, Payload>(existing) : new Dictionary<string, Payload>(1);
-        ret[headerKey] = payloadConverter.ToPayload(context.Value);
+        ret[headerKey] = payloadConverter.ToPayload(Context.Value);
         return ret;
     }
 
@@ -61,7 +62,7 @@ public class ContextPropagationInterceptor<T> : IClientInterceptor, IWorkerInter
     {
         if (headers?.TryGetValue(headerKey, out var payload) == true && payload != null)
         {
-            context.Value = payloadConverter.ToValue<T>(payload);
+            Context.Value = payloadConverter.ToValue<T>(payload);
         }
         // These are async local, no need to unapply afterwards
         return func();
