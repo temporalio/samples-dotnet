@@ -1,104 +1,178 @@
-using Microsoft.Extensions.Logging;
+using Temporalio.Api.WorkflowService.V1;
 using Temporalio.Client;
 using Temporalio.Common;
-using Temporalio.Worker;
-using TemporalioSamples.WorkerVersioning;
 
-// Create a client to localhost on default namespace
-var client = await TemporalClient.ConnectAsync(new("localhost:7233")
+namespace TemporalioSamples.WorkerVersioning;
+
+public static class Program
 {
-    LoggerFactory = LoggerFactory.Create(builder =>
-        builder.AddSimpleConsole(options => options.TimestampFormat = "[HH:mm:ss] ")
-            .SetMinimumLevel(LogLevel.Information)),
-});
+    public const string TaskQueue = "worker-versioning";
+    public const string DeploymentName = "my-deployment";
 
-var taskQueue = $"worker-versioning-{Guid.NewGuid()}";
+    private static readonly string[] DoActivitySignal = { "do-activity" };
+    private static readonly string[] SomeSignal = { "some-signal" };
+    private static readonly string[] ConcludeSignal = { "conclude" };
 
-// Start a 1.0 worker
-using var workerV1 = new TemporalWorker(
-    client,
-    new TemporalWorkerOptions(taskQueue) { DeploymentOptions = new WorkerDeploymentOptions(new WorkerDeploymentVersion($"deployment-{taskQueue}", "1.0"), true) }
-        .AddActivity(MyActivities.Greet)
-        .AddWorkflow<MyWorkflowV1>());
-
-var v1Handle = await workerV1.ExecuteAsync(async () =>
-{
-    // Add 1.0 as the default version for the queue
-    await client.UpdateWorkerBuildIdCompatibilityAsync(taskQueue, new BuildIdOp.AddNewDefault("1.0"));
-
-    // Start a workflow which will run on the 1.0 worker
-    var v1Handle = await client.StartWorkflowAsync(
-        (MyWorkflowV1 wf) => wf.RunAsync(),
-        new() { Id = "worker-versioning-v1", TaskQueue = taskQueue });
-
-    // Signal the workflow to proceed
-    await v1Handle.SignalAsync(wf => wf.ProceederAsync("go"));
-
-    // Give a chance for the workflow to process the signal
-    await Task.Delay(1000);
-
-    return v1Handle;
-});
-
-// Stop the old worker, add 1.1 as compatible with 1.0, and start a 1.1 worker. We do this to speed along the example,
-// since the 1.0 worker may continue to process tasks briefly after we make 1.1 the new default.
-await client.UpdateWorkerBuildIdCompatibilityAsync(taskQueue, new BuildIdOp.AddNewCompatible("1.1", "1.0"));
-using var workerV1Dot1 = new TemporalWorker(
-    client,
-    new TemporalWorkerOptions(taskQueue) { DeploymentOptions = new WorkerDeploymentOptions(new WorkerDeploymentVersion($"deployment-{taskQueue}", "1.1"), true) }
-        .AddActivity(MyActivities.Greet)
-        .AddActivity(MyActivities.SuperGreet)
-        .AddWorkflow<MyWorkflowV1Dot1>());
-
-await workerV1Dot1.ExecuteAsync(async () =>
-{
-    // Continue driving the workflow. Take note that the new version of the workflow run by the 1.1
-    // worker is the one that takes over! You might see a workflow task timeout, if the 1.0 worker is
-    // processing a task as the version update happens. That's normal.
-    await v1Handle.SignalAsync(wf => wf.ProceederAsync("go"));
-
-    // Add a new *incompatible* version to the task queue, which will become the new overall default for the queue.
-    await client.UpdateWorkerBuildIdCompatibilityAsync(taskQueue, new BuildIdOp.AddNewDefault("2.0"));
-
-    // Start a 2.0 worker
-    using var workerV2 = new TemporalWorker(
-        client,
-        new TemporalWorkerOptions(taskQueue) { DeploymentOptions = new WorkerDeploymentOptions(new WorkerDeploymentVersion($"deployment-{taskQueue}", "2.0"), true) }
-        .AddActivity(MyActivities.Greet)
-        .AddActivity(MyActivities.SuperGreet)
-        .AddWorkflow<MyWorkflowV2>());
-    await workerV2.ExecuteAsync(async () =>
+    public static async Task Main(string[] args)
     {
-        // Start a new workflow. Note that it will run on the new 2.0 version, without the client invocation changing
-        // at all! Note here we can use `MyWorkflowV1.run` because the signature of the workflow has not changed.
-        var v2Handle = await client.StartWorkflowAsync(
-            (MyWorkflowV2 wf) => wf.RunAsync(),
-            new() { Id = "worker-versioning-v2", TaskQueue = taskQueue });
-
-        // Drive both workflows once more before concluding them. The first workflow will continue running on the 1.1
-        // worker.
-        await v1Handle.SignalAsync(wf => wf.ProceederAsync("go"));
-        await v2Handle.SignalAsync(wf => wf.ProceederAsync("go"));
-        await v1Handle.SignalAsync(wf => wf.ProceederAsync("finish"));
-        await v2Handle.SignalAsync(wf => wf.ProceederAsync("finish"));
-
-        // Wait for both to complete
-        await v1Handle.GetResultAsync();
-        await v2Handle.GetResultAsync();
-
-        // Lastly we'll demonstrate how you can use the gRPC api to determine if certain build IDs are ready to be
-        // retired. There's more information in the documentation, but here's a quick example that shows us how to
-        // tell when the 1.0 worker can be retired:
-
-        // There is a 5 minute buffer before we will consider IDs no longer reachable by new workflows, to
-        // account for replication in multi-cluster setups. Uncomment the following line to wait long enough to see
-        // the 1.0 worker become unreachable.
-        // await Task.Delay(TimeSpan.FromMinutes(5));
-        var reachability =
-            await client.GetWorkerTaskReachabilityAsync(new List<string> { "2.0", "1.1", "1.0" }, new List<string>());
-        if (reachability.BuildIdReachability["1.0"].TaskQueueReachability[taskQueue].Count == 0)
+        if (args.Length == 0)
         {
-            Console.WriteLine("Build Id 1.0 is no longer reachable");
+            Console.WriteLine("Usage: WorkerVersioning <command> [options]");
+            Console.WriteLine();
+            Console.WriteLine("Commands:");
+            Console.WriteLine("  worker-v1    - Start worker with version 1.0");
+            Console.WriteLine("  worker-v1.1  - Start worker with version 1.1");
+            Console.WriteLine("  worker-v2    - Start worker with version 2.0");
+            Console.WriteLine("  demo         - Run the complete versioning demonstration");
+            return;
         }
-    });
-});
+
+        var client = await TemporalClient.ConnectAsync(new("localhost:7233"));
+
+        switch (args[0].ToLower())
+        {
+            case "worker-v1":
+                await WorkerV1.RunAsync(client);
+                break;
+            case "worker-v1.1":
+                await WorkerV1Dot1.RunAsync(client);
+                break;
+            case "worker-v2":
+                await WorkerV2.RunAsync(client);
+                break;
+            case "demo":
+                await RunDemoAsync(client);
+                break;
+            default:
+                Console.WriteLine($"Unknown command: {args[0]}");
+                break;
+        }
+    }
+
+    private static async Task RunDemoAsync(TemporalClient client)
+    {
+        // Wait for v1 worker and set as current version
+        var workerV1Version = new WorkerDeploymentVersion(Program.DeploymentName, "1.0");
+        Console.WriteLine("Waiting for v1 worker to appear. Run `dotnet run worker-v1` in another terminal");
+        await WaitForWorkerVersionAsync(client, workerV1Version);
+        await SetCurrentVersionAsync(client, workerV1Version);
+
+        // Start auto-upgrading and pinned workflows. Importantly, note that when we start the workflows,
+        // we are using a workflow type name which does *not* include the version number. We defined them
+        // with versioned names so we could show changes to the code, but here when the client invokes
+        // them, we're demonstrating that the client remains version-agnostic.
+        var autoUpgradingId = $"worker-versioning-versioning-autoupgrade_{Guid.NewGuid()}";
+        var autoUpgradingHandle = await client.StartWorkflowAsync(
+            "AutoUpgradingWorkflow",
+            Array.Empty<object>(),
+            new(id: autoUpgradingId, taskQueue: Program.TaskQueue));
+        Console.WriteLine($"Started auto-upgrading workflow: {autoUpgradingHandle.Id}");
+
+        var pinnedId = $"worker-versioning-versioning-pinned_{Guid.NewGuid()}";
+        var pinnedHandle = await client.StartWorkflowAsync(
+            "PinnedWorkflow",
+            Array.Empty<object>(),
+            new(id: pinnedId, taskQueue: Program.TaskQueue));
+        Console.WriteLine($"Started pinned workflow: {pinnedHandle.Id}");
+
+        // Signal both workflows a few times to drive them
+        await SignalWorkflowsAsync(autoUpgradingHandle, pinnedHandle);
+
+        // Now wait for the v1.1 worker to appear and become current
+        var workerV1_1Version = new WorkerDeploymentVersion(Program.DeploymentName, "1.1");
+        Console.WriteLine("Waiting for v1.1 worker to appear. Run `dotnet run worker-v1.1` in another terminal");
+        await WaitForWorkerVersionAsync(client, workerV1_1Version);
+        await SetCurrentVersionAsync(client, workerV1_1Version);
+
+        // Once it has, we will continue to advance the workflows.
+        // The auto-upgrade workflow will now make progress on the new worker, while the pinned one will
+        // keep progressing on the old worker.
+        await SignalWorkflowsAsync(autoUpgradingHandle, pinnedHandle);
+
+        // Finally we'll start the v2 worker, and again it'll become the new current version
+        var workerV2Version = new WorkerDeploymentVersion(Program.DeploymentName, "2.0");
+        Console.WriteLine("Waiting for v2 worker to appear. Run `dotnet run worker-v2` in another terminal");
+        await WaitForWorkerVersionAsync(client, workerV2Version);
+        await SetCurrentVersionAsync(client, workerV2Version);
+
+        // Once it has we'll start one more new workflow, another pinned one, to demonstrate that new
+        // pinned workflows start on the current version.
+        var pinnedV2Id = $"worker-versioning-versioning-pinned-2_{Guid.NewGuid()}";
+        var pinnedV2Handle = await client.StartWorkflowAsync(
+            "PinnedWorkflow",
+            Array.Empty<object>(),
+            new(id: pinnedV2Id, taskQueue: Program.TaskQueue));
+        Console.WriteLine($"Started pinned workflow v2: {pinnedV2Handle.Id}");
+
+        // Now we'll conclude all workflows. You should be able to see in your server UI that the pinned
+        // workflow always stayed on 1.0, while the auto-upgrading workflow migrated.
+        foreach (var handle in new[] { autoUpgradingHandle, pinnedHandle, pinnedV2Handle })
+        {
+            await handle.SignalAsync("DoNextSignal", ConcludeSignal);
+            await handle.GetResultAsync();
+        }
+
+        Console.WriteLine("All workflows completed");
+    }
+
+    /// <summary>Signal both workflows a few times to drive them.</summary>
+    private static async Task SignalWorkflowsAsync(WorkflowHandle autoUpgradingHandle, WorkflowHandle pinnedHandle)
+    {
+        await autoUpgradingHandle.SignalAsync("DoNextSignal", DoActivitySignal);
+        await pinnedHandle.SignalAsync("DoNextSignal", SomeSignal);
+    }
+
+    private static async Task WaitForWorkerVersionAsync(TemporalClient client, WorkerDeploymentVersion version)
+    {
+        while (true)
+        {
+            try
+            {
+                var request = new DescribeWorkerDeploymentRequest
+                {
+                    Namespace = client.Options.Namespace,
+                    DeploymentName = version.DeploymentName,
+                };
+
+                var response = await client.WorkflowService.DescribeWorkerDeploymentAsync(request);
+
+                var versionInfo = response.WorkerDeploymentInfo.VersionSummaries
+                    .FirstOrDefault(v => v.DeploymentVersion?.BuildId == version.BuildId);
+
+                if (versionInfo != null)
+                {
+                    return;
+                }
+            }
+            catch (Temporalio.Exceptions.RpcException)
+            {
+                // Deployment not found yet
+            }
+
+            await Task.Delay(1000);
+        }
+    }
+
+    private static async Task SetCurrentVersionAsync(TemporalClient client, WorkerDeploymentVersion version)
+    {
+        // First get the current deployment info for the conflict token
+        var describeRequest = new DescribeWorkerDeploymentRequest
+        {
+            Namespace = client.Options.Namespace,
+            DeploymentName = version.DeploymentName,
+        };
+
+        var describeResponse = await client.WorkflowService.DescribeWorkerDeploymentAsync(describeRequest);
+
+        // Set the current version
+        var setRequest = new SetWorkerDeploymentCurrentVersionRequest
+        {
+            Namespace = client.Options.Namespace,
+            DeploymentName = version.DeploymentName,
+            BuildId = version.BuildId,
+            ConflictToken = describeResponse.ConflictToken,
+        };
+
+        await client.WorkflowService.SetWorkerDeploymentCurrentVersionAsync(setRequest);
+    }
+}
