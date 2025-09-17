@@ -2,10 +2,10 @@ using Temporalio.Activities;
 
 namespace TemporalioSamples.WorkerVersioning;
 
-public record IncompatibleActivityInput(string CalledBy, string MoreData);
-
 public class MyActivities
 {
+    public record IncompatibleActivityInput(string CalledBy, string MoreData);
+
     [Activity]
     public string SomeActivity(string calledBy)
     {

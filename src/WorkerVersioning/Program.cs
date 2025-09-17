@@ -49,7 +49,7 @@ public static class Program
         }
     }
 
-    private static async Task RunDemoAsync(TemporalClient client)
+    public static async Task RunDemoAsync(TemporalClient client)
     {
         // Wait for v1 worker and set as current version
         var workerV1Version = new WorkerDeploymentVersion(Program.DeploymentName, "1.0");
