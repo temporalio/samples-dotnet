@@ -41,9 +41,5 @@ public class PinnedWorkflowV2
     }
 
     [WorkflowSignal]
-    public Task DoNextSignalAsync(string signal)
-    {
-        signals.Enqueue(signal);
-        return Task.CompletedTask;
-    }
+    public async Task DoNextSignalAsync(string signal) => signals.Enqueue(signal);
 }

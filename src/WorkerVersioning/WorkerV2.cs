@@ -23,8 +23,7 @@ public static class WorkerV2
             }
             .AddWorkflow<AutoUpgradingWorkflowV1Dot1>()
             .AddWorkflow<PinnedWorkflowV2>()
-            .AddActivity(new MyActivities().SomeActivity)
-            .AddActivity(new MyActivities().SomeIncompatibleActivity));
+            .AddAllActivities(new MyActivities()));
 
         Console.WriteLine($"Starting worker with version: {deploymentVersion}");
         await worker.ExecuteAsync(cancellationToken);
