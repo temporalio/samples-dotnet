@@ -10,6 +10,7 @@ The sample creates multiple worker versions (1.0, 1.1, and 2.0) within one deplo
 ### Steps to run this sample:
 
 1) Run a [Temporal service](https://github.com/temporalio/samples-dotnet/tree/main/#how-to-use).
+   Ensure that you're using at least Server version 1.28.0 (CLI version 1.4.0).
 
 2) Start the main application (this will guide you through the sample):
 ```bash
@@ -21,4 +22,5 @@ dotnet run demo
    - When prompted, run: `dotnet run worker-v1.1`
    - When prompted, run: `dotnet run worker-v2`
 
-The sample will show how auto-upgrading workflows migrate to newer workers while pinned workflows remain on their original version.
+The sample will show how auto-upgrading workflows migrate to newer workers while pinned workflows
+remain on their original version.
