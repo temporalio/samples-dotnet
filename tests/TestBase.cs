@@ -5,7 +5,6 @@ using Xunit.Abstractions;
 
 public abstract class TestBase : IDisposable
 {
-    private static readonly TextWriter OriginalOut = Console.Out;
     private readonly TextWriter? consoleWriter;
 
     protected TestBase(ITestOutputHelper output)
@@ -22,7 +21,7 @@ public abstract class TestBase : IDisposable
             LoggerFactory = Microsoft.Extensions.Logging.LoggerFactory.Create(builder =>
                 builder.AddXUnit(output));
             // Only set this if not in-proc
-            consoleWriter = new ConsoleWriter(output, OriginalOut);
+            consoleWriter = new ConsoleWriter(output);
             Console.SetOut(consoleWriter);
         }
     }
