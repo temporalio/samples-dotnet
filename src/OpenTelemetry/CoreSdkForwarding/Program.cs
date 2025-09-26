@@ -4,6 +4,7 @@ using OpenTelemetry.Metrics;
 using OpenTelemetry.Resources;
 using OpenTelemetry.Trace;
 using Temporalio.Client;
+using Temporalio.Client.EnvConfig;
 using Temporalio.Extensions.OpenTelemetry;
 using Temporalio.Runtime;
 using Temporalio.Worker;
@@ -25,27 +26,30 @@ using var tracerProvider = Sdk.
     Build();
 
 // Create a client to localhost on default namespace
-var client = await TemporalClient.ConnectAsync(new("localhost:7233")
+var connectOptions = ClientEnvConfig.LoadClientConnectOptions();
+if (string.IsNullOrEmpty(connectOptions.TargetHost))
 {
-    LoggerFactory = LoggerFactory.Create(builder =>
-        builder.
-            AddSimpleConsole(options => options.TimestampFormat = "[HH:mm:ss] ").
-            SetMinimumLevel(LogLevel.Information)),
-    Interceptors = new[] { new TracingInterceptor() },
-    Runtime = new TemporalRuntime(new TemporalRuntimeOptions()
+    connectOptions.TargetHost = "localhost:7233";
+}
+connectOptions.LoggerFactory = LoggerFactory.Create(builder =>
+    builder.
+        AddSimpleConsole(options => options.TimestampFormat = "[HH:mm:ss] ").
+        SetMinimumLevel(LogLevel.Information));
+connectOptions.Interceptors = new[] { new TracingInterceptor() };
+connectOptions.Runtime = new TemporalRuntime(new TemporalRuntimeOptions()
+{
+    Telemetry = new TelemetryOptions()
     {
-        Telemetry = new TelemetryOptions()
+        Metrics = new MetricsOptions()
         {
-            Metrics = new MetricsOptions()
+            OpenTelemetry = new OpenTelemetryOptions()
             {
-                OpenTelemetry = new OpenTelemetryOptions()
-                {
-                    Url = new Uri("http://localhost:4317"),
-                },
+                Url = new Uri("http://localhost:4317"),
             },
         },
-    }),
+    },
 });
+var client = await TemporalClient.ConnectAsync(connectOptions);
 
 async Task RunWorkerAsync()
 {

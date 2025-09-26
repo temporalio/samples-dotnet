@@ -1,18 +1,22 @@
 using System.Globalization;
 using Microsoft.Extensions.Logging;
 using Temporalio.Client;
+using Temporalio.Client.EnvConfig;
 using Temporalio.Exceptions;
 using Temporalio.Worker;
 using TemporalioSamples.UpdateWithStartLazyInit;
 
 // Create a client to localhost on default namespace
-var client = await TemporalClient.ConnectAsync(new("localhost:7233")
+var connectOptions = ClientEnvConfig.LoadClientConnectOptions();
+if (string.IsNullOrEmpty(connectOptions.TargetHost))
 {
-    LoggerFactory = LoggerFactory.Create(builder =>
-        builder.
-            AddSimpleConsole(options => options.TimestampFormat = "[HH:mm:ss] ").
-            SetMinimumLevel(LogLevel.Information)),
-});
+    connectOptions.TargetHost = "localhost:7233";
+}
+connectOptions.LoggerFactory = LoggerFactory.Create(builder =>
+    builder.
+        AddSimpleConsole(options => options.TimestampFormat = "[HH:mm:ss] ").
+        SetMinimumLevel(LogLevel.Information));
+var client = await TemporalClient.ConnectAsync(connectOptions);
 
 const string TaskQueue = "update-with-start-lazy-init";
 

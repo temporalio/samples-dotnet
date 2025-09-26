@@ -1,4 +1,5 @@
 using Temporalio.Client;
+using Temporalio.Client.EnvConfig;
 using TemporalioSamples.AspNet.Worker;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -9,14 +10,18 @@ builder.Logging.AddSimpleConsole().SetMinimumLevel(LogLevel.Information);
 // Set a singleton for the client _task_. Errors will not happen here, only when
 // the await is performed.
 builder.Services.AddSingleton(ctx =>
+{
     // TODO(cretz): It is not great practice to pass around tasks to be awaited
     // on separately (VSTHRD003). We may prefer a direct DI extension, see
     // https://github.com/temporalio/sdk-dotnet/issues/46.
-    TemporalClient.ConnectAsync(new()
+    var connectOptions = ClientEnvConfig.LoadClientConnectOptions();
+    if (string.IsNullOrEmpty(connectOptions.TargetHost))
     {
-        TargetHost = "localhost:7233",
-        LoggerFactory = ctx.GetRequiredService<ILoggerFactory>(),
-    }));
+        connectOptions.TargetHost = "localhost:7233";
+    }
+    connectOptions.LoggerFactory = ctx.GetRequiredService<ILoggerFactory>();
+    return TemporalClient.ConnectAsync(connectOptions);
+});
 
 var app = builder.Build();
 
