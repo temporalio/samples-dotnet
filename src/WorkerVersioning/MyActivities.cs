@@ -2,17 +2,19 @@ using Temporalio.Activities;
 
 namespace TemporalioSamples.WorkerVersioning;
 
-public static class MyActivities
+public class MyActivities
 {
+    public record IncompatibleActivityInput(string CalledBy, string MoreData);
+
     [Activity]
-    public static string Greet(string text)
+    public string SomeActivity(string calledBy)
     {
-        return $"Hello {text}";
+        return $"SomeActivity called by {calledBy}";
     }
 
     [Activity]
-    public static string SuperGreet(string text, int num)
+    public string SomeIncompatibleActivity(IncompatibleActivityInput inputData)
     {
-        return $"Hello {text} with {num}";
+        return $"SomeIncompatibleActivity called by: {inputData.CalledBy} with {inputData.MoreData}";
     }
 }

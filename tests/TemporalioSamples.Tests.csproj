@@ -13,9 +13,9 @@
     <PackageReference Include="Microsoft.AspNetCore.Mvc.Testing" Version="6.0.0" />
     <PackageReference Include="Microsoft.Extensions.Hosting" Version="8.0.1" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.4.1" />
-    <PackageReference Include="xunit" Version="2.4.2" />
-    <PackageReference Include="xunit.console" Version="2.4.2" />
-    <PackageReference Include="xunit.runner.visualstudio" Version="2.4.3" />
+    <PackageReference Include="xunit" Version="2.9.3" />
+    <PackageReference Include="xunit.console" Version="2.9.3" />
+    <PackageReference Include="xunit.runner.visualstudio" Version="3.1.4" />
   </ItemGroup>
 
   <ItemGroup>
@@ -32,6 +32,7 @@
     <ProjectReference Include="..\src\UpdateWithStartLazyInit\TemporalioSamples.UpdateWithStartLazyInit.csproj" />
     <ProjectReference Include="..\src\WorkerSpecificTaskQueues\TemporalioSamples.WorkerSpecificTaskQueues.csproj" />
     <ProjectReference Include="..\src\WorkflowUpdate\TemporalioSamples.WorkflowUpdate.csproj" />
+    <ProjectReference Include="..\src\WorkerVersioning\TemporalioSamples.WorkerVersioning.csproj" />
     <ProjectReference Include="..\src\SleepForDays\TemporalioSamples.SleepForDays.csproj" />
   </ItemGroup>
 
