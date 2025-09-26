@@ -1,18 +1,22 @@
 using Microsoft.Extensions.Logging;
 using Temporalio.Client;
+using Temporalio.Client.EnvConfig;
 using Temporalio.Converters;
 using TemporalioSamples.Encryption.Codec;
 using TemporalioSamples.Encryption.Worker;
 
 // Create a client to localhost on default namespace
-var client = await TemporalClient.ConnectAsync(new("localhost:7233")
+var connectOptions = ClientEnvConfig.LoadClientConnectOptions();
+if (string.IsNullOrEmpty(connectOptions.TargetHost))
 {
-    DataConverter = DataConverter.Default with { PayloadCodec = new EncryptionCodec() },
-    LoggerFactory = LoggerFactory.Create(builder =>
-        builder.
-            AddSimpleConsole(options => options.TimestampFormat = "[HH:mm:ss] ").
-            SetMinimumLevel(LogLevel.Information)),
-});
+    connectOptions.TargetHost = "localhost:7233";
+}
+connectOptions.DataConverter = DataConverter.Default with { PayloadCodec = new EncryptionCodec() };
+connectOptions.LoggerFactory = LoggerFactory.Create(builder =>
+    builder.
+        AddSimpleConsole(options => options.TimestampFormat = "[HH:mm:ss] ").
+        SetMinimumLevel(LogLevel.Information));
+var client = await TemporalClient.ConnectAsync(connectOptions);
 
 // Run workflow
 var result = await client.ExecuteWorkflowAsync(
