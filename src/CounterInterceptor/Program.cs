@@ -1,6 +1,7 @@
 ﻿namespace TemporalioSamples.CounterInterceptor;
 
 using Temporalio.Client;
+using Temporalio.Client.EnvConfig;
 using Temporalio.Worker;
 
 internal class Program
@@ -8,14 +9,16 @@ internal class Program
     private static async Task Main(string[] args)
     {
         var counterInterceptor = new MyCounterInterceptor();
-        var client = await TemporalClient.ConnectAsync(
-            options: new("localhost:7233")
-            {
-                Interceptors = new[]
-                {
-                    counterInterceptor,
-                },
-            });
+        var connectOptions = ClientEnvConfig.LoadClientConnectOptions();
+        if (string.IsNullOrEmpty(connectOptions.TargetHost))
+        {
+            connectOptions.TargetHost = "localhost:7233";
+        }
+        connectOptions.Interceptors = new[]
+        {
+            counterInterceptor,
+        };
+        var client = await TemporalClient.ConnectAsync(connectOptions);
 
         var activities = new MyActivities();
 
