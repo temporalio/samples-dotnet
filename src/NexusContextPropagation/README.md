@@ -25,13 +25,13 @@ In one terminal, run the handler worker from this directory:
 dotnet run handler-worker
 ```
 
-In another terminal, run the caller worker from this directory:
+In a second terminal, run the caller worker from this directory:
 
 ```
 dotnet run caller-worker
 ```
 
-In another terminal, run the caller workflow:
+In a third terminal, run the caller workflow:
 
 ```
 dotnet run caller-workflow
