@@ -22,6 +22,7 @@ Prerequisites:
 * [CounterInterceptor](src/CounterInterceptor/) - Simple Workflow and Client Interceptors example.
 * [DependencyInjection](src/DependencyInjection) - How to inject dependencies in activities and use generic hosts for workers
 * [Encryption](src/Encryption) - End-to-end encryption with Temporal payload codecs.
+* [EnvConfig] (src/EnvConfig) - Load client configuration from TOML files with programmatic overrides
 * [Mutex](src/Mutex) - How to implement a mutex as a workflow. Demonstrates how to avoid race conditions or parallel mutually exclusive operations on the same resource.
 * [NexusContextPropagation](src/NexusContextPropagation) - Context propagation through Nexus services.
 * [NexusMultiArg](src/NexusMultiArg) - Nexus service implementation calling a workflow with multiple arguments.
