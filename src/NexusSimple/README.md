@@ -1,4 +1,4 @@
-# Nexus Context Propagation
+# Nexus Simple
 
 This sample demonstrates how to use Temporal for authoring a Nexus service and call it from a workflow.
 

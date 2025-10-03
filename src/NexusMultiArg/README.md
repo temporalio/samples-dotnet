@@ -1,4 +1,4 @@
-# Nexus Context Propagation
+# Nexus Multi Arg
 
 This sample demonstrates how to convert a single Nexus argument into multiple workflow arguments.
 
