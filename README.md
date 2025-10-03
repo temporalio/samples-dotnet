@@ -22,9 +22,11 @@ Prerequisites:
 * [CounterInterceptor](src/CounterInterceptor/) - Simple Workflow and Client Interceptors example.
 * [DependencyInjection](src/DependencyInjection) - How to inject dependencies in activities and use generic hosts for workers
 * [Encryption](src/Encryption) - End-to-end encryption with Temporal payload codecs.
-* [EnvConfig] (src/EnvConfig) - Load client configuration from TOML files with programmatic overrides
+* [EnvConfig](src/EnvConfig) - Load client configuration from TOML files with programmatic overrides
 * [Mutex](src/Mutex) - How to implement a mutex as a workflow. Demonstrates how to avoid race conditions or parallel mutually exclusive operations on the same resource.
 * [NexusContextPropagation](src/NexusContextPropagation) - Context propagation through Nexus services.
+* [NexusMultiArg](src/NexusMultiArg) - Nexus service implementation calling a workflow with multiple arguments.
+* [NexusSimple](src/NexusSimple) - Simple Nexus service implementation.
 * [OpenTelemetry](src/OpenTelemetry) - Demonstrates how to set up OpenTelemetry tracing and metrics for both the client and worker, using both the .NET metrics API and internal forwarding from the Core SDK.
 * [Patching](src/Patching) - Alter workflows safely with Patch and DeprecatePatch.
 * [Polling](src/Polling) - Recommended implementation of an activity that needs to periodically poll an external resource waiting its successful completion.
