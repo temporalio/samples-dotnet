@@ -13,4 +13,4 @@ To run, first see the main [README.md](../../README.md) for prerequisites.
 
 Then run the sample:
 
-    dotnet run --project src/EagerWfStart
+    dotnet run

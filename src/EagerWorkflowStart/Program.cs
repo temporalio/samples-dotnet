@@ -1,7 +1,7 @@
 using Microsoft.Extensions.Logging;
 using Temporalio.Client;
 using Temporalio.Worker;
-using TemporalioSamples.EagerWfStart;
+using TemporalioSamples.EagerWorkflowStart;
 
 // Create a client to localhost on default namespace
 var client = await TemporalClient.ConnectAsync(new("localhost:7233")
@@ -12,7 +12,7 @@ var client = await TemporalClient.ConnectAsync(new("localhost:7233")
             SetMinimumLevel(LogLevel.Information)),
 });
 
-const string TaskQueue = "eager-wf-start";
+const string TaskQueue = "eager-wf-start-sample";
 
 // Create an activity instance
 var activities = new Activities();
@@ -23,13 +23,13 @@ using var worker = new TemporalWorker(
     client,
     new TemporalWorkerOptions(TaskQueue).
         AddActivity(activities.Greeting).
-        AddWorkflow<EagerWfStartWorkflow>());
+        AddWorkflow<EagerWorkflowStartWorkflow>());
 
 await worker.ExecuteAsync(async () =>
 {
     // Start workflow with eager start enabled
     var handle = await client.StartWorkflowAsync(
-        (EagerWfStartWorkflow wf) => wf.RunAsync("Temporal"),
+        (EagerWorkflowStartWorkflow wf) => wf.RunAsync("Temporal"),
         new(id: $"eager-workflow-{Guid.NewGuid()}", taskQueue: TaskQueue)
         {
             RequestEagerStart = true,

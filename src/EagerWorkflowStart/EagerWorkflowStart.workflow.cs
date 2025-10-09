@@ -1,9 +1,9 @@
-namespace TemporalioSamples.EagerWfStart;
+namespace TemporalioSamples.EagerWorkflowStart;
 
 using Temporalio.Workflows;
 
 [Workflow]
-public class EagerWfStartWorkflow
+public class EagerWorkflowStartWorkflow
 {
     [WorkflowRun]
     public async Task<string> RunAsync(string name)

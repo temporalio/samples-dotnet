@@ -1,33 +1,33 @@
-namespace TemporalioSamples.Tests.EagerWfStart;
+namespace TemporalioSamples.Tests.EagerWorkflowStart;
 
-using Temporalio.Testing;
+using Temporalio.Client;
 using Temporalio.Worker;
-using TemporalioSamples.EagerWfStart;
+using TemporalioSamples.EagerWorkflowStart;
 using Xunit;
 using Xunit.Abstractions;
 
-public class EagerWfStartTest : TestBase
+public class EagerWorkflowStartTest : WorkflowEnvironmentTestBase
 {
-    public EagerWfStartTest(ITestOutputHelper output)
-        : base(output)
+    public EagerWorkflowStartTest(ITestOutputHelper output, WorkflowEnvironment env)
+        : base(output, env)
     {
     }
 
     [Fact]
     public async Task RunAsync_EagerWorkflowStart_Succeeds()
     {
-        await using var env = await WorkflowEnvironment.StartLocalAsync();
+        var client = new TemporalClient(Client.Connection, Client.Options);
         var activities = new Activities();
         using var worker = new TemporalWorker(
-            env.Client,
+            client,
             new TemporalWorkerOptions("my-task-queue").
                 AddActivity(activities.Greeting).
-                AddWorkflow<EagerWfStartWorkflow>());
+                AddWorkflow<EagerWorkflowStartWorkflow>());
         await worker.ExecuteAsync(async () =>
         {
             // Start workflow with eager start enabled
-            var handle = await env.Client.StartWorkflowAsync(
-                (EagerWfStartWorkflow wf) => wf.RunAsync("Temporal"),
+            var handle = await client.StartWorkflowAsync(
+                (EagerWorkflowStartWorkflow wf) => wf.RunAsync("Temporal"),
                 new(id: $"workflow-{Guid.NewGuid()}", taskQueue: worker.Options.TaskQueue!)
                 {
                     RequestEagerStart = true,
