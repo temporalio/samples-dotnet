@@ -16,17 +16,16 @@ public class EagerWorkflowStartTest : WorkflowEnvironmentTestBase
     [Fact]
     public async Task RunAsync_EagerWorkflowStart_Succeeds()
     {
-        var client = new TemporalClient(Client.Connection, Client.Options);
         var activities = new Activities();
         using var worker = new TemporalWorker(
-            client,
+            Client,
             new TemporalWorkerOptions("my-task-queue").
                 AddActivity(activities.Greeting).
                 AddWorkflow<EagerWorkflowStartWorkflow>());
         await worker.ExecuteAsync(async () =>
         {
             // Start workflow with eager start enabled
-            var handle = await client.StartWorkflowAsync(
+            var handle = await Client.StartWorkflowAsync(
                 (EagerWorkflowStartWorkflow wf) => wf.RunAsync("Temporal"),
                 new(id: $"workflow-{Guid.NewGuid()}", taskQueue: worker.Options.TaskQueue!)
                 {
