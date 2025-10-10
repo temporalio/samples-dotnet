@@ -20,6 +20,7 @@ public class WorkflowEnvironment : IAsyncLifetime
         {
             DevServerOptions = new()
             {
+                DownloadVersion = "latest",
                 ExtraArgs =
                 [
                     "--dynamic-config-value",

@@ -1,4 +1,4 @@
-namespace TemporalioSamples.EagerWfStart;
+namespace TemporalioSamples.EagerWorkflowStart;
 
 using Temporalio.Activities;
 

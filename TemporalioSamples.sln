@@ -45,7 +45,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TemporalioSamples.Polling.P
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TemporalioSamples.DependencyInjection", "src\DependencyInjection\TemporalioSamples.DependencyInjection.csproj", "{10E6F7C9-7F6C-4A8E-94A1-99C10F46BBA4}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TemporalioSamples.EagerWfStart", "src\EagerWfStart\TemporalioSamples.EagerWfStart.csproj", "{E4641F90-A1B2-4C8D-9E3F-1A2B3C4D5E6F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TemporalioSamples.EagerWorkflowStart", "src\EagerWorkflowStart\TemporalioSamples.EagerWorkflowStart.csproj", "{E4641F90-A1B2-4C8D-9E3F-1A2B3C4D5E6F}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TemporalioSamples.WorkerVersioning", "src\WorkerVersioning\TemporalioSamples.WorkerVersioning.csproj", "{CA3FD1BC-C918-4B15-96F6-D6DDA125E63C}"
 EndProject
