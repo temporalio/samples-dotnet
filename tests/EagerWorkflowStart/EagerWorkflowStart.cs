@@ -1,6 +1,5 @@
 namespace TemporalioSamples.Tests.EagerWorkflowStart;
 
-using Temporalio.Client;
 using Temporalio.Worker;
 using TemporalioSamples.EagerWorkflowStart;
 using Xunit;
@@ -35,6 +34,11 @@ public class EagerWorkflowStartTest : WorkflowEnvironmentTestBase
             // Verify the workflow completes successfully
             var result = await handle.GetResultAsync();
             Assert.Equal("Hello, Temporal!", result);
+
+            var history = await handle.FetchHistoryAsync();
+            Assert.Contains(history.Events, e =>
+                e.WorkflowExecutionStartedEventAttributes != null &&
+                e.WorkflowExecutionStartedEventAttributes.EagerExecutionAccepted == true);
         });
     }
 }
