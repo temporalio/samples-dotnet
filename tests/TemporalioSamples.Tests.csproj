@@ -24,6 +24,7 @@
     <ProjectReference Include="..\src\Bedrock\Entity\TemporalioSamples.Bedrock.Entity.csproj" />
     <ProjectReference Include="..\src\ContextPropagation\TemporalioSamples.ContextPropagation.csproj" />
     <ProjectReference Include="..\src\CounterInterceptor\TemporalioSamples.CounterInterceptor.csproj" />
+    <ProjectReference Include="..\src\EagerWorkflowStart\TemporalioSamples.EagerWorkflowStart.csproj" />
     <ProjectReference Include="..\src\Encryption\Codec\TemporalioSamples.Encryption.Codec.csproj" />
     <ProjectReference Include="..\src\Encryption\CodecServer\TemporalioSamples.Encryption.CodecServer.csproj" />
     <ProjectReference Include="..\src\NexusContextPropagation\TemporalioSamples.NexusContextPropagation.csproj" />
