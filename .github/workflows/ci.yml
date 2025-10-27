@@ -5,6 +5,9 @@ on:
     branches:
       - main
       - "releases/*"
+permissions:
+  contents: read
+  actions: write
 
 jobs:
   build-lint-test:
