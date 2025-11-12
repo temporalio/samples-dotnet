@@ -21,8 +21,8 @@ connectOptions.LoggerFactory = loggerFactory;
 // This is where we set the interceptor to propagate context
 connectOptions.Interceptors = new[]
 {
-    new ContextPropagationInterceptor<string>(
-        MyContext.UserId,
+    new ContextPropagationInterceptor<string?>(
+        MyContext.UserIdLocal,
         DataConverter.Default.PayloadConverter),
 };
 var client = await TemporalClient.ConnectAsync(connectOptions);

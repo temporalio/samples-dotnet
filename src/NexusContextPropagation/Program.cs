@@ -1,6 +1,7 @@
 using Microsoft.Extensions.Logging;
 using Temporalio.Client;
 using Temporalio.Client.EnvConfig;
+using Temporalio.Client.Interceptors;
 using Temporalio.Converters;
 using Temporalio.Worker;
 using TemporalioSamples.ContextPropagation;
@@ -31,7 +32,7 @@ Task<TemporalClient> ConnectClientAsync(string temporalNamespace)
     }
     connectOptions.Namespace = temporalNamespace;
     connectOptions.LoggerFactory = loggerFactory;
-    connectOptions.Interceptors = new[]
+    connectOptions.Interceptors = new IClientInterceptor[]
     {
         new ContextPropagationInterceptor<string?>(
             MyContext.UserIdLocal,
