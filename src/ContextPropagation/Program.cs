@@ -1,5 +1,6 @@
 using Microsoft.Extensions.Logging;
 using Temporalio.Client;
+using Temporalio.Client.EnvConfig;
 using Temporalio.Converters;
 using Temporalio.Worker;
 using TemporalioSamples.ContextPropagation;
@@ -11,17 +12,20 @@ using var loggerFactory = LoggerFactory.Create(builder =>
 var logger = loggerFactory.CreateLogger<Program>();
 
 // Create a client to localhost on default namespace
-var client = await TemporalClient.ConnectAsync(new("localhost:7233")
+var connectOptions = ClientEnvConfig.LoadClientConnectOptions();
+if (string.IsNullOrEmpty(connectOptions.TargetHost))
 {
-    LoggerFactory = loggerFactory,
-    // This is where we set the interceptor to propagate context
-    Interceptors =
-    [
-        new ContextPropagationInterceptor<string?>(
-            MyContext.UserIdLocal,
-            DataConverter.Default.PayloadConverter),
-    ],
-});
+    connectOptions.TargetHost = "localhost:7233";
+}
+connectOptions.LoggerFactory = loggerFactory;
+// This is where we set the interceptor to propagate context
+connectOptions.Interceptors = new[]
+{
+    new ContextPropagationInterceptor<string?>(
+        MyContext.UserIdLocal,
+        DataConverter.Default.PayloadConverter),
+};
+var client = await TemporalClient.ConnectAsync(connectOptions);
 
 async Task RunWorkerAsync()
 {

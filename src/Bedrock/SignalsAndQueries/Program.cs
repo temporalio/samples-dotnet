@@ -3,6 +3,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Temporalio.Client;
+using Temporalio.Client.EnvConfig;
 using Temporalio.Extensions.Hosting;
 using TemporalioSamples.Bedrock.SignalsAndQueries;
 
@@ -69,14 +70,19 @@ async Task GetHistoryAsync()
     }
 }
 
-async Task<ITemporalClient> CreateClientAsync() =>
-    await TemporalClient.ConnectAsync(new("localhost:7233")
+async Task<ITemporalClient> CreateClientAsync()
+{
+    var connectOptions = ClientEnvConfig.LoadClientConnectOptions();
+    if (string.IsNullOrEmpty(connectOptions.TargetHost))
     {
-        LoggerFactory = LoggerFactory.Create(builder =>
-            builder.
-                AddSimpleConsole(options => options.TimestampFormat = "[HH:mm:ss] ").
-                SetMinimumLevel(LogLevel.Information)),
-    });
+        connectOptions.TargetHost = "localhost:7233";
+    }
+    connectOptions.LoggerFactory = LoggerFactory.Create(builder =>
+        builder.
+            AddSimpleConsole(options => options.TimestampFormat = "[HH:mm:ss] ").
+            SetMinimumLevel(LogLevel.Information));
+    return await TemporalClient.ConnectAsync(connectOptions);
+}
 
 switch (args.ElementAtOrDefault(0))
 {
