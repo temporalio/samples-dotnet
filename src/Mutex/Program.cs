@@ -1,5 +1,4 @@
 ﻿using System.Diagnostics;
-using Microsoft.Extensions.Logging;
 using Temporalio.Client;
 using Temporalio.Client.EnvConfig;
 using Temporalio.Worker;
