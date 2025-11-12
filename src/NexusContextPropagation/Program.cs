@@ -1,5 +1,6 @@
 using Microsoft.Extensions.Logging;
 using Temporalio.Client;
+using Temporalio.Client.EnvConfig;
 using Temporalio.Converters;
 using Temporalio.Worker;
 using TemporalioSamples.ContextPropagation;
@@ -21,23 +22,27 @@ Console.CancelKeyPress += (_, eventArgs) =>
     eventArgs.Cancel = true;
 };
 
-Task<TemporalClient> ConnectClientAsync(string temporalNamespace) =>
-    TemporalClient.ConnectAsync(new("localhost:7233")
+Task<TemporalClient> ConnectClientAsync(string temporalNamespace)
+{
+    var connectOptions = ClientEnvConfig.LoadClientConnectOptions();
+    if (string.IsNullOrEmpty(connectOptions.TargetHost))
     {
-        Namespace = temporalNamespace,
-        LoggerFactory = loggerFactory,
-        // This is where we set the interceptor to propagate context
-        Interceptors =
-        [
-            new ContextPropagationInterceptor<string?>(
-                MyContext.UserIdLocal,
-                DataConverter.Default.PayloadConverter),
-            // Separate interceptor just for moving in and out of Nexus operation headers. This could
-            // have been implemented in the ContextPropagationInterceptor, but for sample logic
-            // separation, it was added as a separate interceptor in this project instead.
-            new NexusContextPropagationInterceptor(MyContext.UserIdLocal),
-        ],
-    });
+        connectOptions.TargetHost = "localhost:7233";
+    }
+    connectOptions.Namespace = temporalNamespace;
+    connectOptions.LoggerFactory = loggerFactory;
+    connectOptions.Interceptors = new[]
+    {
+        new ContextPropagationInterceptor<string?>(
+            MyContext.UserIdLocal,
+            DataConverter.Default.PayloadConverter),
+        // Separate interceptor just for moving in and out of Nexus operation headers. This could
+        // have been implemented in the ContextPropagationInterceptor, but for sample logic
+        // separation, it was added as a separate interceptor in this project instead.
+        new NexusContextPropagationInterceptor(MyContext.UserIdLocal),
+    };
+    return TemporalClient.ConnectAsync(connectOptions);
+}
 
 async Task RunHandlerWorkerAsync()
 {
