@@ -1,4 +1,4 @@
-
+﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.0.31903.59
@@ -97,6 +97,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TemporalioSamples.NexusMult
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TemporalioSamples.EnvConfig", "src\EnvConfig\TemporalioSamples.EnvConfig.csproj", "{52CE80AF-09C3-4209-8A21-6CFFAA3B2B01}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TemporalioSamples.Timer", "src\Timer\TemporalioSamples.Timer.csproj", "{B37B3E98-4B04-48B8-9017-F0EDEDC7BD98}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TemporalioSamples.RefreshingClient", "src\RefreshingClient\TemporalioSamples.RefreshingClient.csproj", "{9654050C-AA1E-4376-BA4E-8190D1842818}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -588,6 +590,18 @@ Global
 		{B37B3E98-4B04-48B8-9017-F0EDEDC7BD98}.Release|x64.Build.0 = Release|Any CPU
 		{B37B3E98-4B04-48B8-9017-F0EDEDC7BD98}.Release|x86.ActiveCfg = Release|Any CPU
 		{B37B3E98-4B04-48B8-9017-F0EDEDC7BD98}.Release|x86.Build.0 = Release|Any CPU
+		{9654050C-AA1E-4376-BA4E-8190D1842818}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9654050C-AA1E-4376-BA4E-8190D1842818}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9654050C-AA1E-4376-BA4E-8190D1842818}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{9654050C-AA1E-4376-BA4E-8190D1842818}.Debug|x64.Build.0 = Debug|Any CPU
+		{9654050C-AA1E-4376-BA4E-8190D1842818}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{9654050C-AA1E-4376-BA4E-8190D1842818}.Debug|x86.Build.0 = Debug|Any CPU
+		{9654050C-AA1E-4376-BA4E-8190D1842818}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9654050C-AA1E-4376-BA4E-8190D1842818}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9654050C-AA1E-4376-BA4E-8190D1842818}.Release|x64.ActiveCfg = Release|Any CPU
+		{9654050C-AA1E-4376-BA4E-8190D1842818}.Release|x64.Build.0 = Release|Any CPU
+		{9654050C-AA1E-4376-BA4E-8190D1842818}.Release|x86.ActiveCfg = Release|Any CPU
+		{9654050C-AA1E-4376-BA4E-8190D1842818}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -637,5 +651,6 @@ Global
 		{8BE23F78-7178-4924-AB45-4AF74454CC97} = {18E26AEE-5DA3-7BF8-A1AD-13A28A6C7BA3}
 		{52CE80AF-09C3-4209-8A21-6CFFAA3B2B01} = {1A647B41-53D0-4638-AE5A-6630BAAE45FC}
 		{B37B3E98-4B04-48B8-9017-F0EDEDC7BD98} = {1A647B41-53D0-4638-AE5A-6630BAAE45FC}
+		{9654050C-AA1E-4376-BA4E-8190D1842818} = {1A647B41-53D0-4638-AE5A-6630BAAE45FC}
 	EndGlobalSection
 EndGlobal
