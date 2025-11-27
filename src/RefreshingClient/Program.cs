@@ -2,7 +2,7 @@ using Microsoft.Extensions.Logging;
 using Temporalio.Client;
 using Temporalio.Client.EnvConfig;
 using Temporalio.Worker;
-using TemporalioSamples.ActivitySimple;
+using TemporalioSamples.RefreshingClient;
 
 async Task<TemporalClient> CreateClientAsync()
 {

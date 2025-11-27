@@ -1,7 +1,7 @@
-# Activity Simple
+# Refreshing Client
 
-This sample shows a workflow executing a synchronous static activity method and an asynchronous instance activity method.
-The Worker program will refresh the Temporal client periodically every 10 seconds. 
+This sample demonstrates how to periodically refresh the Temporal client in a Worker. 
+The Worker program refreshes the Temporal client every 10 seconds, which is useful for scenarios requiring credential mTLS or api key rotation. 
 
 To run, first see [README.md](../../README.md) for prerequisites. Then, run the following from this directory
 in a separate terminal to start the worker:

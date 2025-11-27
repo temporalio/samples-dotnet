@@ -1,4 +1,4 @@
-namespace TemporalioSamples.ActivitySimple;
+namespace TemporalioSamples.RefreshingClient;
 
 using Microsoft.Extensions.Logging;
 using Temporalio.Workflows;

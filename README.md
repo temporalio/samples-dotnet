@@ -31,7 +31,7 @@ Prerequisites:
 * [OpenTelemetry](src/OpenTelemetry) - Demonstrates how to set up OpenTelemetry tracing and metrics for both the client and worker, using both the .NET metrics API and internal forwarding from the Core SDK.
 * [Patching](src/Patching) - Alter workflows safely with Patch and DeprecatePatch.
 * [Polling](src/Polling) - Recommended implementation of an activity that needs to periodically poll an external resource waiting its successful completion.
-* [RefreshingClient](src/RefreshingClient) - Recommended implementation of a Worker, resfreshing the client periodically every 10 seconds.
+* [RefreshingClient](src/RefreshingClient) - Demonstrates how to periodically refresh the Temporal client in a Worker every 10 seconds.
 * [SafeMessageHandlers](src/SafeMessageHandlers) - Use `Semaphore` to ensure operations are atomically processed in a workflow.
 * [Saga](src/Saga) - Demonstrates how to implement a saga pattern.
 * [Schedules](src/Schedules) - How to schedule workflows to be run at specific times in the future.
