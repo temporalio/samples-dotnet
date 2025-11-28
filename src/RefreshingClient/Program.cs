@@ -43,6 +43,7 @@ async Task RunWorkerAsync(TemporalClient client)
     var replaceWorkerClient = (TemporalClient newClient) =>
     {
         worker.Client = newClient;
+        Console.WriteLine("Client's new handle: {0}", worker.Client.BridgeClientProvider?.BridgeClient?.DangerousGetHandle());
         return Task.FromResult(true);
     };
 
