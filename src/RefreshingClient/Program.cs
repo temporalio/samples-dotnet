@@ -72,15 +72,14 @@ async Task ClientRefreshAsync(Func<TemporalClient, Task> asyncFunc, Cancellation
 
 async Task RunRecurringTaskAsync(TimeSpan interval, CancellationToken cancellationToken, Func<TemporalClient, Task> asyncFunc)
 {
-    await Task.Delay(interval, cancellationToken);
     while (!cancellationToken.IsCancellationRequested)
     {
-        Console.WriteLine("Refreshing client...");
         try
         {
+            await Task.Delay(interval, cancellationToken);
+            Console.WriteLine("Refreshing client...");
             var client = await CreateClientAsync();
             await asyncFunc(client);
-            await Task.Delay(interval, cancellationToken);
         }
         catch (OperationCanceledException)
         {
