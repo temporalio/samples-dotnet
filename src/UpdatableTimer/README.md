@@ -12,7 +12,7 @@ Then in another terminal, run the workflow from this directory:
 
     dotnet run workflow
 
-Check the output of the Worker window. The expected output is:
+Check the output of the worker window. The expected output is:
 
     Running worker
     [14:47:03] info: Temporalio.Workflow:MyWorkflow[0]
