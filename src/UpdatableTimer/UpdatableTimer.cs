@@ -23,7 +23,7 @@ public class UpdatableTimer(DateTimeOffset wakeUpTime)
             Workflow.Logger.LogInformation("Going to sleep for {SleepInterval}", sleepInterval);
 
             wakeUpTimeUpdated = false;
-            if (!await Workflow.WaitConditionAsync(() => wakeUpTimeUpdated, sleepInterval))
+            if (!await Workflow.WaitConditionWithOptionsAsync(new(() => wakeUpTimeUpdated, sleepInterval, $"Going to sleep for {sleepInterval}")))
             {
                 break;
             }
