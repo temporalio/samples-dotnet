@@ -1,5 +1,6 @@
 ﻿namespace TemporalioSamples.Tests.UpdatableTimer;
 
+using Temporalio.Api.Enums.V1;
 using Temporalio.Testing;
 using Temporalio.Worker;
 using TemporalioSamples.UpdatableTimer;
@@ -18,7 +19,7 @@ public class UpdatableTimerWorkflowTests : TestBase
     {
         await using var env = await WorkflowEnvironment.StartLocalAsync();
         using var worker = new TemporalWorker(env.Client, new TemporalWorkerOptions("my-task-queue").AddWorkflow<MyWorkflow>());
-        var wakeUpTime = DateTimeOffset.UtcNow;
+        var wakeUpTime = DateTimeOffset.UtcNow.AddDays(30);
         await worker.ExecuteAsync(async () =>
         {
             var handle = await env.Client.StartWorkflowAsync(
@@ -57,20 +58,14 @@ public class UpdatableTimerWorkflowTests : TestBase
                 (MyWorkflow wf) => wf.RunAsync(wakeUpTime),
                 new(id: $"workflow-{Guid.NewGuid()}", taskQueue: worker.Options.TaskQueue!));
 
-            await AssertMore.EventuallyAsync(async () =>
-            {
-                var history = await handle.FetchHistoryAsync();
-
-                // Continuously check history to see if timer has started.
-                Assert.Contains(history.Events, e =>
-                    e.TimerStartedEventAttributes != null &&
-                    e.TimerStartedEventAttributes.StartToFireTimeout.ToTimeSpan() >= TimeSpan.FromDays(29));
-            });
-
-            // Sleep for 30 days
-            await env.DelayAsync(TimeSpan.FromDays(30));
-
             await handle.GetResultAsync();
+
+            var history = await handle.FetchHistoryAsync();
+
+            // Continuously check history to see if timer has started.
+            Assert.Contains(history.Events, e =>
+                e.TimerStartedEventAttributes != null &&
+                e.TimerStartedEventAttributes.StartToFireTimeout.ToTimeSpan() >= TimeSpan.FromDays(29));
 
             // Assert at least 30 days of time have passed
             Assert.True((await env.GetCurrentTimeAsync() - startTime) >= TimeSpan.FromDays(30));
@@ -101,6 +96,24 @@ public class UpdatableTimerWorkflowTests : TestBase
             Assert.Equal(inAnHour, wakeUpTime2, precision: TimeSpan.FromSeconds(5));
 
             await handle.GetResultAsync();
+
+            var history = await handle.FetchHistoryAsync();
+
+            var firstTimer = history.Events.FirstOrDefault(x => x.EventType == EventType.TimerStarted);
+            var secondTimer = history.Events.LastOrDefault(x => x.EventType == EventType.TimerStarted);
+
+            Assert.NotNull(firstTimer);
+            Assert.NotNull(secondTimer);
+
+            // Check that the first timer canceled.
+            Assert.Contains(history.Events, e =>
+                e.EventType == EventType.TimerCanceled &&
+                e.TimerCanceledEventAttributes.TimerId == firstTimer.TimerStartedEventAttributes.TimerId);
+
+            // Check that the second timer fired.
+            Assert.Contains(history.Events, e =>
+                e.EventType == EventType.TimerFired &&
+                e.TimerFiredEventAttributes.TimerId == secondTimer.TimerStartedEventAttributes.TimerId);
         });
     }
 }
