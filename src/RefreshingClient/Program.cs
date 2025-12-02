@@ -43,7 +43,7 @@ async Task RunWorkerAsync(TemporalClient client)
     var replaceWorkerClient = (TemporalClient newClient) =>
     {
         worker.Client = newClient;
-        Console.WriteLine("Client's new handle: {0}", worker.Client.BridgeClientProvider?.BridgeClient?.DangerousGetHandle());
+        Console.WriteLine("Worker's client has been refreshed.");
         return Task.FromResult(true);
     };
 
@@ -67,8 +67,9 @@ async Task ExecuteWorkflowAsync(TemporalClient client)
 
 async Task ClientRefreshAsync(Func<TemporalClient, Task> asyncFunc, CancellationToken cancellationToken)
 {
-    Console.WriteLine("This program will refresh its Temporal client every 10 seconds.");
-    await RunRecurringTaskAsync(TimeSpan.FromSeconds(10), cancellationToken, asyncFunc);
+    // Change the frequency of rotation as per your requirements
+    Console.WriteLine("This program will refresh its Temporal client every 2 hours.");
+    await RunRecurringTaskAsync(TimeSpan.FromHours(2), cancellationToken, asyncFunc);
 }
 
 async Task RunRecurringTaskAsync(TimeSpan interval, CancellationToken cancellationToken, Func<TemporalClient, Task> asyncFunc)
@@ -84,7 +85,7 @@ async Task RunRecurringTaskAsync(TimeSpan interval, CancellationToken cancellati
         }
         catch (OperationCanceledException)
         {
-            Console.WriteLine("Task cancelled.");
+            Console.WriteLine("Refreshing task cancelled.");
             break;
         }
 #pragma warning disable CA1031 // Do not catch general exception types

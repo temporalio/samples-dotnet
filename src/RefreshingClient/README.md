@@ -1,7 +1,7 @@
 # Refreshing Client
 
 This sample demonstrates how to periodically refresh the Temporal client in a Worker. 
-The Worker program refreshes the Temporal client every 10 seconds, which is useful for scenarios requiring credential mTLS or api key rotation. 
+The Worker program refreshes the Temporal client every 2 hours, which is useful for scenarios requiring credential mTLS or api key rotation. 
 
 `ClientRefreshAsync` accepts a Func to deliver a new client, to replace the callers Worker client.
 
