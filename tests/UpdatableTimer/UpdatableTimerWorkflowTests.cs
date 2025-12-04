@@ -17,7 +17,7 @@ public class UpdatableTimerWorkflowTests : TestBase
     [Fact]
     public async Task SimpleRun_Succeeds()
     {
-        await using var env = await WorkflowEnvironment.StartLocalAsync();
+        await using var env = await WorkflowEnvironment.StartTimeSkippingAsync();
         using var worker = new TemporalWorker(env.Client, new TemporalWorkerOptions("my-task-queue").AddWorkflow<MyWorkflow>());
         var wakeUpTime = DateTimeOffset.UtcNow.AddDays(30);
         await worker.ExecuteAsync(async () =>
@@ -32,7 +32,7 @@ public class UpdatableTimerWorkflowTests : TestBase
     [Fact]
     public async Task WakeUpInThePast_Succeeds()
     {
-        await using var env = await WorkflowEnvironment.StartLocalAsync();
+        await using var env = await WorkflowEnvironment.StartTimeSkippingAsync();
         using var worker = new TemporalWorker(env.Client, new TemporalWorkerOptions("my-task-queue").AddWorkflow<MyWorkflow>());
         var wakeUpTime = DateTimeOffset.UtcNow.AddSeconds(-10);
         await worker.ExecuteAsync(async () =>
