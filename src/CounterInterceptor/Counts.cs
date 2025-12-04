@@ -1,4 +1,5 @@
 namespace TemporalioSamples.CounterInterceptor;
+
 public class Counts
 {
     private uint clientExecutions;

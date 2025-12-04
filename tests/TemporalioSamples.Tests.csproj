@@ -31,6 +31,7 @@
     <ProjectReference Include="..\src\NexusMultiArg\TemporalioSamples.NexusMultiArg.csproj" />
     <ProjectReference Include="..\src\NexusSimple\TemporalioSamples.NexusSimple.csproj" />
     <ProjectReference Include="..\src\SafeMessageHandlers\TemporalioSamples.SafeMessageHandlers.csproj" />
+    <ProjectReference Include="..\src\UpdatableTimer\TemporalioSamples.UpdatableTimer.csproj" />
     <ProjectReference Include="..\src\UpdateWithStartEarlyReturn\TemporalioSamples.UpdateWithStartEarlyReturn.csproj" />
     <ProjectReference Include="..\src\UpdateWithStartLazyInit\TemporalioSamples.UpdateWithStartLazyInit.csproj" />
     <ProjectReference Include="..\src\WorkerSpecificTaskQueues\TemporalioSamples.WorkerSpecificTaskQueues.csproj" />
