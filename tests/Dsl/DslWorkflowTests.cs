@@ -40,7 +40,7 @@ public class DslWorkflowTests(ITestOutputHelper output, WorkflowEnvironment env)
                       result: result3
             """;
 
-        var input = DslParser.ParseYaml(yaml);
+        var input = DslInput.Parse(yaml);
 
         using var worker = new TemporalWorker(
             Client,
@@ -116,7 +116,7 @@ public class DslWorkflowTests(ITestOutputHelper output, WorkflowEnvironment env)
                       result: result6
             """;
 
-        var input = DslParser.ParseYaml(yaml);
+        var input = DslInput.Parse(yaml);
 
         using var worker = new TemporalWorker(
             Client,

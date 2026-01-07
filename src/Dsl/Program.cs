@@ -47,7 +47,7 @@ async Task RunWorkerAsync()
 async Task ExecuteWorkflowAsync(string yamlFile)
 {
     var yamlContent = await File.ReadAllTextAsync(yamlFile);
-    var dslInput = DslParser.ParseYaml(yamlContent);
+    var dslInput = DslInput.Parse(yamlContent);
 
     Console.WriteLine($"Executing workflow from {yamlFile}");
     var result = await client.ExecuteWorkflowAsync(
