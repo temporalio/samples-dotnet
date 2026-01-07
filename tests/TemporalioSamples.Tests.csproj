@@ -38,6 +38,7 @@
     <ProjectReference Include="..\src\WorkflowUpdate\TemporalioSamples.WorkflowUpdate.csproj" />
     <ProjectReference Include="..\src\WorkerVersioning\TemporalioSamples.WorkerVersioning.csproj" />
     <ProjectReference Include="..\src\SleepForDays\TemporalioSamples.SleepForDays.csproj" />
+    <ProjectReference Include="..\src\Dsl\TemporalioSamples.Dsl.csproj" />
   </ItemGroup>
 
 </Project>
