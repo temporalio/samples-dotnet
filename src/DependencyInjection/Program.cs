@@ -1,5 +1,5 @@
 using Temporalio.Client;
-using Temporalio.Client.EnvConfig;
+using Temporalio.Common.EnvConfig;
 using Temporalio.Extensions.Hosting;
 using TemporalioSamples.DependencyInjection;
 
@@ -27,10 +27,7 @@ async Task RunWorkerAsync()
 async Task ExecuteWorkflowAsync()
 {
     var connectOptions = ClientEnvConfig.LoadClientConnectOptions();
-    if (string.IsNullOrEmpty(connectOptions.TargetHost))
-    {
-        connectOptions.TargetHost = "localhost:7233";
-    }
+    connectOptions.TargetHost ??= "localhost:7233";
     connectOptions.LoggerFactory = LoggerFactory.Create(builder =>
         builder.
             AddSimpleConsole(options => options.TimestampFormat = "[HH:mm:ss] ").

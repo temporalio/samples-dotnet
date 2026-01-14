@@ -1,5 +1,5 @@
 using Temporalio.Client;
-using Temporalio.Client.EnvConfig;
+using Temporalio.Common.EnvConfig;
 
 namespace TemporalioSamples.EnvConfig;
 

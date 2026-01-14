@@ -1,7 +1,7 @@
 using Temporalio.Api.WorkflowService.V1;
 using Temporalio.Client;
-using Temporalio.Client.EnvConfig;
 using Temporalio.Common;
+using Temporalio.Common.EnvConfig;
 
 namespace TemporalioSamples.WorkerVersioning;
 
@@ -29,10 +29,7 @@ public static class Program
         }
 
         var connectOptions = ClientEnvConfig.LoadClientConnectOptions();
-        if (string.IsNullOrEmpty(connectOptions.TargetHost))
-        {
-            connectOptions.TargetHost = "localhost:7233";
-        }
+        connectOptions.TargetHost ??= "localhost:7233";
         var client = await TemporalClient.ConnectAsync(connectOptions);
 
         switch (args[0].ToLower())

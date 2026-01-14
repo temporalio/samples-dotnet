@@ -4,7 +4,7 @@ using OpenTelemetry.Metrics;
 using OpenTelemetry.Resources;
 using OpenTelemetry.Trace;
 using Temporalio.Client;
-using Temporalio.Client.EnvConfig;
+using Temporalio.Common.EnvConfig;
 using Temporalio.Extensions.OpenTelemetry;
 using Temporalio.Runtime;
 using Temporalio.Worker;
@@ -27,10 +27,7 @@ using var tracerProvider = Sdk.
 
 // Create a client to localhost on default namespace
 var connectOptions = ClientEnvConfig.LoadClientConnectOptions();
-if (string.IsNullOrEmpty(connectOptions.TargetHost))
-{
-    connectOptions.TargetHost = "localhost:7233";
-}
+connectOptions.TargetHost ??= "localhost:7233";
 connectOptions.LoggerFactory = LoggerFactory.Create(builder =>
     builder.
         AddSimpleConsole(options => options.TimestampFormat = "[HH:mm:ss] ").

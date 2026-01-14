@@ -1,15 +1,12 @@
 ﻿using System.Diagnostics;
 using Temporalio.Client;
-using Temporalio.Client.EnvConfig;
+using Temporalio.Common.EnvConfig;
 using Temporalio.Worker;
 using TemporalioSamples.Mutex;
 using TemporalioSamples.Mutex.Impl;
 
 var connectOptions = ClientEnvConfig.LoadClientConnectOptions();
-if (string.IsNullOrEmpty(connectOptions.TargetHost))
-{
-    connectOptions.TargetHost = "localhost:7233";
-}
+connectOptions.TargetHost ??= "localhost:7233";
 connectOptions.LoggerFactory = LoggerFactory.Create(builder =>
     builder.AddSimpleConsole(options => options.TimestampFormat = "[HH:mm:ss] ").SetMinimumLevel(LogLevel.Information));
 var client = await TemporalClient.ConnectAsync(connectOptions);
