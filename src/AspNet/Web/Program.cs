@@ -1,5 +1,5 @@
 using Temporalio.Client;
-using Temporalio.Client.EnvConfig;
+using Temporalio.Common.EnvConfig;
 using TemporalioSamples.AspNet.Worker;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -15,10 +15,7 @@ builder.Services.AddSingleton(ctx =>
     // on separately (VSTHRD003). We may prefer a direct DI extension, see
     // https://github.com/temporalio/sdk-dotnet/issues/46.
     var connectOptions = ClientEnvConfig.LoadClientConnectOptions();
-    if (string.IsNullOrEmpty(connectOptions.TargetHost))
-    {
-        connectOptions.TargetHost = "localhost:7233";
-    }
+    connectOptions.TargetHost ??= "localhost:7233";
     connectOptions.LoggerFactory = ctx.GetRequiredService<ILoggerFactory>();
     return TemporalClient.ConnectAsync(connectOptions);
 });

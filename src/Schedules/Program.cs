@@ -1,17 +1,14 @@
 using Microsoft.Extensions.Logging;
 using Temporalio.Api.Enums.V1;
 using Temporalio.Client;
-using Temporalio.Client.EnvConfig;
 using Temporalio.Client.Schedules;
+using Temporalio.Common.EnvConfig;
 using Temporalio.Worker;
 using TemporalioSamples.Schedules;
 
 // Create a client to localhost on default namespace
 var connectOptions = ClientEnvConfig.LoadClientConnectOptions();
-if (string.IsNullOrEmpty(connectOptions.TargetHost))
-{
-    connectOptions.TargetHost = "localhost:7233";
-}
+connectOptions.TargetHost ??= "localhost:7233";
 connectOptions.LoggerFactory = LoggerFactory.Create(builder =>
     builder.
         AddSimpleConsole(options => options.TimestampFormat = "[HH:mm:ss] ").

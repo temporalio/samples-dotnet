@@ -1,7 +1,7 @@
 using Microsoft.Extensions.Logging;
 using Temporalio.Api.Enums.V1;
 using Temporalio.Client;
-using Temporalio.Client.EnvConfig;
+using Temporalio.Common.EnvConfig;
 using Temporalio.Worker;
 using TemporalioSamples.SafeMessageHandlers;
 
@@ -11,10 +11,7 @@ using var loggerFactory = LoggerFactory.Create(builder =>
         AddSimpleConsole(options => options.TimestampFormat = "[HH:mm:ss] ").
         SetMinimumLevel(LogLevel.Information));
 var connectOptions = ClientEnvConfig.LoadClientConnectOptions();
-if (string.IsNullOrEmpty(connectOptions.TargetHost))
-{
-    connectOptions.TargetHost = "localhost:7233";
-}
+connectOptions.TargetHost ??= "localhost:7233";
 connectOptions.LoggerFactory = loggerFactory;
 var client = await TemporalClient.ConnectAsync(connectOptions);
 var logger = loggerFactory.CreateLogger<Program>();

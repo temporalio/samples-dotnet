@@ -1,7 +1,7 @@
 using Microsoft.Extensions.Logging;
 using Temporalio.Client;
-using Temporalio.Client.EnvConfig;
 using Temporalio.Client.Interceptors;
+using Temporalio.Common.EnvConfig;
 using Temporalio.Converters;
 using Temporalio.Worker;
 using TemporalioSamples.ContextPropagation;
@@ -26,10 +26,7 @@ Console.CancelKeyPress += (_, eventArgs) =>
 Task<TemporalClient> ConnectClientAsync(string temporalNamespace)
 {
     var connectOptions = ClientEnvConfig.LoadClientConnectOptions();
-    if (string.IsNullOrEmpty(connectOptions.TargetHost))
-    {
-        connectOptions.TargetHost = "localhost:7233";
-    }
+    connectOptions.TargetHost ??= "localhost:7233";
     connectOptions.Namespace = temporalNamespace;
     connectOptions.LoggerFactory = loggerFactory;
     connectOptions.Interceptors = new IClientInterceptor[]

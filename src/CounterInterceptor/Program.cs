@@ -1,7 +1,7 @@
 ﻿namespace TemporalioSamples.CounterInterceptor;
 
 using Temporalio.Client;
-using Temporalio.Client.EnvConfig;
+using Temporalio.Common.EnvConfig;
 using Temporalio.Worker;
 
 internal class Program
@@ -10,10 +10,7 @@ internal class Program
     {
         var counterInterceptor = new MyCounterInterceptor();
         var connectOptions = ClientEnvConfig.LoadClientConnectOptions();
-        if (string.IsNullOrEmpty(connectOptions.TargetHost))
-        {
-            connectOptions.TargetHost = "localhost:7233";
-        }
+        connectOptions.TargetHost ??= "localhost:7233";
         connectOptions.Interceptors = new[]
         {
             counterInterceptor,

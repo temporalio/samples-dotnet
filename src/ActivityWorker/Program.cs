@@ -1,16 +1,13 @@
 using Temporalio.Activities;
 using Temporalio.Client;
-using Temporalio.Client.EnvConfig;
+using Temporalio.Common.EnvConfig;
 using Temporalio.Worker;
 using Temporalio.Workflows;
 using TemporalioSamples.ActivityWorker;
 
 // Create a client to localhost on default namespace
 var connectOptions = ClientEnvConfig.LoadClientConnectOptions();
-if (string.IsNullOrEmpty(connectOptions.TargetHost))
-{
-    connectOptions.TargetHost = "localhost:7233";
-}
+connectOptions.TargetHost ??= "localhost:7233";
 var client = await TemporalClient.ConnectAsync(connectOptions);
 
 // Create worker

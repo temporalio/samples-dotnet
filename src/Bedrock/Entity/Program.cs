@@ -3,7 +3,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Temporalio.Client;
-using Temporalio.Client.EnvConfig;
+using Temporalio.Common.EnvConfig;
 using Temporalio.Extensions.Hosting;
 using TemporalioSamples.Bedrock.Entity;
 
@@ -82,10 +82,7 @@ async Task EndChatAsync()
 async Task<ITemporalClient> CreateClientAsync()
 {
     var connectOptions = ClientEnvConfig.LoadClientConnectOptions();
-    if (string.IsNullOrEmpty(connectOptions.TargetHost))
-    {
-        connectOptions.TargetHost = "localhost:7233";
-    }
+    connectOptions.TargetHost ??= "localhost:7233";
     connectOptions.LoggerFactory = LoggerFactory.Create(builder =>
         builder.
             AddSimpleConsole(options => options.TimestampFormat = "[HH:mm:ss] ").
