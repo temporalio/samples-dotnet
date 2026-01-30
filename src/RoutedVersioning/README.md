@@ -1,53 +1,55 @@
-# WorkflowTypeVersioning
+# Routed Versioning
 
+This sample demonstrates how to version Workflows by having callers route to specific implementations, avoiding `Workflow.Patched()` conditionals.
 
-> Q. How can I avoid the use of `patch` and the complex conditionals it introduces into my Workflow Code?
+> Q: How can I evolve my Workflow without `Workflow.Patched()` and its complex conditionals?
 
-A. The BEST option is to use [WorkerVersioning](../WorkerVersioning).
+A: The recommended approach is to use [Worker Versioning](../WorkerVersioning). However, if that's unavailable, routed versioning lets callers choose which Workflow version to run, delegating internally to the appropriate implementation.
 
-But if you can't use WorkerVersioning, you can use `WorkflowType` versioning to evolve your Workflow code without use of `patch`.
+## How It Works
 
-## Approaches
+With routed versioning, **the caller decides which implementation version to run** by passing a version parameter. This is different from `Workflow.Patched()` where the routing logic lives inside the Workflow code.
 
-### Copy/Paste
+The Worker registers a single facade Workflow that routes incoming requests to the appropriate implementation version based on the caller's choice.
 
-Say the following Workflow is deployed to production.
+## Evolving Your Workflow
 
-```c#
-[Workflow]
-class MyWorkflow {...}
+When you need to create a new Workflow version:
+
+1. Copy the current [Latest implementation](MyWorkflowLatest.workflow.cs) to a new version file (e.g., `MyWorkflowV2.workflow.cs`)
+2. Make your changes to the new **Latest** file only
+3. Add the new version to [WorkflowVersion.cs](WorkflowVersion.cs) (e.g., "v3")
+4. Update the `versions` mapping in the [facade Workflow](MyWorkflowDontChangeThisFileOftenAndDelegateToImplementors.workflow.cs) to route the new version
+5. Deploy - no Worker registration changes needed
+6. Callers then request the new version by passing it in their `StartMyWorkflowRequest.Options.Version`
+
+This approach preserves your `git diff` experience since version changes are isolated to new files and the facade mapping.
+
+## Running the Sample
+
+### Start the Worker
+
+```bash
+dotnet run -- worker
 ```
 
-Now you want to implement `V2` of your Workflow.
+The worker registers the facade Workflow and listens on task queue `rv`. It will display the current latest Workflow version on startup.
 
-You keep the _old_ version (`MyWorkflow`) registered on Workers, but now you register the new implementation too:
+### Start a Workflow
 
-```c#
-[Workflow]
-class MyWorkflowV2 {...}
+In another terminal:
+
+```bash
+dotnet run -- starter --start-workflow my-workflow-1
 ```
 
-Now your _callers_ start new Workflows with explicit `MyWorkflowV2` type name referenced, eg:
+This starts a Workflow using the current latest version. The Workflow ID is `my-workflow-1`.
 
-```c#
-var handle = await client.StartWorkflowAsync((MyWorkflowV2 wf) => wf.RunAsync(args), new(id: workflowId, taskQueue: taskQueue));
+### Query a Workflow
+
+```bash
+dotnet run -- starter --query-workflow my-workflow-1
 ```
 
-This _works_! 
-...But now the code review isn't so easy because this results in a _brand new file_ in the commit so doing a `git diff` is more complicated if you only
-want to see the actual _changes_ to the implementation.
-
-If you want to preserve your `git diff` experience AND benefit from Workflow Type versioning, a different approach is needed.
-
-### Type Version Mapping
-
-Instead of exposing the `[Workflow]` type directly to callers, consider changing out implementations on the "inside" of the Workflow that is registered with the Worker.
-This makes your Workflow a kind of `facade` that delegates workflow methods to the _actual_ implementation mapped inside, similar to a **strategy** pattern.
-
-The evolution of Workflow code then becomes:
-1. Copy the current implementation file and name append the version name that is appropriate. For example, if you are working on "version 3" of `MyWorkflow`, you would copy the [Latest](MyWorkflowLatest.workflow.cs) version over to [V2](MyWorkflowV2.workflow.cs).
-2. Make the changes to the **Latest** file _only_.
-3. Add the new version to `WorkflowVersion` (eg "v3") and update the `versions` mapping inside the [facade](MyWorkflowDontChangeThisFileOftenAndDelegateToImplementors.workflow.cs) to accept the new version.
-4. Deploy the new code..no change is needed to the Worker registration!
-5. Update your Callers to target the new `WorkflowVersion.V3` inside either input arguments, a memo, or however you want to resolve the type map.
+This queries the Workflow for its result.
 
