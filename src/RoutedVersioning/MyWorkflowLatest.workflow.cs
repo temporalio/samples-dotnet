@@ -1,3 +1,4 @@
+using Temporalio.Exceptions;
 using Temporalio.Workflows;
 
 namespace RoutedVersioning;
@@ -10,10 +11,20 @@ public class MyWorkflowLatest(StartMyWorkflowRequest args) : IMyWorkflow
 
     public async Task RunAsync(StartMyWorkflowRequest args)
     {
+        if (Workflow.Info.ContinuedRunId != null)
+        {
+            return;
+        }
+
         state.Result = await Workflow.ExecuteActivityAsync(() => Activities.GenericActivity($"V3 is new hotness @ {args.Value}\n"), new() { ScheduleToCloseTimeout = TimeSpan.FromMinutes(5) });
 
         // some very different behavior
         state.Result += await Workflow.ExecuteActivityAsync(() => Activities.GenericActivity("This will appear in the git diff for code review nicely!"), new() { ScheduleToCloseTimeout = TimeSpan.FromMinutes(5) });
+
+        await Workflow.DelayAsync(2000);
+        var canArgs = new StartMyWorkflowRequest { Value = "done", Options = args.Options };
+        // continue as new works as expected...just keep using the interface unless you want to CAN to a different type
+        throw Workflow.CreateContinueAsNewException<IMyWorkflow>(wf => wf.RunAsync(canArgs));
     }
 
     public Task CallMeMaybeAsync()
