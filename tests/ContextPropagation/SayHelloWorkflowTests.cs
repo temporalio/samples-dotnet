@@ -19,6 +19,11 @@ public class SayHelloWorkflowTests : WorkflowEnvironmentTestBase
     [Fact]
     public async Task RunAsync_ContextPropagation_ReachesActivity()
     {
+        // Create Nexus endpoint for testing context propagation through Nexus
+        var taskQueue = $"tq-{Guid.NewGuid()}";
+        await Env.TestEnv.CreateNexusEndpointAsync(
+            INexusGreetingService.EndpointName, taskQueue);
+
         // Update the client to use the interceptor
         var clientOptions = (TemporalClientOptions)Client.Options.Clone();
         clientOptions.Interceptors =
@@ -44,12 +49,14 @@ public class SayHelloWorkflowTests : WorkflowEnvironmentTestBase
             return $"Mock for {name}";
         }
 
-        // Run worker
+        // Run worker with Nexus service, handler workflow, and activity
         using var worker = new TemporalWorker(
             client,
-            new TemporalWorkerOptions($"tq-{Guid.NewGuid()}").
+            new TemporalWorkerOptions(taskQueue).
                 AddActivity(SayHello).
-                AddWorkflow<SayHelloWorkflow>());
+                AddWorkflow<SayHelloWorkflow>().
+                AddNexusService(new NexusGreetingService()).
+                AddWorkflow<NexusGreetingHandlerWorkflow>());
         await worker.ExecuteAsync(async () =>
         {
             // Set context value, start workflow, set to something else
@@ -62,6 +69,13 @@ public class SayHelloWorkflowTests : WorkflowEnvironmentTestBase
             // Send signal, check result
             await handle.SignalAsync(wf => wf.SignalCompleteAsync());
             Assert.Equal("Mock for some-name", await handle.GetResultAsync());
+
+            // Verify context propagated through Nexus to handler workflow
+            var history = await handle.FetchHistoryAsync();
+            var nexusStartedEvent = history.Events.First(e => e.NexusOperationStartedEventAttributes != null);
+            var handlerWorkflowId = nexusStartedEvent.Links.First().WorkflowEvent!.WorkflowId;
+            var handlerHandle = client.GetWorkflowHandle<NexusGreetingHandlerWorkflow>(handlerWorkflowId);
+            Assert.Equal("test-user", await handlerHandle.QueryAsync(wf => wf.CapturedUserId));
         });
     }
 }

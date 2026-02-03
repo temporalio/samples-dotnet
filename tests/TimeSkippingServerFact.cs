@@ -5,7 +5,7 @@ using Xunit;
 
 /// <summary>
 /// The time-skipping test server can only run on x86/x64 currently.
-/// </remarks>
+/// </summary>
 public sealed class TimeSkippingServerFactAttribute : FactAttribute
 {
     public TimeSkippingServerFactAttribute()

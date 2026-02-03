@@ -1,6 +1,7 @@
 namespace TemporalioSamples.ContextPropagation;
 
 using System.Threading.Tasks;
+using NexusRpc.Handlers;
 using Temporalio.Api.Common.V1;
 using Temporalio.Client;
 using Temporalio.Client.Interceptors;
@@ -39,6 +40,10 @@ public class ContextPropagationInterceptor<T> : IClientInterceptor, IWorkerInter
     public ActivityInboundInterceptor InterceptActivity(ActivityInboundInterceptor nextInterceptor) =>
         new ContextPropagationActivityInboundInterceptor(this, nextInterceptor);
 
+    public NexusOperationInboundInterceptor InterceptNexusOperation(
+        NexusOperationInboundInterceptor nextInterceptor) =>
+        new ContextPropagationNexusOperationInboundInterceptor(this, nextInterceptor);
+
     private Dictionary<string, Payload> HeaderFromContext(IDictionary<string, Payload>? existing)
     {
         var ret = existing != null ?
@@ -62,6 +67,28 @@ public class ContextPropagationInterceptor<T> : IClientInterceptor, IWorkerInter
         if (headers?.TryGetValue(headerKey, out var payload) == true && payload != null)
         {
             context.Value = payloadConverter.ToValue<T>(payload);
+        }
+        // These are async local, no need to unapply afterwards
+        return func();
+    }
+
+    private Dictionary<string, string> HeaderFromContextForNexus(IDictionary<string, string>? existing)
+    {
+        var ret = existing != null ?
+            new Dictionary<string, string>(existing) : new Dictionary<string, string>(1);
+        // Nexus headers are string-based, so serialize context value to JSON.
+        // Alternative approach: could use payload converter and put entire payload as JSON on header.
+        ret[headerKey] = System.Text.Json.JsonSerializer.Serialize(context.Value);
+        return ret;
+    }
+
+    private Task<TResult> WithHeadersAppliedForNexusAsync<TResult>(
+        IReadOnlyDictionary<string, string>? headers, Func<Task<TResult>> func)
+    {
+        if (headers?.TryGetValue(headerKey, out var value) == true)
+        {
+            // Deserialize can return null for nullable types, which is expected
+            context.Value = System.Text.Json.JsonSerializer.Deserialize<T>(value)!;
         }
         // These are async local, no need to unapply afterwards
         return func();
@@ -153,6 +180,11 @@ public class ContextPropagationInterceptor<T> : IClientInterceptor, IWorkerInter
             StartChildWorkflowInput input) =>
             Next.StartChildWorkflowAsync<TWorkflow, TResult>(
                 input with { Headers = root.HeaderFromContext(input.Headers) });
+
+        public override Task<NexusOperationHandle<TResult>> StartNexusOperationAsync<TResult>(
+            StartNexusOperationInput input) =>
+            Next.StartNexusOperationAsync<TResult>(
+                input with { Headers = root.HeaderFromContextForNexus(input.Headers) });
     }
 
     private class ContextPropagationActivityInboundInterceptor : ActivityInboundInterceptor
@@ -165,5 +197,20 @@ public class ContextPropagationInterceptor<T> : IClientInterceptor, IWorkerInter
 
         public override Task<object?> ExecuteActivityAsync(ExecuteActivityInput input) =>
             root.WithHeadersApplied(input.Headers, () => Next.ExecuteActivityAsync(input));
+    }
+
+    private class ContextPropagationNexusOperationInboundInterceptor : NexusOperationInboundInterceptor
+    {
+        private readonly ContextPropagationInterceptor<T> root;
+
+        public ContextPropagationNexusOperationInboundInterceptor(
+            ContextPropagationInterceptor<T> root, NexusOperationInboundInterceptor next)
+            : base(next) => this.root = root;
+
+        public override Task<OperationStartResult<object?>> ExecuteNexusOperationStartAsync(
+            ExecuteNexusOperationStartInput input) =>
+            root.WithHeadersAppliedForNexusAsync(
+                input.Context.Headers,
+                () => base.ExecuteNexusOperationStartAsync(input));
     }
 }

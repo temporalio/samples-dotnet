@@ -40,7 +40,9 @@ async Task RunWorkerAsync()
         client,
         new TemporalWorkerOptions(taskQueue: "interceptors-sample").
             AddAllActivities<SayHelloActivities>(new()).
-            AddWorkflow<SayHelloWorkflow>());
+            AddWorkflow<SayHelloWorkflow>().
+            AddNexusService(new NexusGreetingService()).
+            AddWorkflow<NexusGreetingHandlerWorkflow>());
     try
     {
         await worker.ExecuteAsync(tokenSource.Token);
