@@ -26,6 +26,7 @@ Prerequisites:
 * [Encryption](src/Encryption) - End-to-end encryption with Temporal payload codecs.
 * [EnvConfig](src/EnvConfig) - Load client configuration from TOML files with programmatic overrides
 * [Mutex](src/Mutex) - How to implement a mutex as a workflow. Demonstrates how to avoid race conditions or parallel mutually exclusive operations on the same resource.
+* [NexusCancellation](src/NexusCancellation) - Demonstrates how to cancel a running Nexus operation from a caller workflow.
 * [NexusContextPropagation](src/NexusContextPropagation) - Context propagation through Nexus services.
 * [NexusMultiArg](src/NexusMultiArg) - Nexus service implementation calling a workflow with multiple arguments.
 * [NexusSimple](src/NexusSimple) - Simple Nexus service implementation.

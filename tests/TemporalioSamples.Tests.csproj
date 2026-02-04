@@ -27,6 +27,7 @@
     <ProjectReference Include="..\src\EagerWorkflowStart\TemporalioSamples.EagerWorkflowStart.csproj" />
     <ProjectReference Include="..\src\Encryption\Codec\TemporalioSamples.Encryption.Codec.csproj" />
     <ProjectReference Include="..\src\Encryption\CodecServer\TemporalioSamples.Encryption.CodecServer.csproj" />
+    <ProjectReference Include="..\src\NexusCancellation\TemporalioSamples.NexusCancellation.csproj" />
     <ProjectReference Include="..\src\NexusContextPropagation\TemporalioSamples.NexusContextPropagation.csproj" />
     <ProjectReference Include="..\src\NexusMultiArg\TemporalioSamples.NexusMultiArg.csproj" />
     <ProjectReference Include="..\src\NexusSimple\TemporalioSamples.NexusSimple.csproj" />
