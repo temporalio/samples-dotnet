@@ -66,6 +66,9 @@ dotnet_diagnostic.CA1848.severity = none
 # Don't need to seal sample classes
 dotnet_diagnostic.CA1852.severity = none
 
+# We accept logging performance is not important in samples
+dotnet_diagnostic.CA1873.severity = none
+
 # Don't need ConfigureAwait in samples
 dotnet_diagnostic.CA2007.severity = none
 
