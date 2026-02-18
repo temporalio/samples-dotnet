@@ -50,7 +50,6 @@ async Task ExecuteWorkflowAsync(bool testContinueAsNew)
             id: "atomic-message-handlers-workflow-id",
             taskQueue: "atomic-message-handlers-sample")
     {
-        IdReusePolicy = WorkflowIdReusePolicy.AllowDuplicate,
         IdConflictPolicy = WorkflowIdConflictPolicy.TerminateExisting,
     };
     workflowOptions.SignalWithStart((ClusterManagerWorkflow wf) => wf.StartClusterAsync());
