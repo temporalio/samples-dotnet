@@ -1,0 +1,31 @@
+{
+  "$schema": "https://json.schemastore.org/launchsettings.json",
+  "profiles": {
+    "https": {
+      "commandName": "Project",
+      "dotnetRunMessages": true,
+      "launchBrowser": true,
+      "applicationUrl": "https://localhost:17197;http://localhost:15132",
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Development",
+        "DOTNET_ENVIRONMENT": "Development",
+        "ASPIRE_DASHBOARD_OTLP_ENDPOINT_URL": "https://localhost:21202",
+        "ASPIRE_DASHBOARD_MCP_ENDPOINT_URL": "https://localhost:23199",
+        "ASPIRE_RESOURCE_SERVICE_ENDPOINT_URL": "https://localhost:22048"
+      }
+    },
+    "http": {
+      "commandName": "Project",
+      "dotnetRunMessages": true,
+      "launchBrowser": true,
+      "applicationUrl": "http://localhost:15132",
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Development",
+        "DOTNET_ENVIRONMENT": "Development",
+        "ASPIRE_DASHBOARD_OTLP_ENDPOINT_URL": "http://localhost:19084",
+        "ASPIRE_DASHBOARD_MCP_ENDPOINT_URL": "http://localhost:18042",
+        "ASPIRE_RESOURCE_SERVICE_ENDPOINT_URL": "http://localhost:20034"
+      }
+    }
+  }
+}

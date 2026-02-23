@@ -1,0 +1,22 @@
+<Project Sdk="Aspire.AppHost.Sdk/13.1.1">
+
+    <PropertyGroup>
+        <OutputType>Exe</OutputType>
+        <TargetFramework>net10.0</TargetFramework>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+        <UserSecretsId>4a9378ba-a2ca-4863-9c5c-98903998bef0</UserSecretsId>
+    </PropertyGroup>
+    
+    <ItemGroup>
+        <PackageReference Update="Microsoft.Extensions.Logging" Version="10.0.3" />
+        <PackageReference Update="Microsoft.Extensions.Logging.Console" Version="10.0.3" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\Temporal.Extensions.Aspire.Hosting\Temporal.Extensions.Aspire.Hosting.csproj" IsAspireProjectResource="false" />
+      <ProjectReference Include="..\TemporalioSamples.SampleClient\TemporalioSamples.SampleClient.csproj" />
+      <ProjectReference Include="..\TemporalioSamples.SampleWorker\TemporalioSamples.SampleWorker.csproj" />
+    </ItemGroup>
+
+</Project>
