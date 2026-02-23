@@ -27,9 +27,25 @@ This project provides custom Aspire resource definitions that enable developers 
 ### For CLI-based Setup
 - **Temporal CLI** - Install via [Temporal CLI documentation](https://docs.temporal.io/cli/install)
 
-## Quick Start
+## Running the Project
 
-### Local Server Setup
+Using the Aspire CLI
+
+1. **Navigate to the AppHost project directory:**
+   ```bash
+   cd src/AspireIntegrations/
+   ```
+
+2. **Run the project using the Aspire CLI:**
+   ```bash
+   aspire run
+   ```
+
+> You can also run the project directly with `dotnet run` from the AppHost directory, or use your IDE's run configuration.
+
+## Setup Options
+
+### Local Server
 
 The local server setup uses a Temporal environment for fast testing without external dependencies. It will download and run the necessary Temporal server binaries.
 
@@ -90,7 +106,7 @@ var temporal = builder.AddTemporalLocalTestServer(configure: options =>
 
 ---
 
-### Container-based Setup
+### Container-based
 
 Deploy Temporal using the CLI Docker container.
 
@@ -141,7 +157,7 @@ var temporal = builder.AddTemporalDevContainer(configure: options =>
 ```
 ---
 
-### CLI-based Setup
+### CLI-based
 
 Use the Temporal CLI server for environments without Docker.
 

@@ -9,7 +9,7 @@ namespace Temporal.Extensions.Aspire.Hosting;
 
 public static class TemporalLocalResourceExtensions
 {
-    public static IResourceBuilder<TemporalLocalResource> AddTemporalLocalTestServer(
+    public static IResourceBuilder<TemporalLocalResource> AddTemporalLocalDevServer(
         this IDistributedApplicationBuilder builder,
         string name = "temporal-local",
         Action<TemporalResourceOptions>? configure = null)
