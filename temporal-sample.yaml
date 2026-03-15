@@ -1,0 +1,38 @@
+version: 1
+language: dotnet
+scaffold:
+  Directory.Build.props: |
+    <Project>
+      <PropertyGroup>
+        <TargetFramework>net8.0</TargetFramework>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+      </PropertyGroup>
+      <ItemGroup>
+        <PackageReference Include="Temporalio" Version="1.11.1" />
+        <PackageReference Include="Temporalio.Extensions.Hosting" Version="1.11.1" />
+      </ItemGroup>
+    </Project>
+samples:
+  - path: src/ActivitySimple
+    description: Workflow executing synchronous static and asynchronous instance activity methods
+  - path: src/NexusSimple
+    description: Nexus service definition and operation calls from a workflow
+  - path: src/NexusCancellation
+    description: Cancel a Nexus operation using WaitCancellationRequested
+  - path: src/NexusContextPropagation
+    description: Propagate context through client calls, workflows, and Nexus headers
+  - path: src/NexusMultiArg
+    description: Convert a single Nexus argument into multiple workflow arguments
+  - path: src/Bedrock
+    description: Amazon Bedrock AI chatbot with durable execution
+  - path: src/Saga
+    description: Microservice orchestration using the Saga pattern
+  - path: src/Encryption
+    description: Custom payload codec for end-to-end encryption
+  - path: src/Dsl
+    description: Workflow interpreter for arbitrary steps defined in a DSL
+  - path: src/Polling
+    description: Three best practices for polling
+  - path: src/AspNet
+    description: Generic host worker + ASP.NET web application
