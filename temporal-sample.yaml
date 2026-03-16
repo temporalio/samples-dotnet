@@ -36,3 +36,47 @@ samples:
     description: Three best practices for polling
   - path: src/AspNet
     description: Generic host worker + ASP.NET web application
+  - path: src/ActivityHeartbeatingCancellation
+    description: Activity heartbeating for resume on retry and cancellation handling
+  - path: src/ActivityWorker
+    description: Cross-language activity execution with a Go workflow calling a .NET activity
+  - path: src/ClientMtls
+    description: Client connection using mTLS authentication
+  - path: src/ContextPropagation
+    description: Interceptors propagating contextual information via AsyncLocal
+  - path: src/CounterInterceptor
+    description: Worker and client interceptors counting executions, signals, and queries
+  - path: src/DependencyInjection
+    description: Activity dependency injection with a generic host worker
+  - path: src/EagerWorkflowStart
+    description: Eager workflow start with a local activity for low-latency first tasks
+  - path: src/EnvConfig
+    description: External client configuration from TOML files with programmatic overrides
+  - path: src/Mutex
+    description: Mutex workflow coordinating exclusive access to a resource via signals
+  - path: src/OpenTelemetry
+    description: OpenTelemetry tracing and metrics integration
+  - path: src/Patching
+    description: Safe workflow evolution using Workflow.Patched and DeprecatePatch
+  - path: src/SafeMessageHandlers
+    description: Atomic workflow message handling using Semaphore to prevent data races
+  - path: src/Schedules
+    description: Scheduling workflows to run at specific times
+  - path: src/SignalsQueries
+    description: Loyalty program implemented with signals and queries
+  - path: src/SleepForDays
+    description: Long-running workflow sending periodic emails using durable timers
+  - path: src/Timer
+    description: Monthly subscription using Workflow.DelayAsync with cancellation handling
+  - path: src/UpdatableTimer
+    description: Blocking sleep timer that can be updated at any moment
+  - path: src/UpdateWithStartEarlyReturn
+    description: Start a workflow and return early after partial completion
+  - path: src/UpdateWithStartLazyInit
+    description: Shopping cart using update-with-start for lazy workflow initialization
+  - path: src/WorkerSpecificTaskQueues
+    description: Unique task queue per worker for co-located activity execution
+  - path: src/WorkerVersioning
+    description: Worker versioning with auto-upgrading and pinned workflow deployments
+  - path: src/WorkflowUpdate
+    description: UI wizard using workflow update to mutate state and navigate screens
