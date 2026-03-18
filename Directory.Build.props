@@ -23,7 +23,10 @@
     <PackageReference Include="Temporalio.Extensions.DiagnosticSource" Version="1.12.0" />
     <PackageReference Include="Temporalio.Extensions.Hosting" Version="1.12.0" />
     <PackageReference Include="Temporalio.Extensions.OpenTelemetry" Version="1.12.0" />  </ItemGroup>
-
+    <!--
+    Can also reference the SDK downloaded to a local directory:
+    <ProjectReference Include="$(MSBuildThisFileDirectory)..\temporal-sdk-dotnet\src\Temporalio\Temporalio.csproj" />
+    -->
   <ItemGroup>
     <PackageReference Include="Microsoft.Extensions.Logging" Version="8.0.1" />
     <PackageReference Include="Microsoft.Extensions.Logging.Console" Version="8.0.1" />
