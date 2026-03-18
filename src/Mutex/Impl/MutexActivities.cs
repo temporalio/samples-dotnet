@@ -31,7 +31,7 @@ internal class MutexActivities
             new WorkflowOptions(input.MutexWorkflowId, activityInfo.TaskQueue)
             {
                 StartSignal = RequestLockSignalName,
-                StartSignalArgs = new object[] { new LockRequest(activityInfo.WorkflowId, input.AcquireLockSignalName, input.LockTimeout), },
+                StartSignalArgs = new object[] { new LockRequest(activityInfo.WorkflowId!, input.AcquireLockSignalName, input.LockTimeout), },
             });
     }
 }
