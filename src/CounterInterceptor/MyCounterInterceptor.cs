@@ -136,8 +136,9 @@ public class MyCounterInterceptor : IClientInterceptor, IWorkerInterceptor
 
         public override Task<object?> ExecuteActivityAsync(ExecuteActivityInput input)
         {
-            var id = ActivityExecutionContext.Current.Info.WorkflowId;
-            root.Increment(id, c => Interlocked.Increment(ref root.Counts[id].WorkflowActivityExecutions));
+            var info = ActivityExecutionContext.Current.Info;
+            var workflowId = info.IsWorkflowActivity ? info.WorkflowId! : throw new InvalidOperationException("Activity must be invoked from a workflow");
+            root.Increment(workflowId, c => Interlocked.Increment(ref root.Counts[workflowId].WorkflowActivityExecutions));
             return base.ExecuteActivityAsync(input);
         }
     }
