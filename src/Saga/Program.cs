@@ -2,6 +2,7 @@
 using Microsoft.Extensions.Logging;
 using Temporalio.Client;
 using Temporalio.Common.EnvConfig;
+using Temporalio.Exceptions;
 using Temporalio.Worker;
 using TemporalioSamples.Saga;
 
@@ -51,7 +52,17 @@ async Task ExecuteWorkflowAsync()
 
     Console.WriteLine($"Test workflow '{workflowId}' started");
 
-    await handle.GetResultAsync();
+    try
+    {
+        await handle.GetResultAsync();
+    }
+    catch (WorkflowFailedException)
+    {
+        Console.WriteLine(
+            $"Workflow '{workflowId}' failed as expected (after compensation) in {sw.ElapsedMilliseconds}ms");
+        return;
+    }
+
     Console.WriteLine($"Test workflow '{workflowId}' finished after {sw.ElapsedMilliseconds}ms");
 }
 
