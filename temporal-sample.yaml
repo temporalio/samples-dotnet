@@ -16,67 +16,193 @@ scaffold:
 samples:
   - path: src/ActivitySimple
     description: Workflow executing synchronous static and asynchronous instance activity methods
+    commands:
+      - cmd: dotnet run --project ActivitySimple worker
+      - cmd: dotnet run --project ActivitySimple workflow
+        new_terminal: true
   - path: src/NexusSimple
     description: Nexus service definition and operation calls from a workflow
+    commands:
+      - cmd: temporal operator namespace create --namespace nexus-simple-handler-namespace
+      - cmd: temporal operator namespace create --namespace nexus-simple-caller-namespace
+      - cmd: temporal operator nexus endpoint create --name nexus-simple-endpoint --target-namespace nexus-simple-handler-namespace --target-task-queue nexus-simple-handler-sample --description-file NexusSimple/endpoint_description.md
+      - cmd: dotnet run --project NexusSimple handler-worker
+      - cmd: dotnet run --project NexusSimple caller-worker
+        new_terminal: true
+      - cmd: dotnet run --project NexusSimple caller-workflow
+        new_terminal: true
   - path: src/NexusCancellation
     description: Cancel a Nexus operation using WaitCancellationRequested
+    commands:
+      - cmd: temporal operator namespace create --namespace nexus-cancellation-handler-namespace
+      - cmd: temporal operator namespace create --namespace nexus-cancellation-caller-namespace
+      - cmd: temporal operator nexus endpoint create --name nexus-cancellation-endpoint --target-namespace nexus-cancellation-handler-namespace --target-task-queue nexus-cancellation-handler-sample
+      - cmd: dotnet run --project NexusCancellation handler-worker
+      - cmd: dotnet run --project NexusCancellation caller-worker
+        new_terminal: true
+      - cmd: dotnet run --project NexusCancellation caller-workflow
+        new_terminal: true
   - path: src/NexusContextPropagation
     description: Propagate context through client calls, workflows, and Nexus headers
+    commands:
+      - cmd: temporal operator namespace create --namespace nexus-context-propagation-handler-namespace
+      - cmd: temporal operator namespace create --namespace nexus-context-propagation-caller-namespace
+      - cmd: temporal operator nexus endpoint create --name nexus-context-propagation-endpoint --target-namespace nexus-context-propagation-handler-namespace --target-task-queue nexus-context-propagation-handler-sample
+      - cmd: dotnet run --project NexusContextPropagation handler-worker
+      - cmd: dotnet run --project NexusContextPropagation caller-worker
+        new_terminal: true
+      - cmd: dotnet run --project NexusContextPropagation caller-workflow
+        new_terminal: true
   - path: src/NexusMultiArg
     description: Convert a single Nexus argument into multiple workflow arguments
+    commands:
+      - cmd: temporal operator namespace create --namespace nexus-multi-arg-handler-namespace
+      - cmd: temporal operator namespace create --namespace nexus-multi-arg-caller-namespace
+      - cmd: temporal operator nexus endpoint create --name nexus-multi-arg-endpoint --target-namespace nexus-multi-arg-handler-namespace --target-task-queue nexus-multi-arg-handler-sample
+      - cmd: dotnet run --project NexusMultiArg handler-worker
+      - cmd: dotnet run --project NexusMultiArg caller-worker
+        new_terminal: true
+      - cmd: dotnet run --project NexusMultiArg caller-workflow
+        new_terminal: true
   - path: src/Bedrock
     description: Amazon Bedrock AI chatbot with durable execution
+    commands:
+      - cmd: dotnet run --project Bedrock/Basic worker
+      - cmd: dotnet run --project Bedrock/Basic send-message 'What animals are marsupials?'
+        new_terminal: true
   - path: src/Saga
     description: Microservice orchestration using the Saga pattern
+    commands:
+      - cmd: dotnet run --project Saga worker
+      - cmd: dotnet run --project Saga workflow
+        new_terminal: true
   - path: src/Encryption
     description: Custom payload codec for end-to-end encryption
+    commands:
+      - cmd: dotnet run --project Encryption/Worker
+      - cmd: dotnet run --project Encryption/Starter
+        new_terminal: true
   - path: src/Dsl
     description: Workflow interpreter for arbitrary steps defined in a DSL
+    commands:
+      - cmd: dotnet run --project Dsl worker
+      - cmd: dotnet run --project Dsl workflow Dsl/workflow1.yaml
+        new_terminal: true
   - path: src/Polling
     description: Three best practices for polling
+    commands:
+      - cmd: dotnet run --project Polling/Frequent worker
+      - cmd: dotnet run --project Polling/Frequent workflow
+        new_terminal: true
   - path: src/AspNet
     description: Generic host worker + ASP.NET web application
   - path: src/ActivityHeartbeatingCancellation
     description: Activity heartbeating for resume on retry and cancellation handling
+    commands:
+      - cmd: dotnet run --project ActivityHeartbeatingCancellation worker
+      - cmd: dotnet run --project ActivityHeartbeatingCancellation workflow
+        new_terminal: true
   - path: src/ActivityWorker
     description: Cross-language activity execution with a Go workflow calling a .NET activity
   - path: src/ClientMtls
     description: Client connection using mTLS authentication
   - path: src/ContextPropagation
     description: Interceptors propagating contextual information via AsyncLocal
+    commands:
+      - cmd: dotnet run --project ContextPropagation worker
+      - cmd: dotnet run --project ContextPropagation workflow
+        new_terminal: true
   - path: src/CounterInterceptor
     description: Worker and client interceptors counting executions, signals, and queries
+    commands:
+      - cmd: dotnet run --project CounterInterceptor
   - path: src/DependencyInjection
     description: Activity dependency injection with a generic host worker
+    commands:
+      - cmd: dotnet run --project DependencyInjection worker
+      - cmd: dotnet run --project DependencyInjection workflow
+        new_terminal: true
   - path: src/EagerWorkflowStart
     description: Eager workflow start with a local activity for low-latency first tasks
+    commands:
+      - cmd: dotnet run --project EagerWorkflowStart
   - path: src/EnvConfig
     description: External client configuration from TOML files with programmatic overrides
+    commands:
+      - cmd: dotnet run --project EnvConfig load-from-file
   - path: src/Mutex
     description: Mutex workflow coordinating exclusive access to a resource via signals
+    commands:
+      - cmd: dotnet run --project Mutex worker
+      - cmd: dotnet run --project Mutex workflow
+        new_terminal: true
   - path: src/OpenTelemetry
     description: OpenTelemetry tracing and metrics integration
   - path: src/Patching
     description: Safe workflow evolution using Workflow.Patched and DeprecatePatch
+    commands:
+      - cmd: dotnet run --project Patching worker --workflow initial
+      - cmd: dotnet run --project Patching starter --start-workflow initial-workflow-id
+        new_terminal: true
   - path: src/SafeMessageHandlers
     description: Atomic workflow message handling using Semaphore to prevent data races
+    commands:
+      - cmd: dotnet run --project SafeMessageHandlers worker
+      - cmd: dotnet run --project SafeMessageHandlers workflow
+        new_terminal: true
   - path: src/Schedules
     description: Scheduling workflows to run at specific times
+    commands:
+      - cmd: dotnet run --project Schedules worker
+      - cmd: dotnet run --project Schedules schedule-start
+        new_terminal: true
   - path: src/SignalsQueries
     description: Loyalty program implemented with signals and queries
+    commands:
+      - cmd: dotnet run --project SignalsQueries worker
+      - cmd: dotnet run --project SignalsQueries workflow
+        new_terminal: true
   - path: src/SleepForDays
     description: Long-running workflow sending periodic emails using durable timers
+    commands:
+      - cmd: dotnet run --project SleepForDays worker
+      - cmd: dotnet run --project SleepForDays workflow
+        new_terminal: true
   - path: src/Timer
     description: Monthly subscription using Workflow.DelayAsync with cancellation handling
+    commands:
+      - cmd: dotnet run --project Timer worker
+      - cmd: dotnet run --project Timer workflow
+        new_terminal: true
   - path: src/UpdatableTimer
     description: Blocking sleep timer that can be updated at any moment
+    commands:
+      - cmd: dotnet run --project UpdatableTimer worker
+      - cmd: dotnet run --project UpdatableTimer workflow
+        new_terminal: true
   - path: src/UpdateWithStartEarlyReturn
     description: Start a workflow and return early after partial completion
+    commands:
+      - cmd: dotnet run --project UpdateWithStartEarlyReturn worker
+      - cmd: dotnet run --project UpdateWithStartEarlyReturn workflow
+        new_terminal: true
   - path: src/UpdateWithStartLazyInit
     description: Shopping cart using update-with-start for lazy workflow initialization
+    commands:
+      - cmd: dotnet run --project UpdateWithStartLazyInit worker
+      - cmd: dotnet run --project UpdateWithStartLazyInit workflow
+        new_terminal: true
   - path: src/WorkerSpecificTaskQueues
     description: Unique task queue per worker for co-located activity execution
+    commands:
+      - cmd: dotnet run --project WorkerSpecificTaskQueues worker
+      - cmd: dotnet run --project WorkerSpecificTaskQueues workflow
+        new_terminal: true
   - path: src/WorkerVersioning
     description: Worker versioning with auto-upgrading and pinned workflow deployments
   - path: src/WorkflowUpdate
     description: UI wizard using workflow update to mutate state and navigate screens
+    commands:
+      - cmd: dotnet run --project WorkflowUpdate worker
+      - cmd: dotnet run --project WorkflowUpdate workflow
+        new_terminal: true
