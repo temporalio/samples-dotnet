@@ -40,6 +40,7 @@
     <ProjectReference Include="..\src\WorkerVersioning\TemporalioSamples.WorkerVersioning.csproj" />
     <ProjectReference Include="..\src\SleepForDays\TemporalioSamples.SleepForDays.csproj" />
     <ProjectReference Include="..\src\Dsl\TemporalioSamples.Dsl.csproj" />
+    <ProjectReference Include="..\src\StandaloneActivity\TemporalioSamples.StandaloneActivity.csproj" />
   </ItemGroup>
 
 </Project>

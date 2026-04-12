@@ -26,6 +26,7 @@ internal class MutexActivities
     public async Task SignalWithStartMutexWorkflowAsync(SignalWithStartMutexWorkflowInput input)
     {
         var activityInfo = ActivityExecutionContext.Current.Info;
+        var workflowId = activityInfo.IsWorkflowActivity ? activityInfo.WorkflowId! : throw new InvalidOperationException("Activity must be invoked from a workflow");
 
         // TODO: What do we do here for standalone activities?
         if (activityInfo.WorkflowId is null)
@@ -38,7 +39,7 @@ internal class MutexActivities
             new WorkflowOptions(input.MutexWorkflowId, activityInfo.TaskQueue)
             {
                 StartSignal = RequestLockSignalName,
-                StartSignalArgs = new object[] { new LockRequest(activityInfo.WorkflowId, input.AcquireLockSignalName, input.LockTimeout), },
+                StartSignalArgs = new object[] { new LockRequest(workflowId, input.AcquireLockSignalName, input.LockTimeout), },
             });
     }
 }

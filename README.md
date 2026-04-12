@@ -37,6 +37,7 @@ Prerequisites:
 * [Saga](src/Saga) - Demonstrates how to implement a saga pattern.
 * [Schedules](src/Schedules) - How to schedule workflows to be run at specific times in the future.
 * [SignalsQueries](src/SignalsQueries) - A loyalty program using Signals and Queries.
+* [StandaloneActivity](src/StandaloneActivity) - Execute activities directly from a client, without a workflow.
 * [SleepForDays](src/SleepForDays/) - Use a timer to send an email every 30 days.
 * [Timer](src/Timer) - Use a timer to implement a monthly subscription; handle workflow cancellation.
 * [UpdatableTimer](src/UpdatableTimer) - A timer that can be updated while sleeping.
