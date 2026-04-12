@@ -22,6 +22,7 @@
     <Project Path="src/Schedules/TemporalioSamples.Schedules.csproj" />
     <Project Path="src/SignalsQueries/TemporalioSamples.SignalsQueries.csproj" />
     <Project Path="src/SleepForDays/TemporalioSamples.SleepForDays.csproj" />
+    <Project Path="src/StandaloneActivity/TemporalioSamples.StandaloneActivity.csproj" />
     <Project Path="src/Timer/TemporalioSamples.Timer.csproj" />
     <Project Path="src/UpdatableTimer/TemporalioSamples.UpdatableTimer.csproj" />
     <Project Path="src/UpdateWithStartEarlyReturn/TemporalioSamples.UpdateWithStartEarlyReturn.csproj" />
