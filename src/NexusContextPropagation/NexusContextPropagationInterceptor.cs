@@ -48,7 +48,7 @@ public class NexusContextPropagationInterceptor(
         string headerKey,
         WorkflowOutboundInterceptor next) : WorkflowOutboundInterceptor(next)
     {
-        public override Task<NexusOperationHandle<TResult>> StartNexusOperationAsync<TResult>(
+        public override Task<NexusWorkflowOperationHandle<TResult>> StartNexusOperationAsync<TResult>(
             StartNexusOperationInput input)
         {
             if (context.Value is { } value)

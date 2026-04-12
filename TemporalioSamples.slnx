@@ -1,0 +1,68 @@
+<Solution>
+  <Configurations>
+    <Platform Name="Any CPU" />
+    <Platform Name="x64" />
+    <Platform Name="x86" />
+  </Configurations>
+  <Folder Name="/src/">
+    <Project Path="src/ActivityHeartbeatingCancellation/TemporalioSamples.ActivityHeartbeatingCancellation.csproj" />
+    <Project Path="src/ActivitySimple/TemporalioSamples.ActivitySimple.csproj" />
+    <Project Path="src/ActivityWorker/TemporalioSamples.ActivityWorker.csproj" />
+    <Project Path="src/ClientMtls/TemporalioSamples.ClientMtls.csproj" />
+    <Project Path="src/ContextPropagation/TemporalioSamples.ContextPropagation.csproj" />
+    <Project Path="src/CounterInterceptor/TemporalioSamples.CounterInterceptor.csproj" />
+    <Project Path="src/DependencyInjection/TemporalioSamples.DependencyInjection.csproj" />
+    <Project Path="src/Dsl/TemporalioSamples.Dsl.csproj" />
+    <Project Path="src/EagerWorkflowStart/TemporalioSamples.EagerWorkflowStart.csproj" />
+    <Project Path="src/EnvConfig/TemporalioSamples.EnvConfig.csproj" />
+    <Project Path="src/Mutex/TemporalioSamples.Mutex.csproj" />
+    <Project Path="src/Patching/TemporalioSamples.Patching.csproj" />
+    <Project Path="src/SafeMessageHandlers/TemporalioSamples.SafeMessageHandlers.csproj" />
+    <Project Path="src/Saga/TemporalioSamples.Saga.csproj" />
+    <Project Path="src/Schedules/TemporalioSamples.Schedules.csproj" />
+    <Project Path="src/SignalsQueries/TemporalioSamples.SignalsQueries.csproj" />
+    <Project Path="src/SleepForDays/TemporalioSamples.SleepForDays.csproj" />
+    <Project Path="src/Timer/TemporalioSamples.Timer.csproj" />
+    <Project Path="src/UpdatableTimer/TemporalioSamples.UpdatableTimer.csproj" />
+    <Project Path="src/UpdateWithStartEarlyReturn/TemporalioSamples.UpdateWithStartEarlyReturn.csproj" />
+    <Project Path="src/UpdateWithStartLazyInit/TemporalioSamples.UpdateWithStartLazyInit.csproj" />
+    <Project Path="src/WorkerSpecificTaskQueues/TemporalioSamples.WorkerSpecificTaskQueues.csproj" />
+    <Project Path="src/WorkerVersioning/TemporalioSamples.WorkerVersioning.csproj" />
+    <Project Path="src/WorkflowUpdate/TemporalioSamples.WorkflowUpdate.csproj" />
+  </Folder>
+  <Folder Name="/src/AspNet/">
+    <Project Path="src/AspNet/Web/TemporalioSamples.AspNet.Web.csproj" />
+    <Project Path="src/AspNet/Worker/TemporalioSamples.AspNet.Worker.csproj" />
+  </Folder>
+  <Folder Name="/src/Bedrock/">
+    <Project Path="src/Bedrock/Basic/TemporalioSamples.Bedrock.Basic.csproj" />
+    <Project Path="src/Bedrock/Entity/TemporalioSamples.Bedrock.Entity.csproj" />
+    <Project Path="src/Bedrock/SignalsAndQueries/TemporalioSamples.Bedrock.SignalsAndQueries.csproj" />
+  </Folder>
+  <Folder Name="/src/Encryption/">
+    <Project Path="src/Encryption/Codec/TemporalioSamples.Encryption.Codec.csproj" />
+    <Project Path="src/Encryption/CodecServer/TemporalioSamples.Encryption.CodecServer.csproj" />
+    <Project Path="src/Encryption/Starter/TemporalioSamples.Encryption.Starter.csproj" />
+    <Project Path="src/Encryption/Worker/TemporalioSamples.Encryption.Worker.csproj" />
+  </Folder>
+  <Folder Name="/src/NexusCancellation/">
+    <Project Path="src/NexusCancellation/TemporalioSamples.NexusCancellation.csproj" />
+  </Folder>
+  <Folder Name="/src/NexusContextPropagation/">
+    <Project Path="src/NexusContextPropagation/TemporalioSamples.NexusContextPropagation.csproj" />
+  </Folder>
+  <Folder Name="/src/NexusMultiArg/">
+    <Project Path="src/NexusMultiArg/TemporalioSamples.NexusMultiArg.csproj" />
+  </Folder>
+  <Folder Name="/src/NexusSimple/">
+    <Project Path="src/NexusSimple/TemporalioSamples.NexusSimple.csproj" />
+  </Folder>
+  <Folder Name="/src/Polling/">
+    <Project Path="src/Polling/Frequent/TemporalioSamples.Polling.Frequent.csproj" />
+    <Project Path="src/Polling/Infrequent/TemporalioSamples.Polling.Infrequent.csproj" />
+    <Project Path="src/Polling/PeriodicSequence/TemporalioSamples.Polling.PeriodicSequence.csproj" />
+  </Folder>
+  <Project Path="src/OpenTelemetry/CoreSdkForwarding/TemporalioSamples.OpenTelemetry.CoreSdkForwarding.csproj" />
+  <Project Path="src/OpenTelemetry/DotNetMetrics/TemporalioSamples.OpenTelemetry.DotNetMetrics.csproj" />
+  <Project Path="tests/TemporalioSamples.Tests.csproj" />
+</Solution>

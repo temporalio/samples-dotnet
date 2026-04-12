@@ -137,7 +137,12 @@ public class MyCounterInterceptor : IClientInterceptor, IWorkerInterceptor
         public override Task<object?> ExecuteActivityAsync(ExecuteActivityInput input)
         {
             var id = ActivityExecutionContext.Current.Info.WorkflowId;
-            root.Increment(id, c => Interlocked.Increment(ref root.Counts[id].WorkflowActivityExecutions));
+
+            // TODO: What do we do here for standalone activities?
+            if (id is not null)
+            {
+                root.Increment(id, c => Interlocked.Increment(ref root.Counts[id].WorkflowActivityExecutions));
+            }
             return base.ExecuteActivityAsync(input);
         }
     }

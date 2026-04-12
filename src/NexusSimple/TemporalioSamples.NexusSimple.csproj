@@ -5,7 +5,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="NexusRpc" Version="0.2.0" />
+    <PackageReference Include="NexusRpc" Version="0.3.0" />
   </ItemGroup>
 
 </Project>

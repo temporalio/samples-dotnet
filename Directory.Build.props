@@ -13,16 +13,16 @@
     <Nullable>enable</Nullable>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <RepositoryUrl>https://github.com/temporalio/samples-dotnet</RepositoryUrl>
-    <TargetFramework>net8.0</TargetFramework>
+    <TargetFramework>net9.0</TargetFramework>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
     <Version>0.1.0</Version>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Temporalio" Version="1.11.1" />
-    <PackageReference Include="Temporalio.Extensions.DiagnosticSource" Version="1.11.1" />
-    <PackageReference Include="Temporalio.Extensions.Hosting" Version="1.11.1" />
-    <PackageReference Include="Temporalio.Extensions.OpenTelemetry" Version="1.11.1" />
+    <PackageReference Include="Temporalio" Version="1.13.0" />
+    <PackageReference Include="Temporalio.Extensions.DiagnosticSource" Version="1.13.0" />
+    <PackageReference Include="Temporalio.Extensions.Hosting" Version="1.13.0" />
+    <PackageReference Include="Temporalio.Extensions.OpenTelemetry" Version="1.13.0" />
     <!--
     Can also reference the SDK downloaded to a local directory:
     <ProjectReference Include="$(MSBuildThisFileDirectory)..\temporal-sdk-dotnet\src\Temporalio\Temporalio.csproj" />

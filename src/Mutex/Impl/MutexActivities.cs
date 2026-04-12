@@ -2,6 +2,7 @@
 
 using Temporalio.Activities;
 using Temporalio.Client;
+using Temporalio.Exceptions;
 using Temporalio.Workflows;
 
 internal record SignalWithStartMutexWorkflowInput(string MutexWorkflowId, string ResourceId, string AcquireLockSignalName, TimeSpan? LockTimeout = null);
@@ -26,7 +27,13 @@ internal class MutexActivities
     {
         var activityInfo = ActivityExecutionContext.Current.Info;
 
-        await this.client.StartWorkflowAsync(
+        // TODO: What do we do here for standalone activities?
+        if (activityInfo.WorkflowId is null)
+        {
+            throw new ApplicationFailureException("WorkflowId cannot be null.", nonRetryable: true);
+        }
+
+        await client.StartWorkflowAsync(
             (MutexWorkflow mw) => mw.RunAsync(MutexWorkflowInput.Empty),
             new WorkflowOptions(input.MutexWorkflowId, activityInfo.TaskQueue)
             {
