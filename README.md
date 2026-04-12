@@ -6,7 +6,7 @@ This is the set of .NET samples for the [.NET SDK](https://github.com/temporalio
 
 Prerequisites:
 
-* .NET 8
+* .NET 9
 * [Local Temporal server running](https://learn.temporal.io/getting_started/dotnet/dev_environment/)
 
 ## Samples
