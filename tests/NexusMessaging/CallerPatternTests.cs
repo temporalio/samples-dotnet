@@ -2,18 +2,18 @@ namespace TemporalioSamples.Tests.NexusMessaging;
 
 using Temporalio.Client;
 using Temporalio.Worker;
-using TemporalioSamples.NexusMessaging.Callerpattern;
-using TemporalioSamples.NexusMessaging.Callerpattern.Caller;
-using TemporalioSamples.NexusMessaging.Callerpattern.Handler;
+using TemporalioSamples.NexusMessaging.CallerPattern;
+using TemporalioSamples.NexusMessaging.CallerPattern.Caller;
+using TemporalioSamples.NexusMessaging.CallerPattern.Handler;
 using TemporalioSamples.NexusMessaging.Common;
 using Xunit;
 using Xunit.Abstractions;
 
-public class CallerpatternTests : WorkflowEnvironmentTestBase
+public class CallerPatternTests : WorkflowEnvironmentTestBase
 {
     private static Task<string>? lazyHandlerTaskQueue;
 
-    public CallerpatternTests(ITestOutputHelper output, WorkflowEnvironment env)
+    public CallerPatternTests(ITestOutputHelper output, WorkflowEnvironment env)
         : base(output, env)
     {
     }

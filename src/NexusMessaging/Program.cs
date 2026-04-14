@@ -2,15 +2,13 @@ using Microsoft.Extensions.Logging;
 using Temporalio.Client;
 using Temporalio.Common.EnvConfig;
 using Temporalio.Worker;
-using TemporalioSamples.NexusMessaging.Callerpattern;
-using TemporalioSamples.NexusMessaging.Callerpattern.Caller;
-using TemporalioSamples.NexusMessaging.Callerpattern.Handler;
+using TemporalioSamples.NexusMessaging.CallerPattern.Caller;
+using TemporalioSamples.NexusMessaging.CallerPattern.Handler;
 using TemporalioSamples.NexusMessaging.Common;
-using TemporalioSamples.NexusMessaging.Ondemandpattern;
-using TemporalioSamples.NexusMessaging.Ondemandpattern.Caller;
-using CallerGreetingWorkflow = TemporalioSamples.NexusMessaging.Callerpattern.Handler.GreetingWorkflow;
-using OndemandGreetingWorkflow = TemporalioSamples.NexusMessaging.Ondemandpattern.Handler.GreetingWorkflow;
-using OndemandNexusService = TemporalioSamples.NexusMessaging.Ondemandpattern.Handler.NexusRemoteGreetingService;
+using TemporalioSamples.NexusMessaging.OnDemandPattern.Caller;
+using CallerGreetingWorkflow = TemporalioSamples.NexusMessaging.CallerPattern.Handler.GreetingWorkflow;
+using OnDemandGreetingWorkflow = TemporalioSamples.NexusMessaging.OnDemandPattern.Handler.GreetingWorkflow;
+using OnDemandNexusService = TemporalioSamples.NexusMessaging.OnDemandPattern.Handler.NexusRemoteGreetingService;
 
 using var loggerFactory = LoggerFactory.Create(builder =>
     builder.
@@ -28,8 +26,8 @@ Console.CancelKeyPress += (_, eventArgs) =>
 
 const string HandlerNamespace = "nexus-messaging-handler-namespace";
 const string CallerNamespace = "nexus-messaging-caller-namespace";
-const string HandlerTaskQueue = "nexus-messaging-handler-task-queue";
-const string CallerTaskQueue = "nexus-messaging-caller-task-queue";
+const string HandlerTaskQueue = "nexus-messaging-handler-sample";
+const string CallerTaskQueue = "nexus-messaging-caller-sample";
 
 Task<TemporalClient> ConnectClientAsync(string temporalNamespace)
 {
@@ -115,8 +113,8 @@ async Task RunRemoteHandlerWorkerAsync()
     using var worker = new TemporalWorker(
         await ConnectClientAsync(HandlerNamespace),
         new TemporalWorkerOptions(HandlerTaskQueue).
-            AddNexusService(new OndemandNexusService()).
-            AddWorkflow<OndemandGreetingWorkflow>().
+            AddNexusService(new OnDemandNexusService()).
+            AddWorkflow<OnDemandGreetingWorkflow>().
             AddAllActivities(new GreetingActivities()));
     try
     {

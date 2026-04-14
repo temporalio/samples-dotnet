@@ -1,4 +1,4 @@
-namespace TemporalioSamples.NexusMessaging.Ondemandpattern;
+namespace TemporalioSamples.NexusMessaging.OnDemandPattern;
 
 using NexusRpc;
 using TemporalioSamples.NexusMessaging.Common;
@@ -6,7 +6,7 @@ using TemporalioSamples.NexusMessaging.Common;
 [NexusService]
 public interface INexusRemoteGreetingService
 {
-    public static readonly string EndpointName = "nexus-messaging-nexus-endpoint";
+    static readonly string EndpointName = "nexus-messaging-nexus-endpoint";
 
     [NexusOperation]
     string RunFromRemote(RunFromRemoteInput input);

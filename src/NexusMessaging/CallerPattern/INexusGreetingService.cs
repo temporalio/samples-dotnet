@@ -1,4 +1,4 @@
-namespace TemporalioSamples.NexusMessaging.Callerpattern;
+namespace TemporalioSamples.NexusMessaging.CallerPattern;
 
 using NexusRpc;
 using TemporalioSamples.NexusMessaging.Common;
@@ -6,7 +6,7 @@ using TemporalioSamples.NexusMessaging.Common;
 [NexusService]
 public interface INexusGreetingService
 {
-    public static readonly string EndpointName = "nexus-messaging-nexus-endpoint";
+    static readonly string EndpointName = "nexus-messaging-nexus-endpoint";
 
     [NexusOperation]
     GetLanguagesOutput GetLanguages(GetLanguagesInput input);

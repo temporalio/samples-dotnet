@@ -1,9 +1,9 @@
-namespace TemporalioSamples.NexusMessaging.Ondemandpattern.Handler;
+namespace TemporalioSamples.NexusMessaging.OnDemandPattern.Handler;
 
 using Temporalio.Exceptions;
 using Temporalio.Workflows;
 using TemporalioSamples.NexusMessaging.Common;
-using TemporalioSamples.NexusMessaging.Ondemandpattern;
+using TemporalioSamples.NexusMessaging.OnDemandPattern;
 
 [Workflow]
 public class GreetingWorkflow
@@ -19,7 +19,7 @@ public class GreetingWorkflow
     private string approvedBy = string.Empty;
 
     [WorkflowRun]
-    public async Task<string> RunAsync(string workflowId)
+    public async Task<string> RunAsync(string userId)
     {
         // Wait for approve signal and all handlers to finish
         await Workflow.WaitConditionAsync(() => approved && Workflow.AllHandlersFinished);

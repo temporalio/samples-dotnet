@@ -1,7 +1,7 @@
-namespace TemporalioSamples.NexusMessaging.Callerpattern.Caller;
+namespace TemporalioSamples.NexusMessaging.CallerPattern.Caller;
 
 using Temporalio.Workflows;
-using TemporalioSamples.NexusMessaging.Callerpattern;
+using TemporalioSamples.NexusMessaging.CallerPattern;
 using TemporalioSamples.NexusMessaging.Common;
 
 [Workflow]
