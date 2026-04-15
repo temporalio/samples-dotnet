@@ -39,6 +39,7 @@ Prerequisites:
 * [SignalsQueries](src/SignalsQueries) - A loyalty program using Signals and Queries.
 * [StandaloneActivity](src/StandaloneActivity) - Execute activities directly from a client, without a workflow.
 * [SleepForDays](src/SleepForDays/) - Use a timer to send an email every 30 days.
+* [Testcontainers](src/Testcontainers) - Integration test workflows against Temporal and PostgreSQL containers using Testcontainers.
 * [Timer](src/Timer) - Use a timer to implement a monthly subscription; handle workflow cancellation.
 * [UpdatableTimer](src/UpdatableTimer) - A timer that can be updated while sleeping.
 * [UpdateWithStartEarlyReturn](src/UpdateWithStartEarlyReturn) - Use update with start to get an early return, letting the rest of the workflow complete in the background.
