@@ -6,7 +6,7 @@ using TemporalioSamples.NexusMessaging.Common;
 [NexusService]
 public interface INexusGreetingService
 {
-    static readonly string EndpointName = "nexus-messaging-nexus-endpoint";
+    static readonly string EndpointName = "nexus-messaging-caller-pattern-endpoint";
 
     [NexusOperation]
     GetLanguagesOutput GetLanguages(GetLanguagesInput input);

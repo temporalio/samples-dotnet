@@ -27,7 +27,7 @@ temporal operator namespace create --namespace nexus-messaging-handler-namespace
 temporal operator namespace create --namespace nexus-messaging-caller-namespace
 
 temporal operator nexus endpoint create \
-  --name nexus-messaging-nexus-endpoint \
+  --name nexus-messaging-caller-pattern-endpoint \
   --target-namespace nexus-messaging-handler-namespace \
   --target-task-queue nexus-messaging-handler-sample
 ```
