@@ -20,8 +20,11 @@ public class HelloService
                 context.StartWorkflowAsync(
                     (HelloHandlerWorkflow wf) => wf.RunAsync(input),
                     // Workflow IDs should typically be business meaningful IDs and are used to
-                    // dedupe workflow starts. For this example, we're using the request ID
-                    // allocated by Temporal when the caller workflow schedules the operation,
-                    // this ID is guaranteed to be stable across retries of this operation.
-                    new() { Id = context.HandlerContext.RequestId }));
+                    // dedupe workflow starts. Use a business ID derived from the operation
+                    // input instead of the Nexus request ID. The request ID is still available
+                    // separately as an idempotency key for retries of the operation.
+                    new() { Id = GetHelloWorkflowId(input) }));
+
+    private static string GetHelloWorkflowId(IHelloService.HelloInput input) =>
+        $"hello-{input.Language}-{input.Name.Trim().Replace(' ', '-')}";
 }
