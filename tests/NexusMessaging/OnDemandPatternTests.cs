@@ -51,11 +51,16 @@ public class OnDemandPatternTests : WorkflowEnvironmentTestBase
                     (CallerRemoteWorkflow wf) => wf.RunAsync(),
                     new(id: $"wf-{Guid.NewGuid()}", taskQueue: callerWorker.Options.TaskQueue!));
 
-                Assert.True(result.Length > 0);
-                // Both workflows should have been started and approved
-                Assert.Contains(result, r => r.Contains("Started remote workflow"));
-                Assert.Contains(result, r => r.Contains("[One] Result:"));
-                Assert.Contains(result, r => r.Contains("[Two] Result:"));
+                Assert.Contains("Started remote workflow for user: user-one", result[0]);
+                Assert.Contains("Started remote workflow for user: user-two", result[1]);
+                Assert.Contains("[One] Supported languages:", result[2]);
+                Assert.Contains($"[One] Set language from {Language.English} to {Language.Spanish}", result[3]);
+                Assert.Contains("[One] Approved", result[4]);
+                Assert.Contains("[Two] Current language:", result[5]);
+                Assert.Contains($"[Two] Set language from {Language.English} to {Language.French}", result[6]);
+                Assert.Contains("[Two] Approved", result[7]);
+                Assert.Contains("[One] Result:", result[8]);
+                Assert.Contains("[Two] Result:", result[9]);
             });
         });
     }

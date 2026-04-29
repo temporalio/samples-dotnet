@@ -1,11 +1,11 @@
 ## On-demand pattern
 
-No workflow is pre-started. The caller creates and controls workflow instances through Nexus
+No Workflow is pre-started. The caller creates and controls Workflow instances through Nexus
 operations. `NexusRemoteGreetingService` adds a `RunFromRemote` operation that starts a new
 `GreetingWorkflow`, and every other operation includes a `UserId` so the handler can derive
-the target workflow ID.
+the target Workflow ID.
 
-The caller workflow:
+The caller Workflow:
 1. Starts two remote `GreetingWorkflow` instances via `RunFromRemote` (backed by `WorkflowRunOperationHandler`)
 2. Workflow one: queries supported languages, changes to Spanish, and approves
 3. Workflow two: queries the current language, changes to French, and approves
@@ -43,7 +43,7 @@ In a second terminal, start the caller worker:
 dotnet run --project src/NexusMessaging -- remote-caller-worker
 ```
 
-In a third terminal, start the caller workflow:
+In a third terminal, run the following command to start the example:
 
 ```bash
 dotnet run --project src/NexusMessaging -- remote-caller-workflow

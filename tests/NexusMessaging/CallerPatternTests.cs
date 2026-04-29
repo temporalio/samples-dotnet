@@ -11,25 +11,16 @@ using Xunit.Abstractions;
 
 public class CallerPatternTests : WorkflowEnvironmentTestBase
 {
-    private static Task<string>? lazyHandlerTaskQueue;
-
     public CallerPatternTests(ITestOutputHelper output, WorkflowEnvironment env)
         : base(output, env)
     {
     }
 
-    public Task<string> EnsureHandlerTaskQueueAsync() =>
-        LazyInitializer.EnsureInitialized(ref lazyHandlerTaskQueue, async () =>
-        {
-            var handlerTaskQueue = $"tq-{Guid.NewGuid()}";
-            await Env.TestEnv.CreateNexusEndpointAsync(INexusGreetingService.EndpointName, handlerTaskQueue);
-            return handlerTaskQueue;
-        });
-
     [Fact]
     public async Task RunAsync_CallerWorkflow_Succeeds()
     {
-        var handlerTaskQueue = await EnsureHandlerTaskQueueAsync();
+        var handlerTaskQueue = $"tq-{Guid.NewGuid()}";
+        await Env.TestEnv.CreateNexusEndpointAsync(INexusGreetingService.EndpointName, handlerTaskQueue);
         var userId = $"user-{Guid.NewGuid()}";
         var workflowId = $"GreetingWorkflow_for_{userId}";
 

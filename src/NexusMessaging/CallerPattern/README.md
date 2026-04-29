@@ -1,16 +1,16 @@
 ## Entity pattern
 
-The handler worker starts a `GreetingWorkflow` for a user ID at boot time.
-`NexusGreetingService` routes every Nexus operation to that existing workflow by deriving
-the workflow ID from the caller-supplied `UserId` (see the `WorkflowIdForUser` call).
-The caller passes a `UserId`, not a workflow ID -- the handler is responsible for the
+The handler worker starts a `GreetingWorkflow` for a User ID at boot time.
+`NexusGreetingService` routes every Nexus operation to that existing Workflow by deriving
+the Workflow ID from the caller-supplied `UserId` (see the `WorkflowIdForUser` call).
+The caller passes a `UserId`, not a Workflow ID -- the handler is responsible for the
 ID mapping.
 
-The caller workflow:
-1. Queries for supported languages (`GetLanguages` -- backed by a workflow query)
-2. Queries the current language (`GetLanguage` -- backed by a workflow query)
-3. Changes the language to Chinese (`SetLanguage` -- backed by a workflow update that calls an activity)
-4. Approves the workflow (`Approve` -- backed by a workflow signal)
+The caller Workflow:
+1. Queries for supported languages (`GetLanguages` -- backed by a Workflow query)
+2. Queries the current language (`GetLanguage` -- backed by a Workflow query)
+3. Changes the language to Chinese (`SetLanguage` -- backed by a Workflow update that calls an activity)
+4. Approves the Workflow (`Approve` -- backed by a Workflow signal)
 
 ### Running
 
@@ -44,7 +44,7 @@ In a second terminal, start the caller worker:
 dotnet run --project src/NexusMessaging -- caller-worker
 ```
 
-In a third terminal, start the caller workflow:
+In a third terminal, run the following command to start the example:
 
 ```bash
 dotnet run --project src/NexusMessaging -- caller-workflow

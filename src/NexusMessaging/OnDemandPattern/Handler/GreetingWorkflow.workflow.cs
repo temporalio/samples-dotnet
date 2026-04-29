@@ -73,9 +73,10 @@ public class GreetingWorkflow
     }
 
     [WorkflowSignal]
-    public async Task ApproveAsync(string name)
+    public Task ApproveAsync(string name)
     {
         approved = true;
         approvedBy = name;
+        return Task.CompletedTask;
     }
 }
