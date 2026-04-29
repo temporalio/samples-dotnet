@@ -11,25 +11,16 @@ using Xunit.Abstractions;
 
 public class OnDemandPatternTests : WorkflowEnvironmentTestBase
 {
-    private static Task<string>? lazyHandlerTaskQueue;
-
     public OnDemandPatternTests(ITestOutputHelper output, WorkflowEnvironment env)
         : base(output, env)
     {
     }
 
-    public Task<string> EnsureHandlerTaskQueueAsync() =>
-        LazyInitializer.EnsureInitialized(ref lazyHandlerTaskQueue, async () =>
-        {
-            var handlerTaskQueue = $"tq-{Guid.NewGuid()}";
-            await Env.TestEnv.CreateNexusEndpointAsync(INexusRemoteGreetingService.EndpointName, handlerTaskQueue);
-            return handlerTaskQueue;
-        });
-
     [Fact]
     public async Task RunAsync_CallerRemoteWorkflow_Succeeds()
     {
-        var handlerTaskQueue = await EnsureHandlerTaskQueueAsync();
+        var handlerTaskQueue = $"tq-{Guid.NewGuid()}";
+        await Env.TestEnv.CreateNexusEndpointAsync(INexusRemoteGreetingService.EndpointName, handlerTaskQueue);
 
         // Run handler worker
         using var handlerWorker = new TemporalWorker(
