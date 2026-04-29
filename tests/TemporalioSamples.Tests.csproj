@@ -41,6 +41,7 @@
     <ProjectReference Include="..\src\SleepForDays\TemporalioSamples.SleepForDays.csproj" />
     <ProjectReference Include="..\src\Dsl\TemporalioSamples.Dsl.csproj" />
     <ProjectReference Include="..\src\StandaloneActivity\TemporalioSamples.StandaloneActivity.csproj" />
+    <ProjectReference Include="..\src\NexusMessaging\TemporalioSamples.NexusMessaging.csproj" />
   </ItemGroup>
 
 </Project>
