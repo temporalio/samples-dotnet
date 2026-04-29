@@ -57,7 +57,7 @@ async Task RunHandlerWorkerAsync()
     }
     catch (Temporalio.Exceptions.RpcException ex)
     {
-        logger.LogWarning(ex, "Could not start entity workflow, may already exist");
+        logger.LogWarning(ex, "Could not start entity workflow");
     }
 
     using var worker = new TemporalWorker(
