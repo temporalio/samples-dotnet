@@ -408,6 +408,10 @@ public class TriageActivity
             {
                 StartSignal = "approval-request",
                 StartSignalArgs = new[] { (object)req },
+                // If the activity retries while the approval workflow is still running,
+                // attach to the existing one rather than starting a new approval. The
+                // operator should not get a second prompt for the same incident.
+                IdConflictPolicy = Temporalio.Api.Enums.V1.WorkflowIdConflictPolicy.UseExisting,
             });
         return await handle.GetResultAsync();
     }
