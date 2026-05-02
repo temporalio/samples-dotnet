@@ -43,6 +43,7 @@ Prerequisites:
 * [StandaloneActivity](src/StandaloneActivity) - Execute activities directly from a client, without a workflow.
 * [SleepForDays](src/SleepForDays/) - Use a timer to send an email every 30 days.
 * [Timer](src/Timer) - Use a timer to implement a monthly subscription; handle workflow cancellation.
+* [ToolRegistryIncidentTriage](src/ToolRegistryIncidentTriage) - LLM-driven incident triage activity using `Temporalio.Extensions.ToolRegistry`. Demonstrates `AgenticSession`, MCP HTTP integration, human-in-the-loop, and a testable activity refactor.
 * [UpdatableTimer](src/UpdatableTimer) - A timer that can be updated while sleeping.
 * [UpdateWithStartEarlyReturn](src/UpdateWithStartEarlyReturn) - Use update with start to get an early return, letting the rest of the workflow complete in the background.
 * [UpdateWithStartLazyInit](src/UpdateWithStartLazyInit) - Use update with start to lazily start a workflow before sending update.
