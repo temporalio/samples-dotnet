@@ -413,6 +413,33 @@ public class TriageActivity
                 // operator should not get a second prompt for the same incident.
                 IdConflictPolicy = Temporalio.Api.Enums.V1.WorkflowIdConflictPolicy.UseExisting,
             });
-        return await handle.GetResultAsync();
+
+        // Heartbeat every 30 seconds while waiting on the approval workflow.
+        // AgenticSession only heartbeats between LLM turns, so a multi-hour
+        // operator wait inside this handler would otherwise trigger heartbeat
+        // timeout in 120s and kill the activity.
+        using var ticker = new System.Threading.CancellationTokenSource();
+        var tickerTask = System.Threading.Tasks.Task.Run(async () =>
+        {
+            try
+            {
+                while (!ticker.Token.IsCancellationRequested)
+                {
+                    await System.Threading.Tasks.Task.Delay(TimeSpan.FromSeconds(30), ticker.Token);
+                    Temporalio.Activities.ActivityExecutionContext.Current.Heartbeat();
+                }
+            }
+            catch (System.Threading.Tasks.TaskCanceledException) { }
+        });
+
+        try
+        {
+            return await handle.GetResultAsync();
+        }
+        finally
+        {
+            ticker.Cancel();
+            try { await tickerTask; } catch { }
+        }
     }
 }
