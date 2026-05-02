@@ -1,0 +1,27 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <!-- The Temporalio.Extensions.ToolRegistry SDK is in development.
+         Override the global Temporalio package reference with the local sdk-dotnet checkout
+         until the contrib package publishes. Once published, replace this whole ItemGroup
+         with: <PackageReference Include="Temporalio.Extensions.ToolRegistry" Version="..." /> -->
+    <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
+    <EnableNETAnalyzers>false</EnableNETAnalyzers>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <!-- Suppress the Directory.Build.props global Temporalio PackageReference so the
+         ProjectReference below isn't a duplicate. -->
+    <PackageReference Remove="Temporalio" />
+    <PackageReference Remove="Temporalio.Extensions.DiagnosticSource" />
+    <PackageReference Remove="Temporalio.Extensions.Hosting" />
+    <PackageReference Remove="Temporalio.Extensions.OpenTelemetry" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\sdk-dotnet\src\Temporalio\Temporalio.csproj" />
+    <ProjectReference Include="..\..\..\sdk-dotnet\src\Temporalio.Extensions.ToolRegistry\Temporalio.Extensions.ToolRegistry.csproj" />
+  </ItemGroup>
+
+</Project>
