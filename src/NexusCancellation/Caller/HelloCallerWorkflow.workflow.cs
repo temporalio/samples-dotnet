@@ -8,8 +8,11 @@ using Temporalio.Workflows;
 public class HelloCallerWorkflow
 {
     private static readonly IHelloService.HelloLanguage[] Languages =
-        [IHelloService.HelloLanguage.En, IHelloService.HelloLanguage.Fr, IHelloService.HelloLanguage.De,
-        IHelloService.HelloLanguage.Es, IHelloService.HelloLanguage.Tr];
+        [IHelloService.HelloLanguage.En,
+            IHelloService.HelloLanguage.Fr,
+            IHelloService.HelloLanguage.De,
+            IHelloService.HelloLanguage.Es,
+            IHelloService.HelloLanguage.Tr];
 
     [WorkflowRun]
     public async Task<string> RunAsync(string name)
