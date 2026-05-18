@@ -26,5 +26,5 @@ public class HelloService
                     new() { Id = GetHelloWorkflowId(input) }));
 
     private static string GetHelloWorkflowId(IHelloService.HelloInput input) =>
-        $"hello-{input.Language}-{input.Name.Trim().Replace(' ', '-')}";
+        $"hello-{input.Language}-{input.Name}";
 }
