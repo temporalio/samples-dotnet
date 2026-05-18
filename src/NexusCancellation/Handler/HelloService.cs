@@ -19,7 +19,6 @@ public class HelloService
                     // resolve to the same workflow.
                     new() { Id = GetHelloWorkflowId(input) }));
 
-
     // Create a business meaningful ID derived from the operation input.
     private static string GetHelloWorkflowId(IHelloService.HelloInput input) =>
         $"hello-{input.Language}-{input.Name}";
