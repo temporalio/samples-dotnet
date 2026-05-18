@@ -14,8 +14,12 @@ public class HelloService
                 context.StartWorkflowAsync(
                     (HelloHandlerWorkflow wf) => wf.RunAsync(input),
                     // Workflow IDs should typically be business meaningful IDs and are used to
-                    // dedupe workflow starts. For this example, we're using the request ID
-                    // allocated by Temporal when the caller workflow schedules the operation,
-                    // this ID is guaranteed to be stable across retries of this operation.
-                    new() { Id = context.HandlerContext.RequestId }));
+                    // dedupe workflow starts. For this example, use a business ID derived from
+                    // the greeting input so repeated operations for the same name and language
+                    // resolve to the same workflow.
+                    new() { Id = GetHelloWorkflowId(input) }));
+
+    // Create a business meaningful ID derived from the operation input.
+    private static string GetHelloWorkflowId(IHelloService.HelloInput input) =>
+        $"hello-{input.Language}-{input.Name}";
 }
