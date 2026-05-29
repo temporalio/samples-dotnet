@@ -48,8 +48,8 @@ public class NexusContextPropagationInterceptor(
         string headerKey,
         WorkflowOutboundInterceptor next) : WorkflowOutboundInterceptor(next)
     {
-        public override Task<NexusWorkflowOperationHandle<TResult>> StartNexusOperationAsync<TResult>(
-            StartNexusOperationInput input)
+        public override Task<NexusWorkflowOperationHandle<TResult>> ScheduleNexusOperationAsync<TResult>(
+            ScheduleNexusOperationInput input)
         {
             if (context.Value is { } value)
             {
@@ -58,7 +58,7 @@ public class NexusContextPropagationInterceptor(
                 headers.Add(headerKey, value);
                 input = input with { Headers = headers };
             }
-            return base.StartNexusOperationAsync<TResult>(input);
+            return base.ScheduleNexusOperationAsync<TResult>(input);
         }
     }
 }
