@@ -7,3 +7,6 @@ obj/
 /.vs
 /.vscode
 /.idea
+
+# Local developer overrides
+Directory.Build.local.props

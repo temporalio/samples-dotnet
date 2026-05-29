@@ -35,4 +35,6 @@
     <PackageReference Include="Microsoft.VisualStudio.Threading.Analyzers" PrivateAssets="all" />
     <PackageReference Include="StyleCop.Analyzers" PrivateAssets="all" />
   </ItemGroup>
+
+  <Import Project="Directory.Build.local.props" Condition="Exists('Directory.Build.local.props')" />
 </Project>

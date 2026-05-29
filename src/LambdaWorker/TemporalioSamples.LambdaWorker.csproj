@@ -1,0 +1,16 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Amazon.Lambda.Core" />
+  </ItemGroup>
+
+  <ItemGroup Condition="'$(UseLocalTemporalSdk)' != 'true'">
+    <PackageReference Include="Temporalio.Extensions.Aws.Lambda" />
+    <PackageReference Include="Temporalio.Extensions.Aws.Lambda.OpenTelemetry" />
+  </ItemGroup>
+
+</Project>
