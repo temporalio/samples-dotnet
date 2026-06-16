@@ -1,3 +1,4 @@
+// @@@SNIPSTART dotnet-lambda-worker
 namespace TemporalioSamples.LambdaWorker;
 
 using Amazon.Lambda.Core;
@@ -23,3 +24,4 @@ public class LambdaFunction
         LambdaWorkerOpenTelemetry.ApplyDefaults(config);
     }
 }
+// @@@SNIPEND

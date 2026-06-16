@@ -1,3 +1,4 @@
+// @@@SNIPSTART dotnet-lambda-worker-workflow
 namespace TemporalioSamples.LambdaWorker;
 
 using Microsoft.Extensions.Logging;
@@ -18,3 +19,4 @@ public class SampleWorkflow
         return result;
     }
 }
+// @@@SNIPEND
