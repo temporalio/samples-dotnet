@@ -8,14 +8,14 @@ public static class TemporalHealthCheckBuilderExtensions
 {
     public static IHealthChecksBuilder AddTemporalHealthCheck(
         this IHealthChecksBuilder builder,
-        Func<IServiceProvider, TemporalClientConnectOptions> clientConnectOptionsFactory,
+        Func<ITemporalClient?> clientAccessor,
         string name = "temporal",
         IEnumerable<string>? tags = null,
         TimeSpan? timeout = null)
     {
         return builder.Add(new HealthCheckRegistration(
             name,
-            sp => new TemporalHealthCheck(clientConnectOptionsFactory(sp)),
+            _ => new TemporalHealthCheck(clientAccessor),
             HealthStatus.Unhealthy,
             tags,
             timeout));

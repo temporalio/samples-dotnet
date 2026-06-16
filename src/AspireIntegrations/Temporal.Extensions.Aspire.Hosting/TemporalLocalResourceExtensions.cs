@@ -22,11 +22,7 @@ public static class TemporalLocalResourceExtensions
 
         var healthCheckKey = $"{name}_check";
         builder.Services.AddHealthChecks()
-            .AddTemporalHealthCheck(_ => new TemporalClientConnectOptions
-            {
-                Namespace = resource.Options.Namespace,
-                TargetHost = resource.WorkflowEnvironment?.Client.Connection.Options.TargetHost
-            }, healthCheckKey);
+            .AddTemporalHealthCheck(() => resource.WorkflowEnvironment?.Client, healthCheckKey);
 
         var resourceBuilder = builder.AddResource(resource)
             .ExcludeFromManifest()
@@ -76,15 +72,8 @@ public static class TemporalLocalResourceExtensions
 
                 try
                 {
-                    if (resource.WorkflowEnvironment != null)
-                    {
-                        resourceLogger.LogInformation("Shutting down Temporal test server '{ResourceName}'...", resource.Name);
-                        await resource.WorkflowEnvironment.ShutdownAsync();
-                        resource.WorkflowEnvironment = null;
-                        resourceLogger.LogInformation("Temporal test server '{ResourceName}' shut down successfully.", resource.Name);
-                    }
-
                     // Publish ResourceStoppedEvent to trigger subscriber cleanup and keep _environments dictionary in sync
+                    // The subscriber's OnResourceStoppedAsync performs the actual ShutdownAsync exactly once.
                     var resourceEvent = new ResourceEvent(resource, resource.Name, new CustomResourceSnapshot
                     {
                         ResourceType = "temporal-local",

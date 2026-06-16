@@ -13,25 +13,24 @@ public static class TemporalCliServerResourceExtensions
         var resource = new TemporalCliServerResource(name);
         configure?.Invoke(resource.Options);
 
-        string? endpointAddress = null;
+        ITemporalClient? cachedClient = null;
         builder.Eventing.Subscribe<ConnectionStringAvailableEvent>(resource, async (@event, _) =>
         {
             if (@event.Resource.TryGetEndpoints(out var endpoints))
             {
                 var serviceEndpoint = endpoints.Single(e => e.Name == TemporalResourceConstants.ServiceEndpointName);
-                endpointAddress = $"{serviceEndpoint.TargetHost}:{serviceEndpoint.Port}";
+                var hostPort = $"{serviceEndpoint.TargetHost}:{serviceEndpoint.Port}";
+                cachedClient = await TemporalClient.ConnectAsync(new TemporalClientConnectOptions
+                {
+                    Namespace = resource.Options.Namespace,
+                    TargetHost = hostPort
+                });
             }
-
-            await Task.CompletedTask;
         });
 
         var healthCheckKey = $"{name}_check";
         builder.Services.AddHealthChecks()
-            .AddTemporalHealthCheck(
-                _ => new TemporalClientConnectOptions
-                {
-                    Namespace = resource.Options.AdditionalNamespaces.First(), TargetHost = endpointAddress
-                }, healthCheckKey);
+            .AddTemporalHealthCheck(() => cachedClient, healthCheckKey);
 
         return builder.AddResource(resource)
             .WithArgs(BuildContainerArgs(resource.Options))

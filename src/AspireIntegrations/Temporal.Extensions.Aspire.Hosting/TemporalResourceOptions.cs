@@ -4,7 +4,7 @@ namespace Temporal.Extensions.Aspire.Hosting;
 
 public class TemporalResourceOptions : WorkflowEnvironmentStartLocalOptions
 {
-    private List<string> additionalNamespaces;
+    private List<string> extraNamespaces = [];
 
     public TemporalResourceOptions()
     {
@@ -12,15 +12,27 @@ public class TemporalResourceOptions : WorkflowEnvironmentStartLocalOptions
         UIPort = TemporalResourceConstants.DefaultUIEndpointPort;
         UI = true;
         TargetHost = $"0.0.0.0:{TemporalResourceConstants.DefaultServiceEndpointPort}";
-
-        // Initialize AdditionalNamespaces with the primary namespace
-        additionalNamespaces = [Namespace];
     }
 
     public new List<string> AdditionalNamespaces
     {
-        get => additionalNamespaces.Count > 0 ? additionalNamespaces : [Namespace];
-        set => additionalNamespaces = value ?? [];
+        get
+        {
+            var result = new List<string> { Namespace };
+            foreach (var ns in extraNamespaces)
+            {
+                if (ns != Namespace && !result.Contains(ns))
+                    result.Add(ns);
+            }
+            return result;
+        }
+
+        set
+        {
+            extraNamespaces = value == null
+                ? []
+                : value.Where(ns => !string.IsNullOrEmpty(ns) && ns != Namespace).Distinct().ToList();
+        }
     }
 
     public int Port
@@ -61,7 +73,7 @@ public class TemporalResourceOptions : WorkflowEnvironmentStartLocalOptions
 
     public bool IsHeadless => !UI;
 
-    public List<string> DynamicConfigValues { get; } = [];
+    public List<string> DynamicConfigValues { get; set; } = [];
 
     public string? CodecAuth { get; set; }
 

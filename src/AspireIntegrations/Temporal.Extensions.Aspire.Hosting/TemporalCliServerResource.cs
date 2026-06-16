@@ -11,7 +11,7 @@ public class TemporalCliServerResource(string name, string workingDirectory = ".
 
     public ReferenceExpression ConnectionStringExpression =>
         ReferenceExpression.Create(
-            $"{PrimaryEndpoint.Property(EndpointProperty.Url)}");
+            $"{PrimaryEndpoint.Property(EndpointProperty.HostAndPort)}");
 
     public TemporalResourceOptions Options { get; set; } = new();
 }
