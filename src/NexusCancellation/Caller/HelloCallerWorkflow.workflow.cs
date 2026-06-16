@@ -8,20 +8,23 @@ using Temporalio.Workflows;
 public class HelloCallerWorkflow
 {
     private static readonly IHelloService.HelloLanguage[] Languages =
-        [IHelloService.HelloLanguage.En, IHelloService.HelloLanguage.Fr, IHelloService.HelloLanguage.De,
-        IHelloService.HelloLanguage.Es, IHelloService.HelloLanguage.Tr];
+        [IHelloService.HelloLanguage.En,
+            IHelloService.HelloLanguage.Fr,
+            IHelloService.HelloLanguage.De,
+            IHelloService.HelloLanguage.Es,
+            IHelloService.HelloLanguage.Tr];
 
     [WorkflowRun]
     public async Task<string> RunAsync(string name)
     {
         using var cts = CancellationTokenSource.CreateLinkedTokenSource(Workflow.CancellationToken);
-        var client = Workflow.CreateNexusClient<IHelloService>(IHelloService.EndpointName);
+        var client = Workflow.CreateNexusWorkflowClient<IHelloService>(IHelloService.EndpointName);
 
         // Concurrently execute an operation per language.
         var tasks = Languages.Select(lang =>
             client.ExecuteNexusOperationAsync(
                 svc => svc.SayHello(new IHelloService.HelloInput(name, lang)),
-                new NexusOperationOptions
+                new NexusWorkflowOperationOptions
                 {
                     // We set the CancellationType to WaitCancellationRequested, which means the caller waits
                     // for the request to be received by the handler before proceeding with the cancellation.

@@ -28,6 +28,9 @@ Prerequisites:
 * [Mutex](src/Mutex) - How to implement a mutex as a workflow. Demonstrates how to avoid race conditions or parallel mutually exclusive operations on the same resource.
 * [NexusCancellation](src/NexusCancellation) - Demonstrates how to cancel a running Nexus operation from a caller workflow.
 * [NexusContextPropagation](src/NexusContextPropagation) - Context propagation through Nexus services.
+* [Nexus Messaging](src/NexusMessaging): Demonstrates how send signal, update and query messages through Nexus.
+    This contains two samples, one sending messages to an existing workflow and a second that creates a workflow through Nexus
+    and sends messages to it.
 * [NexusMultiArg](src/NexusMultiArg) - Nexus service implementation calling a workflow with multiple arguments.
 * [NexusSimple](src/NexusSimple) - Simple Nexus service implementation.
 * [OpenTelemetry](src/OpenTelemetry) - Demonstrates how to set up OpenTelemetry tracing and metrics for both the client and worker, using both the .NET metrics API and internal forwarding from the Core SDK.
@@ -37,6 +40,7 @@ Prerequisites:
 * [Saga](src/Saga) - Demonstrates how to implement a saga pattern.
 * [Schedules](src/Schedules) - How to schedule workflows to be run at specific times in the future.
 * [SignalsQueries](src/SignalsQueries) - A loyalty program using Signals and Queries.
+* [StandaloneActivity](src/StandaloneActivity) - Execute activities directly from a client, without a workflow.
 * [SleepForDays](src/SleepForDays/) - Use a timer to send an email every 30 days.
 * [Timer](src/Timer) - Use a timer to implement a monthly subscription; handle workflow cancellation.
 * [UpdatableTimer](src/UpdatableTimer) - A timer that can be updated while sleeping.
