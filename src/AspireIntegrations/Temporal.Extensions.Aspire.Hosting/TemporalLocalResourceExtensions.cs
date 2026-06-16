@@ -225,15 +225,7 @@ public static class TemporalLocalResourceExtensions
                 ctx.EnvironmentVariables["TEMPORAL_UI_ADDRESS"] =
                     $"http://localhost:{source.Resource.Options.UIPort}";
 
-                if (!string.IsNullOrEmpty(source.Resource.Options.CodecAuth))
-                {
-                    ctx.EnvironmentVariables["TEMPORAL_CODEC_AUTH"] = source.Resource.Options.CodecAuth;
-                }
-
-                if (!string.IsNullOrEmpty(source.Resource.Options.CodecEndpoint))
-                {
-                    ctx.EnvironmentVariables["TEMPORAL_CODEC_ENDPOINT"] = source.Resource.Options.CodecEndpoint;
-                }
+                TemporalEnvironmentHelper.AddCodecEnvironmentVariables(ctx, source.Resource.Options);
             });
     }
 }

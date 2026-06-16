@@ -3,14 +3,14 @@ using Temporalio.Client;
 
 namespace Temporal.Extensions.Aspire.Hosting;
 
-public static class TemporalCliServerResourceExtensions
+public static class TemporalContainerResourceExtensions
 {
-    public static IResourceBuilder<TemporalCliServerResource> AddTemporalCliServer(
+    public static IResourceBuilder<TemporalContainerResource> AddTemporalDevContainer(
         this IDistributedApplicationBuilder builder,
-        string name = "temporal-cli-server",
-        Action<TemporalResourceOptions>? configure = null)
+        string name = "temporal-container",
+        Action<TemporalContainerOptions>? configure = null)
     {
-        var resource = new TemporalCliServerResource(name);
+        var resource = new TemporalContainerResource(name);
         configure?.Invoke(resource.Options);
 
         var clientAccessor = TemporalHealthCheckHelper.RegisterCachedClientAccessor(
@@ -21,19 +21,22 @@ public static class TemporalCliServerResourceExtensions
             .AddTemporalHealthCheck(clientAccessor, healthCheckKey);
 
         return builder.AddResource(resource)
-            .WithArgs(TemporalArgsBuilder.BuildArgs(resource.Options))
+            .WithImage(TemporalResourceConstants.TemporalImage,
+                resource.Options.ImageTag ?? TemporalResourceConstants.DefaultTag)
+            .WithImageRegistry("docker.io")
+            .WithArgs(TemporalArgsBuilder.BuildArgs(resource.Options, fixedIpAndPort: true))
             .ExcludeFromManifest()
             .WithEndpoint(
-                targetPort: resource.Options.Port,
-                isProxied: false,
+                targetPort: TemporalResourceConstants.DefaultServiceEndpointPort,
+                port: resource.Options.Port,
                 name: TemporalResourceConstants.ServiceEndpointName)
             .WithHttpEndpoint(
-                targetPort: resource.Options.UIPort,
-                isProxied: false,
+                targetPort: TemporalResourceConstants.DefaultUIEndpointPort,
+                port: resource.Options.UIPort,
                 name: TemporalResourceConstants.UIEndpointName)
             .WithHttpEndpoint(
                 targetPort: resource.Options.MetricsPort,
-                isProxied: false,
+                port: resource.Options.MetricsPort,
                 name: TemporalResourceConstants.MetricsEndpointName)
             .WithHealthCheck(healthCheckKey)
             .WithUrlForEndpoint(TemporalResourceConstants.UIEndpointName, url =>
@@ -43,7 +46,7 @@ public static class TemporalCliServerResourceExtensions
     }
 
     public static IResourceBuilder<TDestination> WithReference<TDestination>(
-        this IResourceBuilder<TDestination> builder, IResourceBuilder<TemporalCliServerResource> source)
+        this IResourceBuilder<TDestination> builder, IResourceBuilder<TemporalContainerResource> source)
         where TDestination : IResourceWithEnvironment
     {
         return builder
