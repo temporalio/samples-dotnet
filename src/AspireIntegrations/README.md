@@ -56,10 +56,10 @@ using Temporal.Extensions.Aspire.Hosting;
 var builder = DistributedApplication.CreateBuilder(args);
 
 // Add Temporal local server
-var temporal = builder.AddTemporalCliServer();
+var temporal = builder.AddTemporalLocalDevServer();
 
 // Add a worker project that depends on Temporal
-builder.AddProject<Projects.SampleWorker>("worker")
+builder.AddProject<Projects.TemporalioSamples_SampleWorker>("worker")
     .WaitFor(temporal)
     .WithReference(temporal);
 
@@ -126,7 +126,7 @@ var temporal = builder.AddTemporalDevContainer(
     });
 
 // Add dependent projects that require Temporal
-builder.AddProject<Projects.SampleWorker>("worker")
+builder.AddProject<Projects.TemporalioSamples_SampleWorker>("worker")
     .WaitFor(temporal)
     .WithReference(temporal);
 
@@ -176,7 +176,7 @@ var temporal = builder.AddTemporalCliServer(
     });
 
 // Add dependent projects that require Temporal
-builder.AddProject<Projects.SampleWorker>("worker")
+builder.AddProject<Projects.TemporalioSamples_SampleWorker>("worker")
     .WaitFor(temporal)
     .WithReference(temporal);
 

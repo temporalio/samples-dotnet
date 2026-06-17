@@ -17,7 +17,7 @@ public static class TemporalCliServerResourceExtensions
         where TDestination : IResourceWithEnvironment
     {
         return builder
-            .WithReference(source as IResourceBuilder<IResourceWithServiceDiscovery>)
+            .WithReference((IResourceBuilder<IResourceWithServiceDiscovery>)source)
             .WithEnvironment(ctx =>
             {
                 TemporalEnvironmentHelper.AddEnvironmentVariables(

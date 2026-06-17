@@ -10,7 +10,7 @@ public class SimpleWorkflow
     public async Task RunAsync()
     {
         Workflow.Logger.LogInformation("Starting workflow...");
-        await Workflow.ExecuteActivityAsync((SimpleActivities a) => a.DoSomethingAsync(),  new() { StartToCloseTimeout = TimeSpan.FromMinutes(4) });
+        await Workflow.ExecuteActivityAsync((SimpleActivities a) => a.DoSomethingAsync(), new() { StartToCloseTimeout = TimeSpan.FromMinutes(4) });
         Workflow.Logger.LogInformation("Workflow completed!");
     }
 }

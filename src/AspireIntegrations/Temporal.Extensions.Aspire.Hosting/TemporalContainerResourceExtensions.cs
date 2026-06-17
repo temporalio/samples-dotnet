@@ -36,7 +36,7 @@ public static class TemporalContainerResourceExtensions
                 isProxied: false,
                 name: TemporalResourceConstants.UIEndpointName)
             .WithHttpEndpoint(
-                targetPort: resource.Options.MetricsPort,
+                targetPort: TemporalResourceConstants.DefaultMetricsEndpointPort,
                 port: resource.Options.MetricsPort,
                 isProxied: false,
                 name: TemporalResourceConstants.MetricsEndpointName)
@@ -52,7 +52,7 @@ public static class TemporalContainerResourceExtensions
         where TDestination : IResourceWithEnvironment
     {
         return builder
-            .WithReference(source as IResourceBuilder<IResourceWithServiceDiscovery>)
+            .WithReference((IResourceBuilder<IResourceWithServiceDiscovery>)source)
             .WithEnvironment(ctx =>
             {
                 TemporalEnvironmentHelper.AddEnvironmentVariables(
