@@ -28,14 +28,17 @@ public static class TemporalContainerResourceExtensions
             .WithEndpoint(
                 targetPort: TemporalResourceConstants.DefaultServiceEndpointPort,
                 port: resource.Options.Port,
+                isProxied: false,
                 name: TemporalResourceConstants.ServiceEndpointName)
             .WithHttpEndpoint(
                 targetPort: TemporalResourceConstants.DefaultUIEndpointPort,
                 port: resource.Options.UIPort,
+                isProxied: false,
                 name: TemporalResourceConstants.UIEndpointName)
             .WithHttpEndpoint(
                 targetPort: resource.Options.MetricsPort,
                 port: resource.Options.MetricsPort,
+                isProxied: false,
                 name: TemporalResourceConstants.MetricsEndpointName)
             .WithHealthCheck(healthCheckKey)
             .WithUrlForEndpoint(TemporalResourceConstants.UIEndpointName, url =>

@@ -1,4 +1,5 @@
 using Aspire.Hosting;
+using Aspire.Hosting.ApplicationModel;
 using Temporal.Extensions.Aspire.Hosting;
 using Xunit;
 
@@ -113,20 +114,52 @@ public class TemporalCliServerResourceExtensionsTests
     }
 
     // -----------------------------------------------------------------------
-    // AddTemporalCliServer — integration test (requires 'temporal' on PATH)
+    // AddTemporalCliServer — public path tests (PATH-independent via seam)
     // -----------------------------------------------------------------------
     [Fact]
     public void AddTemporalCliServer_Throws_WhenTemporalCliNotOnPath()
     {
-        // This is the expected behavior when a developer tries to use AddTemporalCliServer
-        // on a machine without the Temporal CLI installed. The early guard provides a
-        // clear, actionable error instead of a cryptic FailedToStart later in Aspire.
-        //
-        // We verify the guard fires by driving TemporalCliLocator directly (which is
-        // what AddTemporalCliServer calls internally).
+        // Regression guard: the public extension method must throw early with an
+        // actionable error when the Temporal CLI is absent, rather than failing later
+        // with a cryptic FailedToStart from Aspire. The isTemporalCliAvailable seam
+        // lets tests simulate a machine without 'temporal' on PATH.
+        var appBuilder = DistributedApplication.CreateBuilder([]);
+
         var ex = Assert.Throws<InvalidOperationException>(
-            () => TemporalCliLocator.EnsureAvailable(isAvailable: () => false));
+            () => appBuilder.AddTemporalCliServer("temporal", configure: null, isTemporalCliAvailable: () => false));
 
         Assert.Contains("temporal", ex.Message, StringComparison.OrdinalIgnoreCase);
+        Assert.Contains("PATH", ex.Message, StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public void AddTemporalCliServer_RegistersExplicitPortsOnAllEndpoints()
+    {
+        // Regression: the CLI resource must register explicit host ports on all endpoints
+        // so the Aspire dashboard renders clickable URLs. Without an explicit port the
+        // dashboard assigns a random port and the link is either blank or wrong.
+        var appBuilder = DistributedApplication.CreateBuilder([]);
+
+        var resourceBuilder = appBuilder.AddTemporalCliServer(
+            "temporal",
+            configure: options =>
+            {
+                options.TargetHost = "0.0.0.0:17233";
+                options.UIPort = 18233;
+                options.MetricsPort = 19233;
+            },
+            isTemporalCliAvailable: () => true);
+
+        var annotations = resourceBuilder.Resource.Annotations
+            .OfType<EndpointAnnotation>()
+            .ToList();
+
+        var service = annotations.Single(e => e.Name == TemporalResourceConstants.ServiceEndpointName);
+        var ui = annotations.Single(e => e.Name == TemporalResourceConstants.UIEndpointName);
+        var metrics = annotations.Single(e => e.Name == TemporalResourceConstants.MetricsEndpointName);
+
+        Assert.Equal(17233, service.Port);
+        Assert.Equal(18233, ui.Port);
+        Assert.Equal(19233, metrics.Port);
     }
 }
