@@ -17,8 +17,8 @@ This project provides custom Aspire resource definitions that enable developers 
 ## Prerequisites
 
 ### Required
-- **.NET 10.0** or later
-- **Aspire 13.0** or later
+- **[.NET SDK](https://dot.net)** 8.0 or later
+- **[Aspire tooling](https://learn.microsoft.com/dotnet/aspire/fundamentals/setup-tooling)** 13.0 or later
 
 ### For Container-based Setup
 - **Docker** - Required to run the Temporal container
@@ -56,7 +56,7 @@ using Temporal.Extensions.Aspire.Hosting;
 var builder = DistributedApplication.CreateBuilder(args);
 
 // Add Temporal local server
-var temporal = builder.AddTemporalLocalTestServer();
+var temporal = builder.AddTemporalLocalDevServer();
 
 // Add a worker project that depends on Temporal
 builder.AddProject<Projects.SampleWorker>("worker")
@@ -68,7 +68,7 @@ builder.Build().Run();
 
 **Advanced Configuration:**
 ```csharp
-var temporal = builder.AddTemporalLocalTestServer(configure: options =>
+var temporal = builder.AddTemporalLocalDevServer(configure: options =>
 {
     // Port configuration
     options.UIPort = 8233;                  // Web UI port
