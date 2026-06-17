@@ -2,7 +2,6 @@ using Aspire.Hosting.Eventing;
 using Aspire.Hosting.Lifecycle;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using Temporalio.Client;
 using Temporalio.Testing;
 
 namespace Temporal.Extensions.Aspire.Hosting;
@@ -22,7 +21,7 @@ public static class TemporalLocalResourceExtensions
 
         var healthCheckKey = $"{name}_check";
         builder.Services.AddHealthChecks()
-            .AddTemporalHealthCheck(() => resource.WorkflowEnvironment?.Client, healthCheckKey);
+            .AddTemporalHealthCheck(_ => Task.FromResult(resource.WorkflowEnvironment?.Client), healthCheckKey);
 
         var resourceBuilder = builder.AddResource(resource)
             .ExcludeFromManifest()
@@ -33,10 +32,12 @@ public static class TemporalLocalResourceExtensions
                 name: TemporalResourceConstants.ServiceEndpointName)
             .WithHttpEndpoint(
                 targetPort: resource.Options.UIPort,
+                port: resource.Options.UIPort,
                 isProxied: false,
                 name: TemporalResourceConstants.UIEndpointName)
             .WithHttpEndpoint(
                 targetPort: resource.Options.MetricsPort,
+                port: resource.Options.MetricsPort,
                 isProxied: false,
                 name: TemporalResourceConstants.MetricsEndpointName)
             .WithHealthCheck(healthCheckKey)

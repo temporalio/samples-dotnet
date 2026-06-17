@@ -67,4 +67,65 @@ public class TemporalEnvironmentHelperTests
         Assert.False(firstVariables.ContainsKey("TEMPORAL_DEFAULT_NAMESPACE"));
         Assert.False(secondVariables.ContainsKey("TEMPORAL_DEFAULT_NAMESPACE"));
     }
+
+    [Fact]
+    public void AddEnvironmentVariables_InjectsCodecAuth_WhenSet()
+    {
+        var environmentVariables = new Dictionary<string, object>();
+        var context = new EnvironmentCallbackContext(
+            new DistributedApplicationExecutionContext(DistributedApplicationOperation.Run),
+            environmentVariables,
+            CancellationToken.None);
+
+        var options = new TemporalResourceOptions
+        {
+            Namespace = "default",
+            CodecAuth = "Bearer my-token",
+        };
+
+        TemporalEnvironmentHelper.AddEnvironmentVariables(
+            context, options, "localhost:7233", "http://localhost:8233");
+
+        Assert.Equal("Bearer my-token", environmentVariables["TEMPORAL_CODEC_AUTH"]);
+    }
+
+    [Fact]
+    public void AddEnvironmentVariables_InjectsCodecEndpoint_WhenSet()
+    {
+        var environmentVariables = new Dictionary<string, object>();
+        var context = new EnvironmentCallbackContext(
+            new DistributedApplicationExecutionContext(DistributedApplicationOperation.Run),
+            environmentVariables,
+            CancellationToken.None);
+
+        var options = new TemporalResourceOptions
+        {
+            Namespace = "default",
+            CodecEndpoint = "http://localhost:8088",
+        };
+
+        TemporalEnvironmentHelper.AddEnvironmentVariables(
+            context, options, "localhost:7233", "http://localhost:8233");
+
+        Assert.Equal("http://localhost:8088", environmentVariables["TEMPORAL_CODEC_ENDPOINT"]);
+    }
+
+    [Fact]
+    public void AddEnvironmentVariables_OmitsCodecKeys_WhenNotSet()
+    {
+        // Regression: env vars must not be injected with null/empty values when codec is unused.
+        var environmentVariables = new Dictionary<string, object>();
+        var context = new EnvironmentCallbackContext(
+            new DistributedApplicationExecutionContext(DistributedApplicationOperation.Run),
+            environmentVariables,
+            CancellationToken.None);
+
+        var options = new TemporalResourceOptions { Namespace = "default" };
+
+        TemporalEnvironmentHelper.AddEnvironmentVariables(
+            context, options, "localhost:7233", "http://localhost:8233");
+
+        Assert.False(environmentVariables.ContainsKey("TEMPORAL_CODEC_AUTH"));
+        Assert.False(environmentVariables.ContainsKey("TEMPORAL_CODEC_ENDPOINT"));
+    }
 }

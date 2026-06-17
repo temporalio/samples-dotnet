@@ -1,5 +1,4 @@
 using Microsoft.Extensions.DependencyInjection;
-using Temporalio.Client;
 
 namespace Temporal.Extensions.Aspire.Hosting;
 

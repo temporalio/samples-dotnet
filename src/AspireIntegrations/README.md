@@ -56,7 +56,7 @@ using Temporal.Extensions.Aspire.Hosting;
 var builder = DistributedApplication.CreateBuilder(args);
 
 // Add Temporal local server
-var temporal = builder.AddTemporalLocalDevServer();
+var temporal = builder.AddTemporalCliServer();
 
 // Add a worker project that depends on Temporal
 builder.AddProject<Projects.SampleWorker>("worker")
@@ -191,11 +191,21 @@ builder.Build().Run();
 
 ### Connection Strings
 
-Dependent projects can access Temporal connection information via environment variables:
+Dependent projects receive the following environment variables automatically:
 
+| Variable | Description |
+|----------|-------------|
+| `TEMPORAL_ADDRESS` | The gRPC server address (e.g., `localhost:7233` or container name:port) |
+| `TEMPORAL_UI_ADDRESS` | The Web UI address (e.g., `http://localhost:8233`) |
+| `TEMPORAL_NAMESPACE` | The namespace to use (matches the resource's configured namespace) |
+| `TEMPORAL_CODEC_AUTH` | Optional codec authentication token (if configured) |
+| `TEMPORAL_CODEC_ENDPOINT` | Optional codec server endpoint (if configured) |
+
+**Example usage:**
 ```csharp
 var temporalAddress = Environment.GetEnvironmentVariable("TEMPORAL_ADDRESS");
 var temporalUiAddress = Environment.GetEnvironmentVariable("TEMPORAL_UI_ADDRESS");
+var temporalNamespace = Environment.GetEnvironmentVariable("TEMPORAL_NAMESPACE") ?? "default";
 ```
 ---
 

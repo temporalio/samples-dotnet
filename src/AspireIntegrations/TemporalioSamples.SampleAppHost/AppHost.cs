@@ -2,7 +2,7 @@ using Temporal.Extensions.Aspire.Hosting;
 
 var builder = DistributedApplication.CreateBuilder(args);
 
-var temporal = builder.AddTemporalLocalDevServer();
+var temporal = builder.AddTemporalCliServer();
 
 builder.AddProject<Projects.TemporalioSamples_SampleWorker>("sample-temporal-worker")
     .WaitFor(temporal)

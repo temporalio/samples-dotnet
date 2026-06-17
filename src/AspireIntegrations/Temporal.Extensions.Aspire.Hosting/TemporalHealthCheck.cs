@@ -4,11 +4,11 @@ using Temporalio.Client;
 
 namespace Temporal.Extensions.Aspire.Hosting;
 
-public class TemporalHealthCheck(Func<ITemporalClient?> clientAccessor) : IHealthCheck
+public class TemporalHealthCheck(Func<CancellationToken, Task<ITemporalClient?>> clientAccessor) : IHealthCheck
 {
     public async Task<HealthCheckResult> CheckHealthAsync(HealthCheckContext context, CancellationToken cancellationToken = default)
     {
-        var client = clientAccessor();
+        var client = await clientAccessor(cancellationToken);
         if (client is null)
             return HealthCheckResult.Unhealthy("Temporal client not yet initialized");
 

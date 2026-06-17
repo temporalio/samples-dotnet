@@ -1,5 +1,4 @@
 using Microsoft.Extensions.DependencyInjection;
-using Temporalio.Client;
 
 namespace Temporal.Extensions.Aspire.Hosting;
 
@@ -10,6 +9,7 @@ public static class TemporalCliServerResourceExtensions
         string name = "temporal-cli-server",
         Action<TemporalResourceOptions>? configure = null)
     {
+        TemporalCliLocator.EnsureAvailable();
         var resource = new TemporalCliServerResource(name);
         configure?.Invoke(resource.Options);
 

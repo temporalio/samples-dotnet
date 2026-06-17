@@ -8,7 +8,7 @@ public static class TemporalHealthCheckBuilderExtensions
 {
     public static IHealthChecksBuilder AddTemporalHealthCheck(
         this IHealthChecksBuilder builder,
-        Func<ITemporalClient?> clientAccessor,
+        Func<CancellationToken, Task<ITemporalClient?>> clientAccessor,
         string name = "temporal",
         IEnumerable<string>? tags = null,
         TimeSpan? timeout = null)
