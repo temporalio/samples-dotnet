@@ -6,8 +6,18 @@ using Temporalio.Testing;
 
 namespace Temporal.Extensions.Aspire.Hosting;
 
+/// <summary>
+/// Extension methods for registering local Temporal server resources in Aspire.
+/// </summary>
 public static class TemporalLocalResourceExtensions
 {
+    /// <summary>
+    /// Adds a local Temporal server resource (via WorkflowEnvironment) to the distributed application.
+    /// </summary>
+    /// <param name="builder">The distributed application builder.</param>
+    /// <param name="name">The resource name. Default is "temporal-local".</param>
+    /// <param name="configure">Optional action to configure the resource options.</param>
+    /// <returns>A builder for the local Temporal server resource.</returns>
     public static IResourceBuilder<TemporalLocalResource> AddTemporalLocalDevServer(
         this IDistributedApplicationBuilder builder,
         string name = "temporal-local",

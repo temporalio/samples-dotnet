@@ -1,5 +1,8 @@
 namespace Temporal.Extensions.Aspire.Hosting;
 
+/// <summary>
+/// Builds command-line arguments for Temporal dev server startup.
+/// </summary>
 internal static class TemporalArgsBuilder
 {
     /// <summary>
@@ -8,6 +11,9 @@ internal static class TemporalArgsBuilder
     /// is always <see cref="TemporalResourceConstants.DefaultServiceEndpointPort"/> (container mode).
     /// When false, IP and port are taken from <paramref name="options"/> and --ui-port is also emitted (CLI mode).
     /// </summary>
+    /// <param name="options">The resource options containing host, ports, and namespace configuration.</param>
+    /// <param name="fixedIpAndPort">If true, uses fixed container defaults; if false, uses options values and emits --ui-port.</param>
+    /// <returns>An array of CLI arguments for the temporal server start-dev command.</returns>
     internal static string[] BuildArgs(TemporalResourceOptions options, bool fixedIpAndPort = false)
     {
         var args = new List<string> { "server", "start-dev" };

@@ -2,8 +2,18 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace Temporal.Extensions.Aspire.Hosting;
 
+/// <summary>
+/// Extension methods for registering Temporal CLI server resources in Aspire.
+/// </summary>
 public static class TemporalCliServerResourceExtensions
 {
+    /// <summary>
+    /// Adds a Temporal CLI server resource to the distributed application.
+    /// </summary>
+    /// <param name="builder">The distributed application builder.</param>
+    /// <param name="name">The resource name. Default is "temporal-cli-server".</param>
+    /// <param name="configure">Optional action to configure the resource options.</param>
+    /// <returns>A builder for the Temporal CLI server resource.</returns>
     public static IResourceBuilder<TemporalCliServerResource> AddTemporalCliServer(
         this IDistributedApplicationBuilder builder,
         string name = "temporal-cli-server",
@@ -12,6 +22,14 @@ public static class TemporalCliServerResourceExtensions
         return builder.AddTemporalCliServer(name, configure, isTemporalCliAvailable: null);
     }
 
+    /// <summary>
+    /// Adds a reference from a dependent service to a Temporal CLI server resource,
+    /// automatically injecting connection environment variables.
+    /// </summary>
+    /// <typeparam name="TDestination">The type of the destination resource.</typeparam>
+    /// <param name="builder">The resource builder for the dependent service.</param>
+    /// <param name="source">The Temporal CLI server resource builder.</param>
+    /// <returns>The updated resource builder.</returns>
     public static IResourceBuilder<TDestination> WithReference<TDestination>(
         this IResourceBuilder<TDestination> builder, IResourceBuilder<TemporalCliServerResource> source)
         where TDestination : IResourceWithEnvironment

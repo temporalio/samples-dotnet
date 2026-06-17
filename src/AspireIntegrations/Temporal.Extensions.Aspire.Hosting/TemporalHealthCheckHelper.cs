@@ -2,6 +2,9 @@ using Temporalio.Client;
 
 namespace Temporal.Extensions.Aspire.Hosting;
 
+/// <summary>
+/// Helper for registering cached Temporal client accessors for health checks.
+/// </summary>
 internal static class TemporalHealthCheckHelper
 {
     /// <summary>
@@ -10,6 +13,10 @@ internal static class TemporalHealthCheckHelper
     /// that the health check can call on every probe.
     /// The cached client is replaced on each subsequent event so restarts are covered.
     /// </summary>
+    /// <param name="builder">The distributed application builder for subscribing to events.</param>
+    /// <param name="resource">The Temporal resource being monitored for connection string availability.</param>
+    /// <param name="namespace">The Temporal namespace for client connections.</param>
+    /// <returns>A function that accepts a cancellation token and returns the cached ITemporalClient or null if not yet connected.</returns>
     internal static Func<CancellationToken, Task<ITemporalClient?>> RegisterCachedClientAccessor(
         IDistributedApplicationBuilder builder,
         IResource resource,

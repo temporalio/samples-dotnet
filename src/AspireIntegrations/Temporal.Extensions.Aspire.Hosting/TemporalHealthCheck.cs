@@ -4,8 +4,14 @@ using Temporalio.Client;
 
 namespace Temporal.Extensions.Aspire.Hosting;
 
+/// <summary>
+/// Health check implementation for Temporal servers.
+/// </summary>
 public class TemporalHealthCheck(Func<CancellationToken, Task<ITemporalClient?>> clientAccessor) : IHealthCheck
 {
+    /// <summary>
+    /// Checks the health of the Temporal server by calling GetSystemInfoAsync.
+    /// </summary>
     public async Task<HealthCheckResult> CheckHealthAsync(HealthCheckContext context, CancellationToken cancellationToken = default)
     {
         var client = await clientAccessor(cancellationToken);

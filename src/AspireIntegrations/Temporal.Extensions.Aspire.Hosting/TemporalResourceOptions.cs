@@ -2,6 +2,10 @@ using Temporalio.Testing;
 
 namespace Temporal.Extensions.Aspire.Hosting;
 
+/// <summary>
+/// Configuration options for Temporal resources (local, container, and CLI-based).
+/// Extends <see cref="WorkflowEnvironmentStartLocalOptions"/> with Aspire-specific settings.
+/// </summary>
 public class TemporalResourceOptions : WorkflowEnvironmentStartLocalOptions
 {
     private List<string> extraNamespaces = [];
@@ -14,6 +18,10 @@ public class TemporalResourceOptions : WorkflowEnvironmentStartLocalOptions
         TargetHost = $"0.0.0.0:{TemporalResourceConstants.DefaultServiceEndpointPort}";
     }
 
+    /// <summary>
+    /// Gets or sets additional namespaces beyond the primary namespace.
+    /// Always includes the primary <see cref="WorkflowEnvironmentStartLocalOptions.Namespace"/> in the returned list.
+    /// </summary>
     public new List<string> AdditionalNamespaces
     {
         get
@@ -35,6 +43,9 @@ public class TemporalResourceOptions : WorkflowEnvironmentStartLocalOptions
         }
     }
 
+    /// <summary>
+    /// Gets the gRPC port, parsed from <see cref="WorkflowEnvironmentStartLocalOptions.TargetHost"/>.
+    /// </summary>
     public int Port
     {
         get
@@ -69,13 +80,18 @@ public class TemporalResourceOptions : WorkflowEnvironmentStartLocalOptions
         }
     }
 
+    /// <summary>Gets or sets the metrics endpoint port. Default is 9233.</summary>
     public int MetricsPort { get; set; } = TemporalResourceConstants.DefaultMetricsEndpointPort;
 
+    /// <summary>Gets a value indicating whether the UI is disabled.</summary>
     public bool IsHeadless => !UI;
 
+    /// <summary>Gets or sets dynamic configuration values for the Temporal server.</summary>
     public List<string> DynamicConfigValues { get; set; } = [];
 
+    /// <summary>Gets or sets the codec authentication token for encrypted payloads.</summary>
     public string? CodecAuth { get; set; }
 
+    /// <summary>Gets or sets the codec server endpoint for encrypted payloads.</summary>
     public string? CodecEndpoint { get; set; }
 }

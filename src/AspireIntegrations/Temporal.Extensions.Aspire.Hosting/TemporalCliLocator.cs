@@ -2,6 +2,9 @@ using System.Runtime.InteropServices;
 
 namespace Temporal.Extensions.Aspire.Hosting;
 
+/// <summary>
+/// Utility for locating and validating the Temporal CLI executable on the system PATH.
+/// </summary>
 internal static class TemporalCliLocator
 {
     /// <summary>

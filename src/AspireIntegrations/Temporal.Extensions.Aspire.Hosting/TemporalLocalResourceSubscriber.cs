@@ -6,10 +6,16 @@ using Temporalio.Testing;
 
 namespace Temporal.Extensions.Aspire.Hosting;
 
+/// <summary>
+/// Event subscriber for managing local Temporal server lifecycle.
+/// </summary>
 public class TemporalLocalResourceSubscriber : IDistributedApplicationEventingSubscriber
 {
     private readonly Dictionary<string, WorkflowEnvironment> environments = [];
 
+    /// <summary>
+    /// Subscribes to resource events for initializing and managing local Temporal servers.
+    /// </summary>
     public Task SubscribeAsync(IDistributedApplicationEventing eventing,
         DistributedApplicationExecutionContext executionContext,
         CancellationToken cancellationToken)
@@ -25,6 +31,9 @@ public class TemporalLocalResourceSubscriber : IDistributedApplicationEventingSu
         return Task.CompletedTask;
     }
 
+    /// <summary>
+    /// Handles initialization of local Temporal resources.
+    /// </summary>
     private async Task OnInitializeAsync(InitializeResourceEvent @event, CancellationToken cancellationToken = default)
     {
         if (@event.Resource is not TemporalLocalResource resource)
@@ -42,6 +51,9 @@ public class TemporalLocalResourceSubscriber : IDistributedApplicationEventingSu
             @event.Notifications, resourceLoggerService, @event.Services, cancellationToken);
     }
 
+    /// <summary>
+    /// Starts the local Temporal test server and publishes connection events.
+    /// </summary>
     private async Task StartTemporalTestServerAsync(TemporalLocalResource resource,
         IDistributedApplicationEventing eventing,
         ResourceNotificationService resourceNotificationService,
@@ -116,6 +128,9 @@ public class TemporalLocalResourceSubscriber : IDistributedApplicationEventingSu
         }
     }
 
+    /// <summary>
+    /// Handles cleanup when a local Temporal resource is stopped.
+    /// </summary>
     private async Task OnResourceStoppedAsync(ResourceStoppedEvent @event,
         ResourceLoggerService resourceLoggerService, TemporalLocalResource resource)
     {
