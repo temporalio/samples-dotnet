@@ -12,6 +12,9 @@ public class TemporalHealthCheck(Func<CancellationToken, Task<ITemporalClient?>>
     /// <summary>
     /// Checks the health of the Temporal server by calling GetSystemInfoAsync.
     /// </summary>
+    /// <param name="context">The health check context providing access to registered services.</param>
+    /// <param name="cancellationToken">The cancellation token for this operation.</param>
+    /// <returns>A HealthCheckResult indicating whether the server is reachable and healthy.</returns>
     public async Task<HealthCheckResult> CheckHealthAsync(HealthCheckContext context, CancellationToken cancellationToken = default)
     {
         var client = await clientAccessor(cancellationToken);

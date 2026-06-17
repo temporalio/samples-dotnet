@@ -16,6 +16,10 @@ public class TemporalLocalResourceSubscriber : IDistributedApplicationEventingSu
     /// <summary>
     /// Subscribes to resource events for initializing and managing local Temporal servers.
     /// </summary>
+    /// <param name="eventing">The distributed application eventing service.</param>
+    /// <param name="executionContext">The execution context containing application state and mode information.</param>
+    /// <param name="cancellationToken">The cancellation token for this operation.</param>
+    /// <returns>A completed task once event subscriptions are registered.</returns>
     public Task SubscribeAsync(IDistributedApplicationEventing eventing,
         DistributedApplicationExecutionContext executionContext,
         CancellationToken cancellationToken)
