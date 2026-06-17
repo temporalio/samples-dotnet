@@ -50,13 +50,11 @@ public static class TemporalCliServerResourceExtensions
             .WithReference(source as IResourceBuilder<IResourceWithServiceDiscovery>)
             .WithEnvironment(ctx =>
             {
-                ctx.EnvironmentVariables["TEMPORAL_ADDRESS"] =
-                    source.Resource.PrimaryEndpoint.Property(EndpointProperty.HostAndPort);
-
-                ctx.EnvironmentVariables["TEMPORAL_UI_ADDRESS"] =
-                    source.GetEndpoint(TemporalResourceConstants.UIEndpointName);
-
-                TemporalEnvironmentHelper.AddCodecEnvironmentVariables(ctx, source.Resource.Options);
+                TemporalEnvironmentHelper.AddEnvironmentVariables(
+                    ctx,
+                    source.Resource.Options,
+                    source.Resource.ConnectionStringExpression,
+                    source.GetEndpoint(TemporalResourceConstants.UIEndpointName));
             });
     }
 }

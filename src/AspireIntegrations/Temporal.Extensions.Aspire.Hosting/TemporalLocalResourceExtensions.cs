@@ -219,13 +219,11 @@ public static class TemporalLocalResourceExtensions
         return builder
             .WithEnvironment(ctx =>
             {
-                ctx.EnvironmentVariables["TEMPORAL_ADDRESS"] =
-                    $"localhost:{source.Resource.Options.Port}";
-
-                ctx.EnvironmentVariables["TEMPORAL_UI_ADDRESS"] =
-                    $"http://localhost:{source.Resource.Options.UIPort}";
-
-                TemporalEnvironmentHelper.AddCodecEnvironmentVariables(ctx, source.Resource.Options);
+                TemporalEnvironmentHelper.AddEnvironmentVariables(
+                    ctx,
+                    source.Resource.Options,
+                    $"localhost:{source.Resource.Options.Port}",
+                    $"http://localhost:{source.Resource.Options.UIPort}");
             });
     }
 }
