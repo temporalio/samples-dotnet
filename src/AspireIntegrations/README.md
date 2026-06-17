@@ -183,10 +183,42 @@ builder.AddProject<Projects.TemporalioSamples_SampleWorker>("worker")
 builder.Build().Run();
 ```
 
+**Advanced Configuration:**
+```csharp
+var temporal = builder.AddTemporalCliServer(configure: options =>
+{
+    // Port configuration
+    options.UIPort = 8233;                  // Web UI port
+    options.MetricsPort = 9233;             // Metrics endpoint port
+    
+    // Network binding
+    options.TargetHost = "0.0.0.0:7233";
+
+    // Namespace configuration
+    options.Namespace = "default";
+    options.AdditionalNamespaces = ["orders", "analytics"];
+
+    // UI configuration
+    options.UI = true;
+
+    // Search attributes for custom workflows
+    options.SearchAttributes = new[]
+    {
+        new SearchAttribute { Name = "Environment", ValueType = "Text" },
+        new SearchAttribute { Name = "UserId", ValueType = "Text" },
+        new SearchAttribute { Name = "ProcessingTime", ValueType = "Int" }
+    };
+    
+    // Dynamic configuration values
+    options.DynamicConfigValues = [
+        "persistence.cassandra.hosts = cassandra-host:9042"
+    ];
+});
+```
+
 **Requirements:**
 - Temporal CLI must be installed and available in PATH
 - Run `temporal --version` to verify installation
-
 ---
 
 ### Connection Strings
