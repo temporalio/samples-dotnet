@@ -2,6 +2,8 @@ namespace Temporal.Extensions.Aspire.Hosting;
 
 internal static class TemporalEnvironmentHelper
 {
+    // This helper only maps the resource connection details and namespace into dependent services.
+    // It intentionally does not duplicate all resource-specific Temporal environment variables.
     internal static void AddEnvironmentVariables(
         EnvironmentCallbackContext ctx,
         TemporalResourceOptions options,
@@ -11,7 +13,6 @@ internal static class TemporalEnvironmentHelper
         ctx.EnvironmentVariables["TEMPORAL_ADDRESS"] = temporalAddress;
         ctx.EnvironmentVariables["TEMPORAL_UI_ADDRESS"] = temporalUiAddress;
         ctx.EnvironmentVariables["TEMPORAL_NAMESPACE"] = options.Namespace;
-        ctx.EnvironmentVariables["TEMPORAL_DEFAULT_NAMESPACE"] = options.Namespace;
 
         if (!string.IsNullOrEmpty(options.CodecAuth))
             ctx.EnvironmentVariables["TEMPORAL_CODEC_AUTH"] = options.CodecAuth;

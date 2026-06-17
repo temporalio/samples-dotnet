@@ -138,6 +138,7 @@ public class TemporalLocalResourceSubscriber : IDistributedApplicationEventingSu
             catch (Exception ex)
             {
                 resourceLogger.LogError(ex, "Error shutting down Temporal test server '{ResourceName}'", resourceName);
+                throw;
             }
             finally
             {
