@@ -66,7 +66,7 @@ async Task RunStarterAsync()
     var echoResult = await echoHandle.GetResultAsync();
     logger.LogInformation("Echo result: {Message}", echoResult.Message);
 
-    // Execute the async (workflow-backed) Hello operation.
+    // Start the async (workflow-backed) Hello operation.
     var helloHandle = await nexusClient.StartNexusOperationAsync(
         svc => svc.SayHello(new("Temporal", IHelloService.HelloLanguage.En)),
         new("nexus-standalone-hello-op")

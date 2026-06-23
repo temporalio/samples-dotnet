@@ -7,12 +7,12 @@ from client code without wrapping them in a Workflow). It shows both sync and as
 
 > [!NOTE]
 > Standalone Nexus operations require a server version that supports this feature. Use the dev
-> server build at https://github.com/temporalio/cli/releases/tag/v1.7.2
-> -standalone-nexus-operations.
+> server build at:  
+> https://github.com/temporalio/cli/releases/tag/v1.7.2-standalone-nexus-operations.
 
 ### Steps to run this sample
 
-1. Run the [Temporal dev server build that supports standalone Nexus operations](https://github.com/temporalio/cli/releases/tag/v1.7.1-standalone-nexus-operations). (If you are going to run locally, you will want to start it in another terminal; this command is blocking and runs until it receives a SIGINT (Ctrl + C) command.)
+1. Run the [Temporal dev server build that supports standalone Nexus operations](https://github.com/temporalio/cli/releases/tag/v1.7.2-standalone-nexus-operations). (If you are going to run locally, you will want to start it in another terminal; this command is blocking and runs until it receives a SIGINT (Ctrl + C) command.)
 
    Start the dev server with the dynamic config flags required for standalone Nexus operations:
 

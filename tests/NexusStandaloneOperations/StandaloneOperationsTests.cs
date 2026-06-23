@@ -1,6 +1,5 @@
 namespace TemporalioSamples.Tests.NexusStandaloneOperations;
 
-using Temporalio.Client;
 using Temporalio.Testing;
 using Temporalio.Worker;
 using TemporalioSamples.NexusStandaloneOperations;
@@ -15,14 +14,14 @@ public class StandaloneOperationsTests : TestBase
     {
     }
 
-    [Fact(Skip = "Standalone Nexus operations require a pre-release dev server build (v1.7.1-standalone-nexus-operations)")]
+    [Fact(Skip = "Standalone Nexus operations require a pre-release dev server build (v2-standalone-nexus-operations)")]
     public async Task RunAsync_StandaloneOperations_Succeeds()
     {
         await using var env = await WorkflowEnvironment.StartLocalAsync(new()
         {
             DevServerOptions = new()
             {
-                DownloadVersion = "v1.7.1-standalone-nexus-operations",
+                DownloadVersion = "v1.7.2-standalone-nexus-operations",
                 ExtraArgs =
                 [
                     "--dynamic-config-value",
