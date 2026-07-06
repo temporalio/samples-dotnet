@@ -124,6 +124,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TemporalioSamples.Standalon
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TemporalioSamples.NexusMessaging", "src\NexusMessaging\TemporalioSamples.NexusMessaging.csproj", "{5D493692-53AB-4FAA-BA4D-33B1E54E9A48}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "NexusStandaloneOperations", "NexusStandaloneOperations", "{17436B0C-8853-030B-9E2F-BAEB65BE59FB}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TemporalioSamples.NexusStandaloneOperations", "src\NexusStandaloneOperations\TemporalioSamples.NexusStandaloneOperations.csproj", "{6B6622AE-2970-4AAD-B2E4-A7EE1E2C40EA}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -734,6 +738,18 @@ Global
 		{5D493692-53AB-4FAA-BA4D-33B1E54E9A48}.Release|x64.Build.0 = Release|Any CPU
 		{5D493692-53AB-4FAA-BA4D-33B1E54E9A48}.Release|x86.ActiveCfg = Release|Any CPU
 		{5D493692-53AB-4FAA-BA4D-33B1E54E9A48}.Release|x86.Build.0 = Release|Any CPU
+		{6B6622AE-2970-4AAD-B2E4-A7EE1E2C40EA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6B6622AE-2970-4AAD-B2E4-A7EE1E2C40EA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6B6622AE-2970-4AAD-B2E4-A7EE1E2C40EA}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{6B6622AE-2970-4AAD-B2E4-A7EE1E2C40EA}.Debug|x64.Build.0 = Debug|Any CPU
+		{6B6622AE-2970-4AAD-B2E4-A7EE1E2C40EA}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{6B6622AE-2970-4AAD-B2E4-A7EE1E2C40EA}.Debug|x86.Build.0 = Debug|Any CPU
+		{6B6622AE-2970-4AAD-B2E4-A7EE1E2C40EA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6B6622AE-2970-4AAD-B2E4-A7EE1E2C40EA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6B6622AE-2970-4AAD-B2E4-A7EE1E2C40EA}.Release|x64.ActiveCfg = Release|Any CPU
+		{6B6622AE-2970-4AAD-B2E4-A7EE1E2C40EA}.Release|x64.Build.0 = Release|Any CPU
+		{6B6622AE-2970-4AAD-B2E4-A7EE1E2C40EA}.Release|x86.ActiveCfg = Release|Any CPU
+		{6B6622AE-2970-4AAD-B2E4-A7EE1E2C40EA}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -796,5 +812,7 @@ Global
 		{EAB0C45A-7620-D2D2-2901-5E7FCBFFDA77} = {1A647B41-53D0-4638-AE5A-6630BAAE45FC}
 		{240517A1-13B5-4A67-8519-BFCF2C4591B9} = {EAB0C45A-7620-D2D2-2901-5E7FCBFFDA77}
 		{5D493692-53AB-4FAA-BA4D-33B1E54E9A48} = {1A647B41-53D0-4638-AE5A-6630BAAE45FC}
+		{17436B0C-8853-030B-9E2F-BAEB65BE59FB} = {1A647B41-53D0-4638-AE5A-6630BAAE45FC}
+		{6B6622AE-2970-4AAD-B2E4-A7EE1E2C40EA} = {17436B0C-8853-030B-9E2F-BAEB65BE59FB}
 	EndGlobalSection
 EndGlobal
