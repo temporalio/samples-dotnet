@@ -14,7 +14,7 @@ public class StandaloneOperationsTests : TestBase
     {
     }
 
-    [Fact(Skip = "Standalone Nexus operations require a pre-release dev server build (v2-standalone-nexus-operations)")]
+    [Fact]
     public async Task RunAsync_StandaloneOperations_Succeeds()
     {
         await using var env = await WorkflowEnvironment.StartLocalAsync(new()
