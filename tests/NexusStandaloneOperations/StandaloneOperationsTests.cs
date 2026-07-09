@@ -21,7 +21,7 @@ public class StandaloneOperationsTests : TestBase
         {
             DevServerOptions = new()
             {
-                DownloadVersion = "v1.7.2-standalone-nexus-operations",
+                DownloadVersion = "v1.7.3-standalone-nexus-operations",
                 ExtraArgs =
                 [
                     "--dynamic-config-value",
