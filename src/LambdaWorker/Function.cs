@@ -18,7 +18,7 @@ public class LambdaFunction
     public Task HandlerAsync(Stream input, ILambdaContext context) =>
         WorkerHandler(input, context);
 
-    private static void Configure(LambdaWorkerConfig config)
+    private static void Configure(TemporalLambdaWorkerOptions config)
     {
         LambdaWorkerSample.ConfigureWorkerOptions(config.WorkerOptions);
         LambdaWorkerOpenTelemetry.ApplyDefaults(config);

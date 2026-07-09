@@ -46,4 +46,40 @@ public class LambdaWorkerTests : TestBase
             workflow => workflow.Type == typeof(SampleWorkflow));
         Assert.Equal(VersioningBehavior.Pinned, workflow.VersioningBehavior);
     }
+
+    [Fact]
+    public void ConfigureWorkerOptions_UsesEnvironmentOverrides()
+    {
+        using var taskQueue =
+            new EnvironmentVariableScope(LambdaWorkerSample.TaskQueueEnvironmentVariable, "fresh-task-queue");
+        using var workflowId =
+            new EnvironmentVariableScope(LambdaWorkerSample.WorkflowIdEnvironmentVariable, "fresh-workflow");
+        using var deploymentName =
+            new EnvironmentVariableScope(LambdaWorkerSample.DeploymentNameEnvironmentVariable, "fresh-deployment");
+        using var buildId =
+            new EnvironmentVariableScope(LambdaWorkerSample.BuildIdEnvironmentVariable, "fresh-build");
+
+        var options = LambdaWorkerSample.ConfigureWorkerOptions(new TemporalWorkerOptions());
+
+        Assert.Equal("fresh-task-queue", options.TaskQueue);
+        Assert.Equal("fresh-workflow", LambdaWorkerSample.WorkflowId);
+        Assert.Equal("fresh-deployment", LambdaWorkerSample.DeploymentName);
+        Assert.Equal("fresh-build", LambdaWorkerSample.BuildId);
+    }
+
+    private sealed class EnvironmentVariableScope : IDisposable
+    {
+        private readonly string name;
+        private readonly string? originalValue;
+
+        public EnvironmentVariableScope(string name, string value)
+        {
+            this.name = name;
+            originalValue = Environment.GetEnvironmentVariable(name);
+            Environment.SetEnvironmentVariable(name, value);
+        }
+
+        public void Dispose() =>
+            Environment.SetEnvironmentVariable(name, originalValue);
+    }
 }

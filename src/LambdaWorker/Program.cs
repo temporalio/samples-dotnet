@@ -1,6 +1,6 @@
 using Microsoft.Extensions.Logging;
 using Temporalio.Client;
-using Temporalio.Extensions.Aws.Lambda;
+using Temporalio.Common.EnvConfig;
 using TemporalioSamples.LambdaWorker;
 
 if (args.Length > 0 && args[0] != "workflow")
@@ -9,7 +9,7 @@ if (args.Length > 0 && args[0] != "workflow")
     return;
 }
 
-var connectOptions = TemporalLambdaWorker.LoadClientConnectOptions();
+var connectOptions = ClientEnvConfig.LoadClientConnectOptions();
 connectOptions.LoggerFactory = LoggerFactory.Create(builder =>
     builder.
         AddSimpleConsole(options => options.TimestampFormat = "[HH:mm:ss] ").
