@@ -90,7 +90,7 @@ Outputs:
 
   RoleName:
     Description: The name of the IAM role
-    Value: !Ref RoleName
+    Value: !Ref TemporalCloudServerlessWorker
 
   LambdaFunctionARNs:
     Description: The Lambda function ARNs that can be invoked

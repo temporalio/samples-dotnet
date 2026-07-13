@@ -45,4 +45,7 @@ aws iam put-role-policy \
 
 # Needed to make traces show up with type: `"AWS::Lambda::Function"` filter
 aws lambda update-function-configuration \
- --function-name "$FUNCTION_NAME" --tracing-config Mode=Active
+  --function-name "$FUNCTION_NAME" \
+  --tracing-config Mode=Active \
+  --query '{FunctionName:FunctionName,TracingConfig:TracingConfig,LastUpdateStatus:LastUpdateStatus,RevisionId:RevisionId}' \
+  --output json

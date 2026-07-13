@@ -24,29 +24,9 @@ dotnet publish "$SCRIPT_DIR/TemporalioSamples.LambdaWorker.csproj" \
   --self-contained false \
   --output "$PUBLISH_DIR"
 
-BRIDGE_FILE="libtemporalio_sdk_core_c_bridge.so"
-if [[ ! -f "$PUBLISH_DIR/$BRIDGE_FILE" ]]; then
-  if [[ -n "${TEMPORAL_DOTNET_NATIVE_BRIDGE:-}" ]]; then
-    cp "$TEMPORAL_DOTNET_NATIVE_BRIDGE" "$PUBLISH_DIR/$BRIDGE_FILE"
-  elif [[ "$TARGET_RUNTIME" == "linux-x64" && -n "${TEMPORAL_DOTNET_LINUX_X64_BRIDGE:-}" ]]; then
-    cp "$TEMPORAL_DOTNET_LINUX_X64_BRIDGE" "$PUBLISH_DIR/$BRIDGE_FILE"
-  else
-    NUGET_PACKAGES_ROOT="${NUGET_PACKAGES:-}"
-    if [[ -z "$NUGET_PACKAGES_ROOT" ]]; then
-      NUGET_PACKAGES_ROOT="$(dotnet nuget locals global-packages --list | sed 's/^global-packages: //')"
-    fi
-    BRIDGE_FROM_NUGET="$(
-      find "$NUGET_PACKAGES_ROOT/temporalio" \
-        -path "*/runtimes/$TARGET_RUNTIME/native/$BRIDGE_FILE" \
-        -print 2>/dev/null | sort -V | tail -1
-    )"
-    if [[ -z "$BRIDGE_FROM_NUGET" ]]; then
-      echo "Missing $BRIDGE_FILE in publish output." >&2
-      echo "Set TEMPORAL_DOTNET_NATIVE_BRIDGE to a $TARGET_RUNTIME Temporal bridge library path." >&2
-      exit 1
-    fi
-    cp "$BRIDGE_FROM_NUGET" "$PUBLISH_DIR/$BRIDGE_FILE"
-  fi
+if [[ ! -f "$PUBLISH_DIR/libtemporalio_sdk_core_c_bridge.so" ]]; then
+  echo "Publish output is missing the $TARGET_RUNTIME Temporal native bridge." >&2
+  exit 1
 fi
 
 cp "$SCRIPT_DIR/temporal.toml" "$SCRIPT_DIR/otel-collector-config.yaml" \
@@ -55,6 +35,10 @@ cp "$SCRIPT_DIR/temporal.toml" "$SCRIPT_DIR/otel-collector-config.yaml" \
 cd "$PUBLISH_DIR"
 zip -r "$ZIP_FILE" .
 
-aws lambda update-function-code --function-name "$FUNCTION_NAME" --zip-file fileb://"$ZIP_FILE"
+aws lambda update-function-code \
+  --function-name "$FUNCTION_NAME" \
+  --zip-file fileb://"$ZIP_FILE" \
+  --query '{FunctionName:FunctionName,CodeSha256:CodeSha256,LastModified:LastModified,RevisionId:RevisionId}' \
+  --output json
 
 rm -rf "$PUBLISH_DIR" "$ZIP_FILE"

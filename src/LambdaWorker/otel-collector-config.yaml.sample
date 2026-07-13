@@ -8,7 +8,6 @@ receivers:
                 endpoint: "localhost:4318"
 
 exporters:
-    debug:
     awsxray:
         region: ${env:AWS_REGION}
     awsemf:
@@ -23,13 +22,13 @@ service:
     pipelines:
         traces:
             receivers: [otlp]
-            exporters: [awsxray, debug]
+            exporters: [awsxray]
         metrics:
             receivers: [otlp]
             exporters: [awsemf]
     telemetry:
         logs:
-            level: debug
+            level: info
         metrics:
             address: localhost:8888
 # @@@SNIPEND

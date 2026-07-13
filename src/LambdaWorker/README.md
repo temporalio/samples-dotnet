@@ -81,7 +81,9 @@ Set the API key on the Lambda function:
 ```bash
 aws lambda update-function-configuration \
   --function-name my-temporal-worker \
-  --environment "Variables={TEMPORAL_API_KEY=<your-api-key>,SSL_CERT_FILE=/etc/pki/tls/certs/ca-bundle.crt}"
+  --environment "Variables={TEMPORAL_API_KEY=<your-api-key>,SSL_CERT_FILE=/etc/pki/tls/certs/ca-bundle.crt}" \
+  --query '{FunctionName:FunctionName,LastUpdateStatus:LastUpdateStatus,RevisionId:RevisionId}' \
+  --output json
 ```
 
 If you also enable OpenTelemetry, include
@@ -104,8 +106,8 @@ worker configuration.
 
 ### 4. Enable OpenTelemetry
 
-The sample calls `LambdaWorkerOpenTelemetry.ApplyDefaults` in `Function.cs`.
-If you want traces, metrics, and logs, attach the ADOT Collector layer to your
+The sample calls `ApplyOpenTelemetryDefaults` in `Function.cs`.
+If you want traces and metrics, attach the ADOT Collector layer to your
 Lambda function. You will need to add the appropriate layer for your runtime and
 region. See
 [this page](https://aws-otel.github.io/docs/getting-started/lambda#getting-started-with-aws-lambda-layers)
@@ -136,6 +138,10 @@ the normal single-function test deployment.
 
 This runs `dotnet publish`, bundles the publish output with your code and
 configuration files, and uploads to AWS Lambda.
+
+The script publishes for `linux-x64` by default. Set
+`TEMPORAL_DOTNET_LAMBDA_RUNTIME=linux-arm64` when the Lambda function uses the
+Arm64 architecture.
 
 ### 6. Configure Temporal to invoke your Lambda function
 
@@ -188,7 +194,9 @@ ORIGINAL_TIMEOUT=$(aws lambda get-function-configuration \
 
 aws lambda update-function-configuration \
   --function-name my-temporal-worker \
-  --timeout 30
+  --timeout 30 \
+  --query '{FunctionName:FunctionName,Timeout:Timeout,LastUpdateStatus:LastUpdateStatus}' \
+  --output json
 
 aws lambda wait function-updated \
   --function-name my-temporal-worker
@@ -202,7 +210,9 @@ aws lambda invoke \
 
 aws lambda update-function-configuration \
   --function-name my-temporal-worker \
-  --timeout "$ORIGINAL_TIMEOUT"
+  --timeout "$ORIGINAL_TIMEOUT" \
+  --query '{FunctionName:FunctionName,Timeout:Timeout,LastUpdateStatus:LastUpdateStatus}' \
+  --output json
 ```
 
 ### 7. Start a Workflow
@@ -215,47 +225,4 @@ From inside this directory:
 ```bash
 TEMPORAL_CONFIG_FILE=temporal.toml TEMPORAL_API_KEY=<your-api-key> \
   mise exec dotnet@8 -- dotnet run --project TemporalioSamples.LambdaWorker.csproj -- workflow
-```
-
-## Local SDK Development
-
-The sample uses NuGet package references by default. To test against a local
-checkout of `../sdk-dotnet` before packages are published, create an untracked
-`Directory.Build.local.props` file at the samples repo root:
-
-```xml
-<Project>
-  <PropertyGroup>
-    <UseLocalTemporalSdk>true</UseLocalTemporalSdk>
-  </PropertyGroup>
-
-  <ItemGroup Condition="'$(UseLocalTemporalSdk)' == 'true'">
-    <PackageReference Remove="Temporalio" />
-    <PackageReference Remove="Temporalio.Extensions.DiagnosticSource" />
-    <PackageReference Remove="Temporalio.Extensions.Hosting" />
-    <PackageReference Remove="Temporalio.Extensions.OpenTelemetry" />
-    <PackageReference Remove="Temporalio.Extensions.Aws.Lambda" />
-    <PackageReference Remove="Temporalio.Extensions.Aws.Lambda.OpenTelemetry" />
-
-    <ProjectReference Include="$(MSBuildThisFileDirectory)..\sdk-dotnet\src\Temporalio\Temporalio.csproj" />
-    <ProjectReference Include="$(MSBuildThisFileDirectory)..\sdk-dotnet\src\Temporalio.Extensions.DiagnosticSource\Temporalio.Extensions.DiagnosticSource.csproj" />
-    <ProjectReference Include="$(MSBuildThisFileDirectory)..\sdk-dotnet\src\Temporalio.Extensions.Hosting\Temporalio.Extensions.Hosting.csproj" />
-    <ProjectReference Include="$(MSBuildThisFileDirectory)..\sdk-dotnet\src\Temporalio.Extensions.OpenTelemetry\Temporalio.Extensions.OpenTelemetry.csproj" />
-    <ProjectReference Include="$(MSBuildThisFileDirectory)..\sdk-dotnet\src\Temporalio.Extensions.Aws.Lambda\Temporalio.Extensions.Aws.Lambda.csproj" />
-    <ProjectReference Include="$(MSBuildThisFileDirectory)..\sdk-dotnet\src\Temporalio.Extensions.Aws.Lambda.OpenTelemetry\Temporalio.Extensions.Aws.Lambda.OpenTelemetry.csproj" />
-  </ItemGroup>
-</Project>
-```
-
-`Directory.Build.local.props` is ignored by Git.
-
-When deploying this sample from local SDK project references on macOS, the
-publish step does not build the Linux native Temporal bridge that Lambda needs.
-`deploy-lambda.sh` copies `libtemporalio_sdk_core_c_bridge.so` from the local
-NuGet cache when it is missing from the publish output. The script defaults to
-`linux-x64`; set `TEMPORAL_DOTNET_LAMBDA_RUNTIME=linux-arm64` if your Lambda
-function uses arm64. To use a specific locally built Linux bridge instead, set:
-
-```bash
-TEMPORAL_DOTNET_NATIVE_BRIDGE=/path/to/libtemporalio_sdk_core_c_bridge.so
 ```

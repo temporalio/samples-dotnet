@@ -21,7 +21,7 @@ public class LambdaFunction
     private static void Configure(TemporalLambdaWorkerOptions config)
     {
         LambdaWorkerSample.ConfigureWorkerOptions(config.WorkerOptions);
-        LambdaWorkerOpenTelemetry.ApplyDefaults(config);
+        config.ApplyOpenTelemetryDefaults();
     }
 }
 // @@@SNIPEND
