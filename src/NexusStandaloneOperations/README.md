@@ -97,7 +97,7 @@ support (`ClientEnvConfig.LoadClientConnectOptions()`), which reads `TEMPORAL_NA
    For mTLS instead of API keys, set `tls.client_cert_path` and `tls.client_key_path` on each profile
    (see the [docs](https://docs.temporal.io/develop/environment-configuration) for the full schema).
 
-4. Run the worker and starter in separate terminals, selecting the appropriate profile in each:
+4. Run the worker and starter in separate terminals from this directory, selecting the appropriate profile in each:
 
    ```bash
    # terminal 1 (worker, handler namespace)
