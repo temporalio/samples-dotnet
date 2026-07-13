@@ -21,7 +21,7 @@
     <PackageVersion Include="Temporalio.Extensions.DiagnosticSource" Version="1.17.0" />
     <PackageVersion Include="Temporalio.Extensions.Hosting" Version="1.17.0" />
     <PackageVersion Include="Temporalio.Extensions.OpenTelemetry" Version="1.17.0" />
-    <PackageVersion Include="Aspire.Hosting.AppHost" Version="13.4.4" Condition="'$(MSBuildProjectName)' != 'TemporalioSamples.SampleAppHost'" />
+    <PackageVersion Include="Aspire.Hosting.AppHost" Version="13.4.6" Condition="'$(MSBuildProjectName)' != 'TemporalioSamples.SampleAppHost'" />
     <PackageVersion Include="xunit" Version="2.9.3" />
     <PackageVersion Include="xunit.console" Version="2.9.3" />
     <PackageVersion Include="xunit.runner.visualstudio" Version="3.1.4" />
