@@ -2,7 +2,7 @@
 set -euo pipefail
 
 # Additional setup steps for OpenTelemetry support.
-# These are needed if you want metrics, logs, and traces from your Lambda worker.
+# These are needed to export metrics to CloudWatch EMF and traces to X-Ray.
 
 ROLE_NAME="${1:?Usage: extra-setup-steps <role-name> <function-name> <region> <account-id>}"
 FUNCTION_NAME="${2:?Usage: extra-setup-steps <role-name> <function-name> <region> <account-id>}"
@@ -49,3 +49,4 @@ aws lambda update-function-configuration \
   --tracing-config Mode=Active \
   --query '{FunctionName:FunctionName,TracingConfig:TracingConfig,LastUpdateStatus:LastUpdateStatus,RevisionId:RevisionId}' \
   --output json
+aws lambda wait function-updated --function-name "$FUNCTION_NAME"

@@ -13,15 +13,13 @@ public class LambdaFunction
             new WorkerDeploymentVersion(
                 LambdaWorkerSample.DeploymentName,
                 LambdaWorkerSample.BuildId),
-            Configure);
+            config =>
+            {
+                config.ApplyOpenTelemetryDefaults();
+                LambdaWorkerSample.ConfigureWorkerOptions(config.WorkerOptions);
+            });
 
     public Task HandlerAsync(Stream input, ILambdaContext context) =>
         WorkerHandler(input, context);
-
-    private static void Configure(TemporalLambdaWorkerOptions config)
-    {
-        LambdaWorkerSample.ConfigureWorkerOptions(config.WorkerOptions);
-        config.ApplyOpenTelemetryDefaults();
-    }
 }
 // @@@SNIPEND

@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <OutputType>Exe</OutputType>
+    <GenerateRuntimeConfigurationFiles>true</GenerateRuntimeConfigurationFiles>
   </PropertyGroup>
 
   <ItemGroup>
@@ -11,6 +11,10 @@
   <ItemGroup>
     <PackageReference Include="Temporalio.Extensions.Aws.Lambda" />
     <PackageReference Include="Temporalio.Extensions.Aws.Lambda.OpenTelemetry" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Remove="Starter/**/*.cs" />
   </ItemGroup>
 
 </Project>
