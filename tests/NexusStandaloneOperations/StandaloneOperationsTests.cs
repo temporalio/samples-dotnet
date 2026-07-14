@@ -21,14 +21,7 @@ public class StandaloneOperationsTests : TestBase
         {
             DevServerOptions = new()
             {
-                DownloadVersion = "v1.7.3-standalone-nexus-operations",
-                ExtraArgs =
-                [
-                    "--dynamic-config-value",
-                    "nexusoperation.enableStandalone=true",
-                    "--dynamic-config-value",
-                    "history.enableChasmCallbacks=true",
-                ],
+                DownloadVersion = "v1.7.4-standalone-nexus-operations",
             },
         });
 

@@ -5,7 +5,7 @@ using NexusRpc;
 [NexusService]
 public interface IHelloService
 {
-    static readonly string EndpointName = "nexus-standalone-operations-endpoint";
+    static readonly string EndpointName = "my-nexus-endpoint";
 
     [NexusOperation]
     EchoOutput Echo(EchoInput input);

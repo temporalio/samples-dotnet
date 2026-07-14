@@ -5,7 +5,7 @@ using Temporalio.Worker;
 using TemporalioSamples.NexusStandaloneOperations;
 using TemporalioSamples.NexusStandaloneOperations.Handler;
 
-const string taskQueue = "nexus-standalone-operations";
+const string taskQueue = "nexus-handler-queue";
 
 using var loggerFactory = LoggerFactory.Create(builder =>
     builder.
