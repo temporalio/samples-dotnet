@@ -6,6 +6,39 @@ updates:
       interval: "weekly"
     cooldown:
       default-days: 14
+    groups:
+      # The Microsoft.Extensions.* packages share release cadence and are bumped
+      # together in a single PR.
+      microsoft-extensions:
+        patterns:
+          - "Microsoft.Extensions.*"
+      # The official xunit packages share release cadence and are bumped
+      # together in a single PR.
+      xunit:
+        patterns:
+          - "xunit"
+          - "xunit.console"
+          - "xunit.runner.visualstudio"
+      # The Temporalio packages ship together as one SDK release and share a
+      # version, so they are bumped together in a single PR.
+      temporalio:
+        patterns:
+          - "Temporalio*"
+    ignore:
+      # Aspire packages are bumped manually in lock-step with the Aspire.AppHost.Sdk
+      # version, which Dependabot can't update. Security updates still flow through.
+      - dependency-name: "Aspire*"
+        update-types:
+          - "version-update:semver-major"
+          - "version-update:semver-minor"
+          - "version-update:semver-patch"
+      # AWS SDK packages update very frequently; the samples do not require
+      # the latest versions. Security updates still flow through.
+      - dependency-name: "AWSSDK.BedrockRuntime"
+        update-types:
+          - "version-update:semver-major"
+          - "version-update:semver-minor"
+          - "version-update:semver-patch"
   - package-ecosystem: "github-actions"
     directory: "/"
     schedule:
