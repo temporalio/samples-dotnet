@@ -3,7 +3,6 @@ namespace TemporalioSamples.Tests.NexusMessaging;
 using Temporalio.Client;
 using Temporalio.Worker;
 using TemporalioSamples.NexusMessaging.Common;
-using TemporalioSamples.NexusMessaging.OnDemandPattern;
 using TemporalioSamples.NexusMessaging.OnDemandPattern.Caller;
 using TemporalioSamples.NexusMessaging.OnDemandPattern.Handler;
 using Xunit;

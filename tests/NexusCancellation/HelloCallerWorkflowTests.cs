@@ -2,7 +2,6 @@
 
 using Temporalio.Client;
 using Temporalio.Worker;
-using TemporalioSamples.NexusCancellation;
 using TemporalioSamples.NexusCancellation.Caller;
 using TemporalioSamples.NexusCancellation.Handler;
 using Xunit;
