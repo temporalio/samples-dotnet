@@ -20,7 +20,7 @@ public class OnDemandPatternTests : WorkflowEnvironmentTestBase
     public async Task RunAsync_CallerRemoteWorkflow_Succeeds()
     {
         var handlerTaskQueue = $"tq-{Guid.NewGuid()}";
-        await Env.TestEnv.CreateNexusEndpointAsync(INexusRemoteGreetingService.EndpointName, handlerTaskQueue);
+        await Env.TestEnv.CreateNexusEndpointAsync(NexusEndpoints.RemoteGreetingService, handlerTaskQueue);
 
         // Run handler worker
         using var handlerWorker = new TemporalWorker(

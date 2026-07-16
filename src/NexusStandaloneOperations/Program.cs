@@ -6,7 +6,6 @@ using TemporalioSamples.NexusStandaloneOperations;
 using TemporalioSamples.NexusStandaloneOperations.Handler;
 
 const string taskQueue = "nexus-handler-queue";
-const string helloServiceEndpoint = "my-nexus-endpoint";
 
 using var loggerFactory = LoggerFactory.Create(builder =>
     builder.
@@ -53,7 +52,7 @@ async Task RunStarterAsync()
 
     // Create a Nexus client bound to the endpoint and service.
     // The endpoint must be pre-created on the server (see README).
-    var nexusClient = client.CreateNexusClient<IHelloService>(helloServiceEndpoint);
+    var nexusClient = client.CreateNexusClient<IHelloService>(NexusEndpoints.HelloService);
 
     // Execute the sync Echo operation.
     var echoHandle = await nexusClient.StartNexusOperationAsync(
@@ -82,7 +81,7 @@ async Task RunStarterAsync()
     // List Nexus operations using the base client (not the Nexus client).
     logger.LogInformation("ListNexusOperations results:");
     await foreach (var op in client.ListNexusOperationsAsync(
-        $"Endpoint = '{helloServiceEndpoint}'"))
+        $"Endpoint = '{NexusEndpoints.HelloService}'"))
     {
         logger.LogInformation(
             "\tOperationID: {OperationId}, Operation: {Operation}, Status: {Status}",
@@ -93,7 +92,7 @@ async Task RunStarterAsync()
 
     // Count Nexus operations using the base client (not the Nexus client).
     var countResp = await client.CountNexusOperationsAsync(
-        $"Endpoint = '{helloServiceEndpoint}'");
+        $"Endpoint = '{NexusEndpoints.HelloService}'");
     logger.LogInformation("Total Nexus operations: {Count}", countResp.Count);
 }
 

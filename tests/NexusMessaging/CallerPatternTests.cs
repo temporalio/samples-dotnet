@@ -20,7 +20,7 @@ public class CallerPatternTests : WorkflowEnvironmentTestBase
     public async Task RunAsync_CallerWorkflow_Succeeds()
     {
         var handlerTaskQueue = $"tq-{Guid.NewGuid()}";
-        await Env.TestEnv.CreateNexusEndpointAsync(INexusGreetingService.EndpointName, handlerTaskQueue);
+        await Env.TestEnv.CreateNexusEndpointAsync(NexusEndpoints.GreetingService, handlerTaskQueue);
         var userId = $"user-{Guid.NewGuid()}";
         var workflowId = $"GreetingWorkflow_for_{userId}";
 
