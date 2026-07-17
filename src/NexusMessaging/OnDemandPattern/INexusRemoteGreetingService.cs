@@ -6,8 +6,6 @@ using TemporalioSamples.NexusMessaging.Common;
 [NexusService]
 public interface INexusRemoteGreetingService
 {
-    static readonly string EndpointName = "nexus-messaging-on-demand-pattern-endpoint";
-
     [NexusOperation]
     string RunFromRemote(RunFromRemoteInput input);
 

@@ -3,7 +3,6 @@ namespace TemporalioSamples.Tests.NexusMessaging;
 using Temporalio.Client;
 using Temporalio.Worker;
 using TemporalioSamples.NexusMessaging.Common;
-using TemporalioSamples.NexusMessaging.OnDemandPattern;
 using TemporalioSamples.NexusMessaging.OnDemandPattern.Caller;
 using TemporalioSamples.NexusMessaging.OnDemandPattern.Handler;
 using Xunit;
@@ -20,7 +19,7 @@ public class OnDemandPatternTests : WorkflowEnvironmentTestBase
     public async Task RunAsync_CallerRemoteWorkflow_Succeeds()
     {
         var handlerTaskQueue = $"tq-{Guid.NewGuid()}";
-        await Env.TestEnv.CreateNexusEndpointAsync(INexusRemoteGreetingService.EndpointName, handlerTaskQueue);
+        await Env.TestEnv.CreateNexusEndpointAsync(NexusEndpoints.RemoteGreetingService, handlerTaskQueue);
 
         // Run handler worker
         using var handlerWorker = new TemporalWorker(

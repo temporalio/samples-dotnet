@@ -22,7 +22,7 @@ public class HelloCallerWorkflowTests : WorkflowEnvironmentTestBase
     {
         // Create endpoint
         var handlerTaskQueue = $"tq-{Guid.NewGuid()}";
-        await Env.TestEnv.CreateNexusEndpointAsync(IHelloService.EndpointName, handlerTaskQueue);
+        await Env.TestEnv.CreateNexusEndpointAsync(NexusEndpoints.HelloService, handlerTaskQueue);
 
         // Setup client with interceptors
         var clientOptions = (TemporalClientOptions)Client.Options.Clone();
