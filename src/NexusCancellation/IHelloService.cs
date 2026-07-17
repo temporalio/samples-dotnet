@@ -5,8 +5,6 @@ using NexusRpc;
 [NexusService]
 public interface IHelloService
 {
-    static readonly string EndpointName = "nexus-cancellation-endpoint";
-
     [NexusOperation]
     HelloOutput SayHello(HelloInput input);
 

@@ -5,8 +5,6 @@ using NexusRpc;
 [NexusService]
 public interface IHelloService
 {
-    static readonly string EndpointName = "nexus-multi-arg-endpoint";
-
     [NexusOperation]
     HelloOutput SayHello(HelloInput input);
 

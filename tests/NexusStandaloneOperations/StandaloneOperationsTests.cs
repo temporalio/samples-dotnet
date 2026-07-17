@@ -26,7 +26,7 @@ public class StandaloneOperationsTests : TestBase
         });
 
         var taskQueue = $"tq-{Guid.NewGuid()}";
-        await env.CreateNexusEndpointAsync(IHelloService.EndpointName, taskQueue);
+        await env.CreateNexusEndpointAsync(NexusEndpoints.HelloService, taskQueue);
 
         using var worker = new TemporalWorker(
             env.Client,
@@ -35,7 +35,7 @@ public class StandaloneOperationsTests : TestBase
                 AddWorkflow<HelloHandlerWorkflow>());
         await worker.ExecuteAsync(async () =>
         {
-            var nexusClient = env.Client.CreateNexusClient<IHelloService>(IHelloService.EndpointName);
+            var nexusClient = env.Client.CreateNexusClient<IHelloService>(NexusEndpoints.HelloService);
 
             // Sync (Echo) operation.
             var echoResult = await nexusClient.ExecuteNexusOperationAsync(
@@ -58,17 +58,17 @@ public class StandaloneOperationsTests : TestBase
             // List operations.
             var listCount = 0;
             await foreach (var op in env.Client.ListNexusOperationsAsync(
-                $"Endpoint = '{IHelloService.EndpointName}'"))
+                $"Endpoint = '{NexusEndpoints.HelloService}'"))
             {
                 Assert.NotEmpty(op.OperationId);
-                Assert.Equal(IHelloService.EndpointName, op.Endpoint);
+                Assert.Equal(NexusEndpoints.HelloService, op.Endpoint);
                 listCount++;
             }
             Assert.True(listCount > 0);
 
             // Count operations.
             var countResp = await env.Client.CountNexusOperationsAsync(
-                $"Endpoint = '{IHelloService.EndpointName}'");
+                $"Endpoint = '{NexusEndpoints.HelloService}'");
             Assert.True(countResp.Count > 0);
         });
     }

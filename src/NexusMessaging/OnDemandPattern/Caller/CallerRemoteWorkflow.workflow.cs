@@ -12,7 +12,7 @@ public class CallerRemoteWorkflow
     {
         var log = new List<string>();
         var client = Workflow.CreateNexusWorkflowClient<INexusRemoteGreetingService>(
-            INexusRemoteGreetingService.EndpointName);
+            NexusEndpoints.RemoteGreetingService);
 
         // Start two remote greeting workflows on demand
         var userIdOne = "user-one";

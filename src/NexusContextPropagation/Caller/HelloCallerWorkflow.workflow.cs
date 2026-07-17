@@ -11,7 +11,7 @@ public class HelloCallerWorkflow
     public async Task<string> RunAsync(string name, IHelloService.HelloLanguage language)
     {
         Workflow.Logger.LogInformation("Caller workflow called by user {UserId}", MyContext.UserId);
-        var output = await Workflow.CreateNexusWorkflowClient<IHelloService>(IHelloService.EndpointName).
+        var output = await Workflow.CreateNexusWorkflowClient<IHelloService>(NexusEndpoints.HelloService).
             ExecuteNexusOperationAsync(svc => svc.SayHello(new(name, language)));
         return output.Message;
     }

@@ -18,7 +18,7 @@ public class HelloCallerWorkflow
     public async Task<string> RunAsync(string name)
     {
         using var cts = CancellationTokenSource.CreateLinkedTokenSource(Workflow.CancellationToken);
-        var client = Workflow.CreateNexusWorkflowClient<IHelloService>(IHelloService.EndpointName);
+        var client = Workflow.CreateNexusWorkflowClient<IHelloService>(NexusEndpoints.HelloService);
 
         // Concurrently execute an operation per language.
         var tasks = Languages.Select(lang =>
