@@ -15,8 +15,9 @@ by this sample must be registered on the server, which can be done at dev server
       --search-attribute CustomDatetimeField=Datetime \
       --search-attribute CustomKeywordListField=KeywordList
 
-When running against Temporal Cloud or a self-hosted service, instead register the custom search
-attributes as described in [how to create custom Search Attributes](https://docs.temporal.io/self-hosted-guide/visibility#create-custom-search-attributes).
+> [!NOTE]
+> To register the custom search attributes on Temporal Cloud or a self-hosted service, see
+> [how to create custom Search Attributes](https://docs.temporal.io/self-hosted-guide/visibility#create-custom-search-attributes).
 
 Then, run the following from this directory in a separate terminal to start the worker:
 
