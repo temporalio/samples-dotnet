@@ -39,6 +39,7 @@ Prerequisites:
 * [SafeMessageHandlers](src/SafeMessageHandlers) - Use `Semaphore` to ensure operations are atomically processed in a workflow.
 * [Saga](src/Saga) - Demonstrates how to implement a saga pattern.
 * [Schedules](src/Schedules) - How to schedule workflows to be run at specific times in the future.
+* [SearchAttributes](src/SearchAttributes) - How to set, read, upsert, and search on custom search attributes.
 * [SignalsQueries](src/SignalsQueries) - A loyalty program using Signals and Queries.
 * [StandaloneActivity](src/StandaloneActivity) - Execute activities directly from a client, without a workflow.
 * [Standalone Nexus Operation](src/NexusStandaloneOperations) - Execute Nexus Operations directly from a client, without a workflow.
