@@ -21,6 +21,9 @@
   <ItemGroup>
     <ProjectReference Include="..\src\ActivitySimple\TemporalioSamples.ActivitySimple.csproj" />
     <ProjectReference Include="..\src\ActivityWorker\TemporalioSamples.ActivityWorker.csproj" />
+    <ProjectReference Include="..\src\Batch\HeartbeatingActivity\TemporalioSamples.Batch.HeartbeatingActivity.csproj" />
+    <ProjectReference Include="..\src\Batch\Iterator\TemporalioSamples.Batch.Iterator.csproj" />
+    <ProjectReference Include="..\src\Batch\SlidingWindow\TemporalioSamples.Batch.SlidingWindow.csproj" />
     <ProjectReference Include="..\src\Bedrock\Entity\TemporalioSamples.Bedrock.Entity.csproj" />
     <ProjectReference Include="..\src\AspireIntegrations\Temporal.Extensions.Aspire.Hosting\Temporal.Extensions.Aspire.Hosting.csproj" />
     <ProjectReference Include="..\src\ContextPropagation\TemporalioSamples.ContextPropagation.csproj" />
