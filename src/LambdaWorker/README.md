@@ -24,21 +24,13 @@ included in the Lambda deployment package.
 
 Run the commands below from `src/LambdaWorker`.
 
-## Files
+## Layout
 
-| File | Description |
-|------|-------------|
-| `Function.cs` | Lambda entry point that configures and runs the worker |
-| `LambdaWorkerSample.cs` | Shared task queue, deployment, and worker registration |
-| `SampleWorkflow.workflow.cs` | Greeting Workflow |
-| `Activities.cs` | Greeting Activity |
-| `Starter/Program.cs` | Local Workflow starter |
-| `temporal.toml.sample` | Temporal client configuration template |
-| `otel-collector-config.yaml.sample` | ADOT Collector configuration template |
-| `mk-lambda-execution-role.sh` | Creates the role assumed by the Lambda service |
-| `deploy-lambda.sh` | Publishes the worker and creates or updates the Lambda function |
-| `mk-iam-role.sh` | Creates the role that Temporal Cloud assumes to invoke Lambda |
-| `extra-setup-steps` | Grants telemetry permissions and enables active X-Ray tracing |
+- `Worker/` contains the Lambda handler, Workflow, Activity, and worker project.
+- `Starter/` contains the local Workflow starter project.
+- `Deploy/` contains the AWS deployment scripts and CloudFormation template.
+- `temporal.template.toml` and `otel-collector-config.template.yaml` are the
+  configuration templates copied in the setup below.
 
 ## 1. Choose fresh identifiers and AWS context
 
@@ -74,8 +66,8 @@ The unsuffixed files are intentionally ignored because `temporal.toml`
 contains namespace-specific configuration:
 
 ```bash
-cp temporal.toml.sample temporal.toml
-cp otel-collector-config.yaml.sample otel-collector-config.yaml
+cp temporal.template.toml temporal.toml
+cp otel-collector-config.template.yaml otel-collector-config.yaml
 ```
 
 Edit `temporal.toml` and replace the address and namespace placeholders:
@@ -101,7 +93,7 @@ The Lambda worker loads Temporal configuration in this order:
 Create the IAM role assumed by the Lambda service:
 
 ```bash
-./mk-lambda-execution-role.sh "$EXECUTION_ROLE_NAME"
+./Deploy/mk-lambda-execution-role.sh "$EXECUTION_ROLE_NAME"
 
 export EXECUTION_ROLE_ARN="$(aws iam get-role \
   --role-name "$EXECUTION_ROLE_NAME" \
@@ -112,7 +104,7 @@ export EXECUTION_ROLE_ARN="$(aws iam get-role \
 Publish the worker for Linux and create the function:
 
 ```bash
-./deploy-lambda.sh "$FUNCTION_NAME" "$EXECUTION_ROLE_ARN"
+./Deploy/deploy-lambda.sh "$FUNCTION_NAME" "$EXECUTION_ROLE_ARN"
 ```
 
 The script defaults to `linux-x64` and creates an `x86_64` function. For
@@ -131,7 +123,7 @@ aws lambda update-function-configuration \
   --function-name "$FUNCTION_NAME" \
   --timeout 60 \
   --layers "$ADOT_LAYER_ARN" \
-  --environment "Variables={TEMPORAL_API_KEY=${TEMPORAL_API_KEY},SSL_CERT_FILE=/etc/pki/tls/certs/ca-bundle.crt,OPENTELEMETRY_COLLECTOR_CONFIG_URI=/var/task/otel-collector-config.yaml,TEMPORAL_TASK_QUEUE=${TASK_QUEUE},TEMPORAL_LAMBDA_WORKFLOW_ID_PREFIX=${WORKFLOW_ID_PREFIX},TEMPORAL_LAMBDA_DEPLOYMENT_NAME=${DEPLOYMENT_NAME},TEMPORAL_LAMBDA_BUILD_ID=${BUILD_ID}}" \
+  --environment "Variables={TEMPORAL_API_KEY=${TEMPORAL_API_KEY},SSL_CERT_FILE=/etc/pki/tls/certs/ca-bundle.crt,OPENTELEMETRY_COLLECTOR_CONFIG_URI=/var/task/otel-collector-config.yaml,TEMPORAL_TASK_QUEUE=${TASK_QUEUE},TEMPORAL_LAMBDA_DEPLOYMENT_NAME=${DEPLOYMENT_NAME},TEMPORAL_LAMBDA_BUILD_ID=${BUILD_ID}}" \
   --query '{FunctionName:FunctionName,Timeout:Timeout,Layers:Layers[*].Arn,LastUpdateStatus:LastUpdateStatus,RevisionId:RevisionId}' \
   --output json
 
@@ -146,7 +138,7 @@ Grant the execution role permission to publish X-Ray traces and CloudWatch EMF
 metrics, then enable active X-Ray tracing:
 
 ```bash
-./extra-setup-steps \
+./Deploy/enable-telemetry.sh \
   "$EXECUTION_ROLE_NAME" \
   "$FUNCTION_NAME" \
   "$AWS_REGION" \
@@ -167,7 +159,7 @@ export LAMBDA_ARN="$(aws lambda get-function-configuration \
   --query FunctionArn \
   --output text)"
 
-./mk-iam-role.sh "$STACK_NAME" "$EXTERNAL_ID" "$LAMBDA_ARN"
+./Deploy/mk-iam-role.sh "$STACK_NAME" "$EXTERNAL_ID" "$LAMBDA_ARN"
 ```
 
 The script waits for stack creation and prints the physical role name and ARN.
@@ -187,6 +179,10 @@ environment variables configured above:
 
 ```bash
 temporal --config-file "$PWD/temporal.toml" --profile default \
+  worker deployment create \
+  --name "$DEPLOYMENT_NAME"
+
+temporal --config-file "$PWD/temporal.toml" --profile default \
   worker deployment create-version \
   --deployment-name "$DEPLOYMENT_NAME" \
   --build-id "$BUILD_ID" \
@@ -202,9 +198,10 @@ temporal --config-file "$PWD/temporal.toml" --profile default \
   --yes
 ```
 
-`--allow-no-pollers` is expected because the Lambda worker has no
-long-running poller before Temporal invokes the function. Verify the routing
-state:
+The deployment is created explicitly because the Lambda worker has no
+long-running poller that could create it lazily. For the same reason,
+`--allow-no-pollers` is expected when setting the current version. Verify the
+routing state:
 
 ```bash
 temporal --config-file "$PWD/temporal.toml" --profile default \
@@ -221,8 +218,9 @@ Run the separate starter project:
 
 ```bash
 TEMPORAL_CONFIG_FILE="$PWD/temporal.toml" \
-  mise exec dotnet@8 -- dotnet run \
-  --project Starter/TemporalioSamples.LambdaWorker.Starter.csproj \
+TEMPORAL_LAMBDA_WORKFLOW_ID_PREFIX="$WORKFLOW_ID_PREFIX" \
+  dotnet run \
+  --project Starter \
   -- workflow
 ```
 
@@ -257,8 +255,6 @@ temporal --config-file "$PWD/temporal.toml" --profile default \
   --allow-no-pollers \
   --yes
 
-aws lambda delete-function --function-name "$FUNCTION_NAME"
-
 temporal --config-file "$PWD/temporal.toml" --profile default \
   worker deployment delete-version \
   --deployment-name "$DEPLOYMENT_NAME" \
@@ -268,6 +264,8 @@ temporal --config-file "$PWD/temporal.toml" --profile default \
 temporal --config-file "$PWD/temporal.toml" --profile default \
   worker deployment delete \
   --name "$DEPLOYMENT_NAME"
+
+aws lambda delete-function --function-name "$FUNCTION_NAME"
 ```
 
 Delete the AWS invocation stack, execution role, and retained log group:

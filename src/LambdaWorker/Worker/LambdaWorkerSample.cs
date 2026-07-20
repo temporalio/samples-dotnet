@@ -1,4 +1,4 @@
-namespace TemporalioSamples.LambdaWorker;
+namespace TemporalioSamples.LambdaWorker.Worker;
 
 using Temporalio.Worker;
 

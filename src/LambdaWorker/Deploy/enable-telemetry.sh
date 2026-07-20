@@ -4,10 +4,10 @@ set -euo pipefail
 # Additional setup steps for OpenTelemetry support.
 # These are needed to export metrics to CloudWatch EMF and traces to X-Ray.
 
-ROLE_NAME="${1:?Usage: extra-setup-steps <role-name> <function-name> <region> <account-id>}"
-FUNCTION_NAME="${2:?Usage: extra-setup-steps <role-name> <function-name> <region> <account-id>}"
-REGION="${3:?Usage: extra-setup-steps <role-name> <function-name> <region> <account-id>}"
-ACCOUNT_ID="${4:?Usage: extra-setup-steps <role-name> <function-name> <region> <account-id>}"
+ROLE_NAME="${1:?Usage: enable-telemetry.sh <role-name> <function-name> <region> <account-id>}"
+FUNCTION_NAME="${2:?Usage: enable-telemetry.sh <role-name> <function-name> <region> <account-id>}"
+REGION="${3:?Usage: enable-telemetry.sh <role-name> <function-name> <region> <account-id>}"
+ACCOUNT_ID="${4:?Usage: enable-telemetry.sh <role-name> <function-name> <region> <account-id>}"
 
 # Needed to allow metrics/logs/traces to be published
 aws iam put-role-policy \

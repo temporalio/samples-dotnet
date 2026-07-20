@@ -4,6 +4,7 @@ set -euo pipefail
 FUNCTION_NAME="${1:?Usage: deploy-lambda.sh <function-name> [execution-role-arn]}"
 EXECUTION_ROLE_ARN="${2:-${LAMBDA_EXECUTION_ROLE_ARN:-}}"
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
+SAMPLE_DIR="$(cd "$SCRIPT_DIR/.." && pwd)"
 PUBLISH_DIR="$SCRIPT_DIR/bin/lambda-publish"
 ZIP_FILE="$SCRIPT_DIR/function.zip"
 TARGET_RUNTIME="${TEMPORAL_DOTNET_LAMBDA_RUNTIME:-linux-x64}"
@@ -28,7 +29,7 @@ case "$TARGET_RUNTIME" in
 esac
 
 rm -rf "$PUBLISH_DIR" "$ZIP_FILE"
-dotnet publish "$SCRIPT_DIR/TemporalioSamples.LambdaWorker.csproj" \
+dotnet publish "$SAMPLE_DIR/Worker/TemporalioSamples.LambdaWorker.Worker.csproj" \
   --configuration Release \
   --runtime "$TARGET_RUNTIME" \
   --self-contained false \
@@ -39,7 +40,7 @@ if [[ ! -f "$PUBLISH_DIR/libtemporalio_sdk_core_c_bridge.so" ]]; then
   exit 1
 fi
 
-cp "$SCRIPT_DIR/temporal.toml" "$SCRIPT_DIR/otel-collector-config.yaml" \
+cp "$SAMPLE_DIR/temporal.toml" "$SAMPLE_DIR/otel-collector-config.yaml" \
   "$PUBLISH_DIR/"
 
 cd "$PUBLISH_DIR"
@@ -66,7 +67,7 @@ else
     if CREATE_OUTPUT="$(aws lambda create-function \
       --function-name "$FUNCTION_NAME" \
       --runtime dotnet8 \
-      --handler TemporalioSamples.LambdaWorker::TemporalioSamples.LambdaWorker.LambdaFunction::HandlerAsync \
+      --handler TemporalioSamples.LambdaWorker.Worker::TemporalioSamples.LambdaWorker.Worker.LambdaFunction::HandlerAsync \
       --role "$EXECUTION_ROLE_ARN" \
       --architectures "$ARCHITECTURE" \
       --timeout 600 \

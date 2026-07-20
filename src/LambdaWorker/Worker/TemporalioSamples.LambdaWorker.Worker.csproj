@@ -13,8 +13,4 @@
     <PackageReference Include="Temporalio.Extensions.Aws.Lambda.OpenTelemetry" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Compile Remove="Starter/**/*.cs" />
-  </ItemGroup>
-
 </Project>

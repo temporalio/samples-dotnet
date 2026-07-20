@@ -5,7 +5,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\TemporalioSamples.LambdaWorker.csproj" />
+    <ProjectReference Include="..\Worker\TemporalioSamples.LambdaWorker.Worker.csproj" />
   </ItemGroup>
 
 </Project>

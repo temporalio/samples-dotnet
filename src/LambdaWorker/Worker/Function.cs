@@ -1,5 +1,4 @@
-// @@@SNIPSTART dotnet-lambda-worker
-namespace TemporalioSamples.LambdaWorker;
+namespace TemporalioSamples.LambdaWorker.Worker;
 
 using Amazon.Lambda.Core;
 using Temporalio.Common;
@@ -22,4 +21,3 @@ public class LambdaFunction
     public Task HandlerAsync(Stream input, ILambdaContext context) =>
         WorkerHandler(input, context);
 }
-// @@@SNIPEND

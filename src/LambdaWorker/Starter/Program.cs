@@ -1,7 +1,7 @@
 using Microsoft.Extensions.Logging;
 using Temporalio.Client;
 using Temporalio.Common.EnvConfig;
-using TemporalioSamples.LambdaWorker;
+using TemporalioSamples.LambdaWorker.Worker;
 
 if (args.Length > 0 && args[0] != "workflow")
 {
