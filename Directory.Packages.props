@@ -4,11 +4,10 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageVersion Include="Aspire.Hosting.AppHost" Version="13.4.4" Condition="'$(MSBuildProjectName)' != 'TemporalioSamples.SampleAppHost'" />
+    <PackageVersion Include="Aspire.Hosting.AppHost" Version="13.4.6" Condition="'$(MSBuildProjectName)' != 'TemporalioSamples.SampleAppHost'" />
     <PackageVersion Include="AWSSDK.BedrockRuntime" Version="4.0.100" />
     <PackageVersion Include="coverlet.collector" Version="10.0.1" />
     <PackageVersion Include="MartinCostello.Logging.XUnit" Version="0.7.1" />
-    <PackageVersion Include="MessagePack" Version="2.5.301" />
     <PackageVersion Include="Microsoft.AspNetCore.Mvc.Testing" Version="8.0.28" />
     <PackageVersion Include="Microsoft.Extensions.Hosting" Version="10.0.9" />
     <PackageVersion Include="Microsoft.Extensions.Logging" Version="10.0.9" />
