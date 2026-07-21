@@ -29,6 +29,7 @@ Prerequisites:
 * [Mutex](src/Mutex) - How to implement a mutex as a workflow. Demonstrates how to avoid race conditions or parallel mutually exclusive operations on the same resource.
 * [NexusCancellation](src/NexusCancellation) - Demonstrates how to cancel a running Nexus operation from a caller workflow.
 * [NexusContextPropagation](src/NexusContextPropagation) - Context propagation through Nexus services.
+* [NexusDependencyInjection](src/NexusDependencyInjection) - How to configure a Nexus service handler for dependency injection using a generic host worker.
 * [Nexus Messaging](src/NexusMessaging): Demonstrates how send signal, update and query messages through Nexus.
     This contains two samples, one sending messages to an existing workflow and a second that creates a workflow through Nexus
     and sends messages to it.
