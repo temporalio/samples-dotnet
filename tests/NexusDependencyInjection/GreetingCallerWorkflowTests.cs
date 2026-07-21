@@ -5,7 +5,6 @@ using Microsoft.Extensions.Hosting;
 using Temporalio.Client;
 using Temporalio.Extensions.Hosting;
 using Temporalio.Worker;
-using TemporalioSamples.NexusDependencyInjection;
 using TemporalioSamples.NexusDependencyInjection.Caller;
 using TemporalioSamples.NexusDependencyInjection.Handler;
 using Xunit;
@@ -23,7 +22,7 @@ public class GreetingCallerWorkflowTests : WorkflowEnvironmentTestBase
     {
         // Create the Nexus endpoint that routes to the handler worker's task queue.
         var handlerTaskQueue = $"tq-{Guid.NewGuid()}";
-        await Env.TestEnv.CreateNexusEndpointAsync(IGreetingService.EndpointName, handlerTaskQueue);
+        await Env.TestEnv.CreateNexusEndpointAsync(NexusEndpoints.GreetingService, handlerTaskQueue);
 
         // Run the handler worker as a generic host exactly as Program.cs does, so the
         // GreetingServiceHandler is resolved via AddScopedNexusService with its IGreetingClient
@@ -31,11 +30,10 @@ public class GreetingCallerWorkflowTests : WorkflowEnvironmentTestBase
         using var handlerHost = Host.CreateDefaultBuilder()
             .ConfigureServices(services => services.
                 AddScoped<IGreetingClient, GreetingClient>().
-                AddHostedTemporalWorker(handlerTaskQueue).
-                ConfigureOptions(options => options.ClientOptions = new(Client.Connection.Options.TargetHost!)
-                {
-                    Namespace = Client.Options.Namespace,
-                }).
+                AddHostedTemporalWorker(
+                    Client.Connection.Options.TargetHost!,
+                    Client.Options.Namespace,
+                    handlerTaskQueue).
                 AddScopedNexusService<GreetingServiceHandler>())
             .Build();
         await handlerHost.StartAsync();
