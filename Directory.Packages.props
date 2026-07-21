@@ -18,7 +18,7 @@
     <PackageVersion Include="NexusRpc" Version="0.3.0" />
     <PackageVersion Include="OpenTelemetry.Exporter.OpenTelemetryProtocol" Version="1.16.0" />
     <PackageVersion Include="StyleCop.Analyzers" Version="1.2.0-beta.435" />
-    <PackageVersion Include="System.CommandLine" Version="2.0.0-beta4.22272.1" />
+    <PackageVersion Include="System.CommandLine" Version="2.0.9" />
     <PackageVersion Include="Temporalio" Version="1.17.0" />
     <PackageVersion Include="Temporalio.Extensions.Aws.Lambda" Version="1.17.0" />
     <PackageVersion Include="Temporalio.Extensions.Aws.Lambda.OpenTelemetry" Version="1.17.0" />
