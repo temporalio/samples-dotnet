@@ -5,7 +5,8 @@
 
   <ItemGroup>
     <PackageVersion Include="Amazon.Lambda.Core" Version="3.1.0" />
-    <PackageVersion Include="AWSSDK.BedrockRuntime" Version="3.7.401.11" />
+    <PackageVersion Include="Aspire.Hosting.AppHost" Version="13.4.6" Condition="'$(MSBuildProjectName)' != 'TemporalioSamples.SampleAppHost'" />
+    <PackageVersion Include="AWSSDK.BedrockRuntime" Version="4.0.100" />
     <PackageVersion Include="coverlet.collector" Version="10.0.1" />
     <PackageVersion Include="MartinCostello.Logging.XUnit" Version="0.7.1" />
     <PackageVersion Include="Microsoft.AspNetCore.Mvc.Testing" Version="8.0.28" />
@@ -15,7 +16,7 @@
     <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="18.7.0" />
     <PackageVersion Include="Microsoft.VisualStudio.Threading.Analyzers" Version="18.7.23" />
     <PackageVersion Include="NexusRpc" Version="0.3.0" />
-    <PackageVersion Include="OpenTelemetry.Exporter.OpenTelemetryProtocol" Version="1.15.3" />
+    <PackageVersion Include="OpenTelemetry.Exporter.OpenTelemetryProtocol" Version="1.16.0" />
     <PackageVersion Include="StyleCop.Analyzers" Version="1.2.0-beta.435" />
     <PackageVersion Include="System.CommandLine" Version="2.0.0-beta4.22272.1" />
     <PackageVersion Include="Temporalio" Version="1.17.0" />
@@ -24,10 +25,9 @@
     <PackageVersion Include="Temporalio.Extensions.DiagnosticSource" Version="1.17.0" />
     <PackageVersion Include="Temporalio.Extensions.Hosting" Version="1.17.0" />
     <PackageVersion Include="Temporalio.Extensions.OpenTelemetry" Version="1.17.0" />
-    <PackageVersion Include="Aspire.Hosting.AppHost" Version="13.4.4" Condition="'$(MSBuildProjectName)' != 'TemporalioSamples.SampleAppHost'" />
     <PackageVersion Include="xunit" Version="2.9.3" />
     <PackageVersion Include="xunit.console" Version="2.9.3" />
-    <PackageVersion Include="xunit.runner.visualstudio" Version="3.1.4" />
+    <PackageVersion Include="xunit.runner.visualstudio" Version="3.1.5" />
     <PackageVersion Include="YamlDotNet" Version="16.2.0" />
   </ItemGroup>
 </Project>

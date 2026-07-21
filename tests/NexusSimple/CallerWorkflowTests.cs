@@ -21,7 +21,7 @@ public class CallerWorkflowTests : WorkflowEnvironmentTestBase
         LazyInitializer.EnsureInitialized(ref lazyHandlerTaskQueue, async () =>
         {
             var handlerTaskQueue = $"tq-{Guid.NewGuid()}";
-            await Env.TestEnv.CreateNexusEndpointAsync(IHelloService.EndpointName, handlerTaskQueue);
+            await Env.TestEnv.CreateNexusEndpointAsync(NexusEndpoints.HelloService, handlerTaskQueue);
             return handlerTaskQueue;
         });
 
