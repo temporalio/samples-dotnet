@@ -1,0 +1,16 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <GenerateRuntimeConfigurationFiles>true</GenerateRuntimeConfigurationFiles>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Amazon.Lambda.Core" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Temporalio.Extensions.Aws.Lambda" />
+    <PackageReference Include="Temporalio.Extensions.Aws.Lambda.OpenTelemetry" />
+  </ItemGroup>
+
+</Project>
