@@ -8,7 +8,7 @@ public class HelloCallerWorkflow
     [WorkflowRun]
     public async Task<string> RunAsync(string name, IHelloService.HelloLanguage language)
     {
-        var output = await Workflow.CreateNexusWorkflowClient<IHelloService>(IHelloService.EndpointName).
+        var output = await Workflow.CreateNexusWorkflowClient<IHelloService>(NexusEndpoints.HelloService).
             ExecuteNexusOperationAsync(svc => svc.SayHello(new(name, language)));
         return output.Message;
     }

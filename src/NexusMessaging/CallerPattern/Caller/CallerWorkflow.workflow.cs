@@ -12,7 +12,7 @@ public class CallerWorkflow
     {
         var log = new List<string>();
         var client = Workflow.CreateNexusWorkflowClient<INexusGreetingService>(
-            INexusGreetingService.EndpointName);
+            NexusEndpoints.GreetingService);
 
         // GetLanguages - query entity workflow for supported languages
         var languagesOutput = await client.ExecuteNexusOperationAsync(

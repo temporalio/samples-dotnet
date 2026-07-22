@@ -2,7 +2,6 @@
 
 using Temporalio.Client;
 using Temporalio.Worker;
-using TemporalioSamples.NexusCancellation;
 using TemporalioSamples.NexusCancellation.Caller;
 using TemporalioSamples.NexusCancellation.Handler;
 using Xunit;
@@ -29,7 +28,7 @@ public class HelloCallerWorkflowTests : WorkflowEnvironmentTestBase
     {
         // Create endpoint
         var handlerTaskQueue = $"tq-{Guid.NewGuid()}";
-        await Env.TestEnv.CreateNexusEndpointAsync(IHelloService.EndpointName, handlerTaskQueue);
+        await Env.TestEnv.CreateNexusEndpointAsync(NexusEndpoints.HelloService, handlerTaskQueue);
 
         // Run handler worker
         using var handlerWorker = new TemporalWorker(
