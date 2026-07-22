@@ -31,49 +31,49 @@ The worker terminal will output something like:
 
 ```
 Running worker
-[22:42:50] info: Temporalio.Workflow:SearchAttributesWorkflow[0]
+[22:11:38] info: Temporalio.Workflow:SearchAttributesWorkflow[0]
       SearchAttributes workflow started
-[22:42:50] info: Temporalio.Workflow:SearchAttributesWorkflow[0]
+[22:11:38] info: Temporalio.Workflow:SearchAttributesWorkflow[0]
       Initial search attribute value. CustomIntField: 1
-[22:42:50] info: Temporalio.Workflow:SearchAttributesWorkflow[0]
+[22:11:38] info: Temporalio.Workflow:SearchAttributesWorkflow[0]
       Current search attribute value. CustomBoolField: True
-[22:42:50] info: Temporalio.Workflow:SearchAttributesWorkflow[0]
-      Current search attribute value. CustomDatetimeField: 07/17/2026 02:42:50 +00:00
-[22:42:50] info: Temporalio.Workflow:SearchAttributesWorkflow[0]
+[22:11:38] info: Temporalio.Workflow:SearchAttributesWorkflow[0]
+      Current search attribute value. CustomDatetimeField: 07/22/2026 02:11:38 +00:00
+[22:11:38] info: Temporalio.Workflow:SearchAttributesWorkflow[0]
       Current search attribute value. CustomDoubleField: 3.14
-[22:42:50] info: Temporalio.Workflow:SearchAttributesWorkflow[0]
+[22:11:38] info: Temporalio.Workflow:SearchAttributesWorkflow[0]
       Current search attribute value. CustomIntField: 2
-[22:42:50] info: Temporalio.Workflow:SearchAttributesWorkflow[0]
+[22:11:38] info: Temporalio.Workflow:SearchAttributesWorkflow[0]
       Current search attribute value. CustomKeywordField: Keyword fields supports prefix search
-[22:42:50] info: Temporalio.Workflow:SearchAttributesWorkflow[0]
+[22:11:38] info: Temporalio.Workflow:SearchAttributesWorkflow[0]
       Current search attribute value. CustomKeywordListField: value1, value2
-[22:42:50] info: Temporalio.Workflow:SearchAttributesWorkflow[0]
+[22:11:38] info: Temporalio.Workflow:SearchAttributesWorkflow[0]
       Current search attribute value. CustomBoolField: True
-[22:42:50] info: Temporalio.Workflow:SearchAttributesWorkflow[0]
-      Current search attribute value. CustomDatetimeField: 07/17/2026 02:42:50 +00:00
-[22:42:50] info: Temporalio.Workflow:SearchAttributesWorkflow[0]
+[22:11:38] info: Temporalio.Workflow:SearchAttributesWorkflow[0]
+      Current search attribute value. CustomDatetimeField: 07/22/2026 02:11:38 +00:00
+[22:11:38] info: Temporalio.Workflow:SearchAttributesWorkflow[0]
       Current search attribute value. CustomIntField: 2
-[22:42:50] info: Temporalio.Workflow:SearchAttributesWorkflow[0]
+[22:11:38] info: Temporalio.Workflow:SearchAttributesWorkflow[0]
       Current search attribute value. CustomKeywordField: Keyword fields supports prefix search
-[22:42:50] info: Temporalio.Workflow:SearchAttributesWorkflow[0]
+[22:11:38] info: Temporalio.Workflow:SearchAttributesWorkflow[0]
       Current search attribute value. CustomKeywordListField: value1, value2
-[22:42:51] info: Temporalio.Activity:ListExecutions[0]
-      Listing executions. Query: CustomIntField=2 AND CustomKeywordField STARTS_WITH 'Keyword fields'
-[22:42:51] info: Temporalio.Workflow:SearchAttributesWorkflow[0]
-      WorkflowId must be the same. Current: search-attributes-3f2c32ec-dbab-48e7-bc95-9018674090d5, from visibility query: search-attributes-3f2c32ec-dbab-48e7-bc95-9018674090d5
-[22:42:51] info: Temporalio.Workflow:SearchAttributesWorkflow[0]
-      RunId must be the same. Current: 019f6df4-88e9-7466-8d85-3298cef0e88a, from visibility query: 019f6df4-88e9-7466-8d85-3298cef0e88a
-[22:42:51] info: Temporalio.Workflow:SearchAttributesWorkflow[0]
+[22:11:39] info: Temporalio.Activity:WaitForFirstMatchingExecution[0]
+      Waiting for first matching execution. Query: (CustomIntField=2 AND CustomKeywordField STARTS_WITH 'Keyword fields') AND RunId = '019f8797-c456-765c-9d07-39d49f12f10a'
+[22:11:40] info: Temporalio.Workflow:SearchAttributesWorkflow[0]
+      WorkflowId must be the same. Current: search-attributes-b95097d8-fb95-4c66-958d-3206fa7afccd, from visibility query: search-attributes-b95097d8-fb95-4c66-958d-3206fa7afccd
+[22:11:40] info: Temporalio.Workflow:SearchAttributesWorkflow[0]
+      RunId must be the same. Current: 019f8797-c456-765c-9d07-39d49f12f10a, from visibility query: 019f8797-c456-765c-9d07-39d49f12f10a
+[22:11:40] info: Temporalio.Workflow:SearchAttributesWorkflow[0]
       Current search attribute value. CustomBoolField: True
-[22:42:51] info: Temporalio.Workflow:SearchAttributesWorkflow[0]
-      Current search attribute value. CustomDatetimeField: 07/17/2026 02:42:50 +00:00
-[22:42:51] info: Temporalio.Workflow:SearchAttributesWorkflow[0]
+[22:11:40] info: Temporalio.Workflow:SearchAttributesWorkflow[0]
+      Current search attribute value. CustomDatetimeField: 07/22/2026 02:11:38 +00:00
+[22:11:40] info: Temporalio.Workflow:SearchAttributesWorkflow[0]
       Current search attribute value. CustomIntField: 2
-[22:42:51] info: Temporalio.Workflow:SearchAttributesWorkflow[0]
+[22:11:40] info: Temporalio.Workflow:SearchAttributesWorkflow[0]
       Current search attribute value. CustomKeywordField: Keyword fields supports prefix search
-[22:42:51] info: Temporalio.Workflow:SearchAttributesWorkflow[0]
+[22:11:40] info: Temporalio.Workflow:SearchAttributesWorkflow[0]
       Current search attribute value. CustomKeywordListField: value1, value2
-[22:42:51] info: Temporalio.Workflow:SearchAttributesWorkflow[0]
+[22:11:40] info: Temporalio.Workflow:SearchAttributesWorkflow[0]
       Workflow completed
 ```
 

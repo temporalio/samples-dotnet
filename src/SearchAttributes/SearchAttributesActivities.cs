@@ -13,22 +13,23 @@ public class SearchAttributesActivities
     public SearchAttributesActivities(ITemporalClient client) => this.client = client;
 
     [Activity]
-    public async Task<ExecutionInfo> ListExecutionsAsync(string query)
+    public async Task<ExecutionInfo> WaitForFirstMatchingExecutionAsync(string query)
     {
         var context = ActivityExecutionContext.Current;
-        context.Logger.LogInformation("Listing executions. Query: {Query}", query);
+
+        // Scope the caller's query to the calling execution so we don't list every workflow in
+        // the namespace.
+        var scopedQuery = $"({query}) AND RunId = '{context.Info.WorkflowRunId}'";
+        context.Logger.LogInformation("Waiting for first matching execution. Query: {Query}", scopedQuery);
 
         // The visibility store is eventually consistent, so poll until the calling execution has
         // been indexed and appears in the results. If it never appears, the activity fails with a
         // start-to-close timeout.
         while (true)
         {
-            await foreach (var execution in client.ListWorkflowsAsync(query))
+            await foreach (var execution in client.ListWorkflowsAsync(scopedQuery))
             {
-                if (execution.RunId == context.Info.WorkflowRunId)
-                {
-                    return new(execution.Id, execution.RunId);
-                }
+                return new(execution.Id, execution.RunId);
             }
 
             context.Heartbeat();

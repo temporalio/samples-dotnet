@@ -53,7 +53,7 @@ public class SearchAttributesWorkflow
         // consistent.
         var query = $"{CustomIntField.Name}=2 AND {CustomKeywordField.Name} STARTS_WITH 'Keyword fields'";
         var lastExecution = await Workflow.ExecuteActivityAsync(
-            (SearchAttributesActivities acts) => acts.ListExecutionsAsync(query),
+            (SearchAttributesActivities acts) => acts.WaitForFirstMatchingExecutionAsync(query),
             new()
             {
                 StartToCloseTimeout = TimeSpan.FromSeconds(30),
@@ -79,7 +79,7 @@ public class SearchAttributesWorkflow
 
     private static void PrintSearchAttributes()
     {
-        foreach (var pair in Workflow.TypedSearchAttributes.UntypedValues)
+        foreach (var pair in Workflow.TypedSearchAttributes.UntypedValues.OrderBy(pair => pair.Key.Name, StringComparer.Ordinal))
         {
             Workflow.Logger.LogInformation("Current search attribute value. {Name}: {Value}", pair.Key.Name, pair.Value);
         }
