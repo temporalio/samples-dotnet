@@ -1,0 +1,6 @@
+[profile.default]
+address = "<your-namespace>.<account>.tmprl.cloud:7233"
+namespace = "<your-namespace>.<account>"
+
+# Set TEMPORAL_API_KEY in the Lambda function environment. When an API key is
+# present, the SDK enables TLS automatically.
