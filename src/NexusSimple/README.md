@@ -9,12 +9,13 @@ contrasts synchronous and asynchronous Nexus operations:
   delay intentionally exceeds the 10-second synchronous Nexus request deadline.
 
 Use `OperationHandler.Sync` only for highly reliable, low-latency, bounded operations that complete
-well within that short request window. Prefer an asynchronous operation when latency or availability is uncertain, 
-the work might exceed the handler deadline, or execution depends on a potentially unreliable service or database.
+well within that short request window. Use an asynchronous operation when latency or 
+availability is uncertain, the work might exceed the handler deadline, or execution depends on a potentially
+unreliable service or database.
 
-The asynchronous handler must still start the Workflow and return an operation token within
-the request deadline. The Workflow can continue afterward, and the caller retrieves its
-eventual result through the operation handle.
+An asynchronous handler must still initiate or attach to the underlying work and return an operation
+token within the request deadline. The work can continue afterward, and the caller retrieves its
+eventual result through the operation handle. In this sample, that work is a Workflow.
 
 ## Instructions
 
