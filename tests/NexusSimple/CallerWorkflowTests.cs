@@ -80,4 +80,22 @@ public class CallerWorkflowTests : WorkflowEnvironmentTestBase
             });
         });
     }
+
+    [Fact]
+    public async Task RunAsync_HelloHandlerWorkflow_DurableDelayCompletes()
+    {
+        await using var env = await Temporalio.Testing.WorkflowEnvironment.StartTimeSkippingAsync();
+        using var worker = new TemporalWorker(
+            env.Client,
+            new TemporalWorkerOptions($"tq-{Guid.NewGuid()}").
+                AddWorkflow<HelloHandlerWorkflow>());
+        await worker.ExecuteAsync(async () =>
+        {
+            var result = await env.Client.ExecuteWorkflowAsync(
+                (HelloHandlerWorkflow wf) =>
+                    wf.RunAsync(new("some-name", IHelloService.HelloLanguage.Fr)),
+                new(id: $"wf-{Guid.NewGuid()}", taskQueue: worker.Options.TaskQueue!));
+            Assert.Equal("Bonjour some-name 👋", result.Message);
+        });
+    }
 }
