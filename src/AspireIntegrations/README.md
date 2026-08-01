@@ -1,8 +1,8 @@
-# Temporal Extensions for .NET Aspire
+# Temporal Aspire Integration Sample
 
 ## Overview
 
-This project provides custom Aspire resource definitions that enable developers to integrate Temporal workflow servers into their Aspire applications with minimal configuration. It supports three deployment models:
+This sample demonstrates how to use the `TemporalCommunity.Aspire.Hosting` NuGet package to integrate Temporal workflow servers into .NET Aspire applications. It supports three deployment models:
 
 - **Local Testing** - Temporal server using `Temporalio.Testing.WorkflowEnvironment` for fast local development and testing
 - **Container-based** - Docker container running the official Temporal server image for development and staging environments
@@ -29,7 +29,7 @@ This project provides custom Aspire resource definitions that enable developers 
 
 ## Running the Project
 
-Using the Aspire CLI
+Running the AppHost
 
 1. **Navigate to the AppHost project directory:**
    ```bash
@@ -38,10 +38,9 @@ Using the Aspire CLI
 
 2. **Run the project using the Aspire CLI:**
    ```bash
-   aspire run
+   dotnet run
    ```
 
-> You can also run the project directly with `dotnet run` from the AppHost directory, or use your IDE's run configuration.
 
 ## Setup Options
 
@@ -51,7 +50,7 @@ The local server setup uses a Temporal environment for fast testing without exte
 
 **AppHost.cs:**
 ```csharp
-using Temporal.Extensions.Aspire.Hosting;
+using TemporalCommunity.Aspire.Hosting;
 
 var builder = DistributedApplication.CreateBuilder(args);
 
@@ -112,7 +111,7 @@ Deploy Temporal using the CLI Docker container.
 
 **AppHost.cs:**
 ```csharp
-using Temporal.Extensions.Aspire.Hosting;
+using TemporalCommunity.Aspire.Hosting;
 
 var builder = DistributedApplication.CreateBuilder(args);
 
@@ -163,7 +162,7 @@ Use the Temporal CLI server for environments without Docker.
 
 **AppHost.cs:**
 ```csharp
-using Temporal.Extensions.Aspire.Hosting;
+using TemporalCommunity.Aspire.Hosting;
 
 var builder = DistributedApplication.CreateBuilder(args);
 
