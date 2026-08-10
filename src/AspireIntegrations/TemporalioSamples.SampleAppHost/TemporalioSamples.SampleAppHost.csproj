@@ -8,7 +8,8 @@
     </PropertyGroup>
     
     <ItemGroup>
-      <ProjectReference Include="..\Temporal.Extensions.Aspire.Hosting\Temporal.Extensions.Aspire.Hosting.csproj" IsAspireProjectResource="false" />
+      <PackageReference Include="Aspire.Hosting.AppHost" />
+      <PackageReference Include="TemporalCommunity.Aspire.Hosting" />
       <ProjectReference Include="..\TemporalioSamples.SampleClient\TemporalioSamples.SampleClient.csproj" />
       <ProjectReference Include="..\TemporalioSamples.SampleWorker\TemporalioSamples.SampleWorker.csproj" />
     </ItemGroup>

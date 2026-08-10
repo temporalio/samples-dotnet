@@ -1,4 +1,4 @@
-using Temporal.Extensions.Aspire.Hosting;
+using TemporalCommunity.Aspire.Hosting;
 
 var builder = DistributedApplication.CreateBuilder(args);
 

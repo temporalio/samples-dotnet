@@ -5,14 +5,14 @@
 
   <ItemGroup>
     <PackageVersion Include="Amazon.Lambda.Core" Version="3.1.0" />
-    <PackageVersion Include="Aspire.Hosting.AppHost" Version="13.4.6" Condition="'$(MSBuildProjectName)' != 'TemporalioSamples.SampleAppHost'" />
+    <PackageVersion Include="Aspire.Hosting.AppHost" Version="13.4.6" />
     <PackageVersion Include="AWSSDK.BedrockRuntime" Version="4.0.100" />
     <PackageVersion Include="coverlet.collector" Version="10.0.1" />
     <PackageVersion Include="MartinCostello.Logging.XUnit" Version="0.7.1" />
     <PackageVersion Include="Microsoft.AspNetCore.Mvc.Testing" Version="8.0.28" />
-    <PackageVersion Include="Microsoft.Extensions.Hosting" Version="10.0.9" />
-    <PackageVersion Include="Microsoft.Extensions.Logging" Version="10.0.9" />
-    <PackageVersion Include="Microsoft.Extensions.Logging.Console" Version="10.0.9" />
+    <PackageVersion Include="Microsoft.Extensions.Hosting" Version="10.0.10" />
+    <PackageVersion Include="Microsoft.Extensions.Logging" Version="10.0.10" />
+    <PackageVersion Include="Microsoft.Extensions.Logging.Console" Version="10.0.10" />
     <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="18.7.0" />
     <PackageVersion Include="Microsoft.VisualStudio.Threading.Analyzers" Version="18.7.23" />
     <PackageVersion Include="NexusRpc" Version="0.3.0" />
@@ -25,6 +25,7 @@
     <PackageVersion Include="Temporalio.Extensions.DiagnosticSource" Version="1.17.0" />
     <PackageVersion Include="Temporalio.Extensions.Hosting" Version="1.17.0" />
     <PackageVersion Include="Temporalio.Extensions.OpenTelemetry" Version="1.17.0" />
+    <PackageVersion Include="TemporalCommunity.Aspire.Hosting" Version="0.1.0" />
     <PackageVersion Include="xunit" Version="2.9.3" />
     <PackageVersion Include="xunit.console" Version="2.9.3" />
     <PackageVersion Include="xunit.runner.visualstudio" Version="3.1.5" />
