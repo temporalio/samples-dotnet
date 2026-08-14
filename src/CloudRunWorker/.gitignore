@@ -1,0 +1,3 @@
+# Temporary test scaffolding for the unpublished GCP Cloud Run package (remove once published).
+local-packages/
+nuget.config
