@@ -1,0 +1,88 @@
+# Google-Built OpenTelemetry Collector config for the Cloud Run worker-pool sidecar.
+#   metrics -> Google Managed Service for Prometheus (googlemanagedprometheus)
+#   traces  -> Cloud Trace via the Telemetry API (OTLP), authenticated with the runtime SA (ADC)
+# The worker exports OTLP/gRPC to localhost:4317; the collector detects GCP resource attributes and
+# fans out. Auth uses the worker-pool service account's Application Default Credentials via the
+# googleclientauth extension (no key files).
+receivers:
+  otlp:
+    protocols:
+      grpc:
+        endpoint: localhost:4317
+
+processors:
+  # Batch traces for throughput. Do NOT add a batch processor to the cumulative-metrics pipeline: a
+  # shutdown flush could be batched with a recent periodic export of the same series and rejected as
+  # a duplicate time series.
+  batch/traces:
+    send_batch_max_size: 200
+    send_batch_size: 200
+    timeout: 5s
+  memory_limiter:
+    check_interval: 1s
+    limit_percentage: 65
+    spike_limit_percentage: 20
+  resourcedetection:
+    detectors: [gcp]
+    timeout: 10s
+  # Rename Temporal datapoint labels that collide with the target labels Google Managed Service for
+  # Prometheus injects (e.g. Temporal emits a `namespace` label).
+  transform/collision:
+    metric_statements:
+      - context: datapoint
+        statements:
+          - set(attributes["exported_location"], attributes["location"])
+          - delete_key(attributes, "location")
+          - set(attributes["exported_cluster"], attributes["cluster"])
+          - delete_key(attributes, "cluster")
+          - set(attributes["exported_namespace"], attributes["namespace"])
+          - delete_key(attributes, "namespace")
+          - set(attributes["exported_job"], attributes["job"])
+          - delete_key(attributes, "job")
+          - set(attributes["exported_instance"], attributes["instance"])
+          - delete_key(attributes, "instance")
+          - set(attributes["exported_project_id"], attributes["project_id"])
+          - delete_key(attributes, "project_id")
+  # The Telemetry API expects the Google Cloud project in gcp.project_id.
+  transform/set_project_id:
+    error_mode: ignore
+    trace_statements:
+      - set(resource.attributes["gcp.project_id"], resource.attributes["gcp.project.id"]) where resource.attributes["gcp.project.id"] != nil
+      - set(resource.attributes["gcp.project_id"], resource.attributes["cloud.account.id"]) where resource.attributes["gcp.project_id"] == nil and resource.attributes["cloud.account.id"] != nil
+
+exporters:
+  googlemanagedprometheus:
+  otlp:
+    endpoint: telemetry.googleapis.com:443
+    compression: none
+    balancer_name: pick_first
+    auth:
+      authenticator: googleclientauth
+
+extensions:
+  health_check:
+    endpoint: 0.0.0.0:13133
+  googleclientauth:
+
+service:
+  extensions:
+    - health_check
+    - googleclientauth
+  pipelines:
+    metrics:
+      receivers: [otlp]
+      processors: [memory_limiter, resourcedetection, transform/collision]
+      exporters: [googlemanagedprometheus]
+    traces:
+      receivers: [otlp]
+      processors: [memory_limiter, resourcedetection, transform/set_project_id, batch/traces]
+      exporters: [otlp]
+  telemetry:
+    metrics:
+      readers:
+        - periodic:
+            exporter:
+              otlp:
+                protocol: grpc
+                endpoint: http://localhost:4317
+                insecure: true
