@@ -33,6 +33,7 @@
     <ProjectReference Include="..\src\NexusDependencyInjection\TemporalioSamples.NexusDependencyInjection.csproj" />
     <ProjectReference Include="..\src\NexusMultiArg\TemporalioSamples.NexusMultiArg.csproj" />
     <ProjectReference Include="..\src\NexusSimple\TemporalioSamples.NexusSimple.csproj" />
+    <ProjectReference Include="..\src\NexusStandaloneActivity\TemporalioSamples.NexusStandaloneActivity.csproj" />
     <ProjectReference Include="..\src\NexusStandaloneOperations\TemporalioSamples.NexusStandaloneOperations.csproj" />
     <ProjectReference Include="..\src\SafeMessageHandlers\TemporalioSamples.SafeMessageHandlers.csproj" />
     <ProjectReference Include="..\src\UpdatableTimer\TemporalioSamples.UpdatableTimer.csproj" />
