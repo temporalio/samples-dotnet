@@ -8,8 +8,17 @@ Workflow. Workflow code and external clients publish to named topics through Sig
 long-poll through Updates, and a Query exposes the current global offset. The extension handles
 batching, publisher deduplication, topic filtering, Continue-As-New handoff, and truncation.
 
-The sample contains six scenarios. The first five commands use the shared worker; LLM streaming
-uses a separate worker and task queue because it requires an OpenAI API key.
+The sample contains six independently linkable scenarios:
+
+- [Basic publish/subscribe](BasicPublishSubscribe)
+- [Listener subscription](ListenerSubscription)
+- [Reconnecting subscriber](ReconnectingSubscriber)
+- [External publisher](ExternalPublisher)
+- [Bounded log](BoundedLog)
+- [LLM token streaming](LlmTokenStreaming)
+
+The first five commands use the shared worker; LLM streaming uses a separate worker and task queue
+because it requires an OpenAI API key.
 
 ## Run the sample
 
@@ -32,13 +41,13 @@ dotnet run -- external-publisher  # Publish from code outside a Workflow or Acti
 dotnet run -- ticker              # Bound the log by truncating old entries
 ```
 
-### Basic publish/subscribe
+### [Basic publish/subscribe](BasicPublishSubscribe)
 
 `OrderWorkflow` publishes lifecycle events to the `status` topic. Its payment Activity creates a
 client with `WorkflowStreamClient.FromActivity()` and publishes finer-grained events to `progress`.
 The subscriber consumes both topics with `await foreach` and decodes each payload by topic.
 
-### Listener subscription
+### [Listener subscription](ListenerSubscription)
 
 The listener scenario starts two order Workflows and subscribes to each with
 `WorkflowStreamListener`. `Subscribe` returns immediately with a
@@ -47,24 +56,24 @@ returned by `OnNextAsync` prevents the next item and poll from being delivered u
 finishes. Unlike a blocking iterator, both this API and .NET's `await foreach` API poll fully
 asynchronously without occupying a thread.
 
-### Reconnecting subscriber
+### [Reconnecting subscriber](ReconnectingSubscriber)
 
 The first subscriber reads two pipeline stages and saves one past the last global offset it saw.
 A fresh client then calls `Subscribe(savedOffset)` and receives the remaining stages without gaps
 or duplicates. Offsets are global across topics, not per-topic.
 
-### External publisher
+### [External publisher](ExternalPublisher)
 
 `HubWorkflow` only hosts the stream. A normal client publishes news into it while another client
 subscribes, then signals the Workflow to close after flushing a sentinel event.
 
-### Bounded log
+### [Bounded log](BoundedLog)
 
 `TickerWorkflow` periodically calls `Truncate()` to retain only recent events. A fast subscriber
 sees every tick. A late subscriber requests an offset that has already been truncated and is
 automatically advanced to the retained base offset, demonstrating the bounded-history tradeoff.
 
-## LLM token streaming
+## [LLM token streaming](LlmTokenStreaming)
 
 Set `OPENAI_API_KEY` and start the dedicated worker:
 
