@@ -18,6 +18,7 @@ Prerequisites:
 * [AspNet](src/AspNet) - Demonstration of a generic host worker and an ASP.NET workflow starter.
 * [Bedrock](src/Bedrock) - Orchestrate a chatbot with Amazon Bedrock.
 * [ClientMtls](src/ClientMtls) - How to use client certificate authentication, e.g. for Temporal Cloud.
+* [CloudRunWorker](src/CloudRunWorker) - Run a long-lived Temporal Worker on a Google Cloud Run worker pool, deriving worker identity and deployment version from Cloud Run metadata.
 * [ContextPropagation](src/ContextPropagation) - Context propagation via interceptors.
 * [CounterInterceptor](src/CounterInterceptor/) - Simple Workflow and Client Interceptors example.
 * [DependencyInjection](src/DependencyInjection) - How to inject dependencies in activities and use generic hosts for workers
