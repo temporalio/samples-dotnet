@@ -1,6 +1,6 @@
 # OpenTelemetry - .Core SDK Forwarding
 
-This sample shows how to configure the SDK to forward metrics from the Core SDK.
+This sample shows how to configure the SDK to forward metrics and logs from the Core SDK.
 
 The main advantage over using .NET metrics is simplicity.
 
@@ -39,3 +39,24 @@ Select `temporal-core-sdk`.
 All metrics emitted by the Core SDK will be shown. It may look something like:
 
 ![Metrics Screenshot](metrics-screenshot.png)
+
+## Logs
+
+The Core SDK writes its own logs to the console, where `ILogger` never sees them. Setting `Forwarding` on
+`LoggingOptions` routes them to the given logger instead:
+
+```csharp
+Logging = new LoggingOptions()
+{
+    // Core SDK logs default to WARN for Temporal's crates, ERROR for everything else.
+    Filter = new TelemetryFilterOptions(core: TelemetryFilterOptions.Level.Info),
+    Forwarding = new LogForwardingOptions(loggerFactory.CreateLogger("Temporalio.Core")),
+}
+```
+
+Forwarded logs are prefixed with their Core SDK target:
+
+    [10:45:27] info: Temporalio.Core[0]
+          [sdk_core::temporalio_sdk_core::worker] Initializing worker namespace="default", task_queue="opentelemetry-sample-core-sdk-forwarding"
+
+Since the logger factory here also has an OpenTelemetry provider, they show up on the dashboard's structured logs tab.
