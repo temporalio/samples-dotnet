@@ -1,4 +1,4 @@
-namespace TemporalioSamples.WorkflowStreams;
+namespace TemporalioSamples.WorkflowStreams.ReconnectingSubscriber;
 
 using Temporalio.Extensions.WorkflowStreams;
 using Temporalio.Workflows;
@@ -14,7 +14,7 @@ public class PipelineWorkflow
     [WorkflowRun]
     public async Task<string> RunAsync(PipelineInput input)
     {
-        var status = stream.Topic(WorkflowStreamsConstants.TopicStatus);
+        var status = stream.Topic(Constants.TopicStatus);
         var stageInterval = input.StageInterval ?? TimeSpan.FromSeconds(2);
         var stages = new[]
         {
@@ -34,7 +34,7 @@ public class PipelineWorkflow
             }
         }
 
-        await Workflow.DelayAsync(WorkflowStreamsConstants.DrainDelay);
+        await Workflow.DelayAsync(Constants.DrainDelay);
         return $"pipeline {input.PipelineId} done";
     }
 }

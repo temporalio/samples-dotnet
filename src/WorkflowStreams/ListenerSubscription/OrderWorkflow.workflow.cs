@@ -1,4 +1,4 @@
-namespace TemporalioSamples.WorkflowStreams.BasicPublishSubscribe;
+namespace TemporalioSamples.WorkflowStreams.ListenerSubscription;
 
 using Temporalio.Extensions.WorkflowStreams;
 using Temporalio.Workflows;

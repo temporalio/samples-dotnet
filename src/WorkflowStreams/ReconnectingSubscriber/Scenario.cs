@@ -1,16 +1,17 @@
-namespace TemporalioSamples.WorkflowStreams;
+namespace TemporalioSamples.WorkflowStreams.ReconnectingSubscriber;
 
 using Temporalio.Client;
+using Temporalio.Converters;
 using Temporalio.Extensions.WorkflowStreams;
 
-public static partial class Scenarios
+public static class Scenario
 {
     public static async Task RunReconnectingSubscriberAsync(ITemporalClient client)
     {
         var workflowId = $"workflow-streams-pipeline-{Guid.NewGuid()}";
         var handle = await client.StartWorkflowAsync(
             (PipelineWorkflow wf) => wf.RunAsync(new PipelineInput("pipeline-7", null, null)),
-            new(workflowId, WorkflowStreamsConstants.TaskQueue));
+            new(workflowId, Constants.TaskQueue));
         Console.WriteLine($"Started workflow: {workflowId}");
 
         long nextOffset = 0;
@@ -18,7 +19,7 @@ public static partial class Scenarios
         await using (var streamClient = new WorkflowStreamClient(client, workflowId))
         {
             var seen = 0;
-            await foreach (var item in streamClient.Topic(WorkflowStreamsConstants.TopicStatus).Subscribe())
+            await foreach (var item in streamClient.Topic(Constants.TopicStatus).Subscribe())
             {
                 var evt = Decode<StageEvent>(client, item);
                 nextOffset = item.Offset + 1;
@@ -34,7 +35,7 @@ public static partial class Scenarios
         Console.WriteLine("--- phase 2: reconnected subscriber ---");
         await using (var streamClient = new WorkflowStreamClient(client, workflowId))
         {
-            await foreach (var item in streamClient.Topic(WorkflowStreamsConstants.TopicStatus).Subscribe(nextOffset))
+            await foreach (var item in streamClient.Topic(Constants.TopicStatus).Subscribe(nextOffset))
             {
                 var evt = Decode<StageEvent>(client, item);
                 Console.WriteLine($"offset={item.Offset}  stage={evt.Stage}");
@@ -47,4 +48,7 @@ public static partial class Scenarios
 
         Console.WriteLine($"Workflow result: {await handle.GetResultAsync()}");
     }
+
+    private static T Decode<T>(ITemporalClient client, WorkflowStreamItem item) =>
+        client.Options.DataConverter.PayloadConverter.ToValue<T>(item.Payload);
 }

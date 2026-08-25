@@ -1,9 +1,10 @@
-namespace TemporalioSamples.WorkflowStreams;
+namespace TemporalioSamples.WorkflowStreams.BoundedLog;
 
 using Temporalio.Client;
+using Temporalio.Converters;
 using Temporalio.Extensions.WorkflowStreams;
 
-public static partial class Scenarios
+public static class Scenario
 {
     private const int TickCount = 30;
     private const int KeepLast = 5;
@@ -16,13 +17,13 @@ public static partial class Scenarios
         var handle = await client.StartWorkflowAsync(
             (TickerWorkflow wf) => wf.RunAsync(
                 new TickerInput(TickCount, KeepLast, TruncateEvery, null, null)),
-            new(workflowId, WorkflowStreamsConstants.TaskQueue));
+            new(workflowId, Constants.TaskQueue));
         Console.WriteLine($"Started workflow: {workflowId}");
 
         async Task FastSubscriberAsync()
         {
             await using var streamClient = new WorkflowStreamClient(client, workflowId);
-            await foreach (var item in streamClient.Topic(WorkflowStreamsConstants.TopicTick).Subscribe())
+            await foreach (var item in streamClient.Topic(Constants.TopicTick).Subscribe())
             {
                 var evt = Decode<TickEvent>(client, item);
                 Console.WriteLine($"[fast] offset={item.Offset,3}  n={evt.N}");
@@ -43,7 +44,7 @@ public static partial class Scenarios
             }
 
             var first = true;
-            await foreach (var item in streamClient.Topic(WorkflowStreamsConstants.TopicTick).Subscribe(StaleOffset))
+            await foreach (var item in streamClient.Topic(Constants.TopicTick).Subscribe(StaleOffset))
             {
                 var evt = Decode<TickEvent>(client, item);
                 if (first && item.Offset > StaleOffset)
@@ -65,4 +66,7 @@ public static partial class Scenarios
         await Task.WhenAll(FastSubscriberAsync(), LateSubscriberAsync());
         Console.WriteLine($"Workflow result: {await handle.GetResultAsync()}");
     }
+
+    private static T Decode<T>(ITemporalClient client, WorkflowStreamItem item) =>
+        client.Options.DataConverter.PayloadConverter.ToValue<T>(item.Payload);
 }

@@ -1,4 +1,4 @@
-namespace TemporalioSamples.WorkflowStreams;
+namespace TemporalioSamples.WorkflowStreams.LlmTokenStreaming;
 
 using System.ClientModel;
 using System.ClientModel.Primitives;
@@ -21,9 +21,9 @@ public static class LlmActivities
 
         await using var streamClient = WorkflowStreamClient.FromActivity(
             new() { BatchInterval = TimeSpan.FromMilliseconds(200), });
-        var deltas = streamClient.Topic(WorkflowStreamsConstants.TopicDelta);
-        var complete = streamClient.Topic(WorkflowStreamsConstants.TopicComplete);
-        var retry = streamClient.Topic(WorkflowStreamsConstants.TopicRetry);
+        var deltas = streamClient.Topic(Constants.TopicDelta);
+        var complete = streamClient.Topic(Constants.TopicComplete);
+        var retry = streamClient.Topic(Constants.TopicRetry);
 
         var activityContext = ActivityExecutionContext.Current;
         if (activityContext.Info.Attempt > 1)

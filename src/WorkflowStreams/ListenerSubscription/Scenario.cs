@@ -1,9 +1,10 @@
-namespace TemporalioSamples.WorkflowStreams;
+namespace TemporalioSamples.WorkflowStreams.ListenerSubscription;
 
 using Temporalio.Client;
+using Temporalio.Converters;
 using Temporalio.Extensions.WorkflowStreams;
 
-public static partial class Scenarios
+public static class Scenario
 {
     private static readonly string[] OrderIds = new[] { "order-A", "order-B" };
 
@@ -19,7 +20,7 @@ public static partial class Scenarios
             var workflowId = $"workflow-streams-listener-{orderId}-{Guid.NewGuid()}";
             var workflowHandle = await client.StartWorkflowAsync(
                 (OrderWorkflow wf) => wf.RunAsync(new OrderInput(orderId, null)),
-                new(workflowId, WorkflowStreamsConstants.TaskQueue));
+                new(workflowId, Constants.TaskQueue));
             Console.WriteLine($"Started workflow: {workflowId}");
 
 #pragma warning disable CA2000 // The client is closed in the method's finally block
@@ -30,8 +31,8 @@ public static partial class Scenarios
                 {
                     Topics = new List<string>
                     {
-                        WorkflowStreamsConstants.TopicStatus,
-                        WorkflowStreamsConstants.TopicProgress,
+                        Constants.TopicStatus,
+                        Constants.TopicProgress,
                     },
                 },
                 new RenderingListener(client, orderId, renderLock));
@@ -72,12 +73,12 @@ public static partial class Scenarios
             await renderLock.WaitAsync().ConfigureAwait(false);
             try
             {
-                if (item.Topic == WorkflowStreamsConstants.TopicStatus)
+                if (item.Topic == Constants.TopicStatus)
                 {
                     Console.WriteLine(
                         $"[{orderId}] [status]   {Decode<StatusEvent>(client, item).Kind}");
                 }
-                else if (item.Topic == WorkflowStreamsConstants.TopicProgress)
+                else if (item.Topic == Constants.TopicProgress)
                 {
                     Console.WriteLine(
                         $"[{orderId}] [progress] {Decode<ProgressEvent>(client, item).Message}");
@@ -95,4 +96,7 @@ public static partial class Scenarios
         public override void OnError(Exception failure) =>
             Console.Error.WriteLine($"[{orderId}] stream failed: {failure}");
     }
+
+    private static T Decode<T>(ITemporalClient client, WorkflowStreamItem item) =>
+        client.Options.DataConverter.PayloadConverter.ToValue<T>(item.Payload);
 }

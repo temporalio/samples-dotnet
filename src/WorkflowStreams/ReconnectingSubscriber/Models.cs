@@ -1,4 +1,4 @@
-namespace TemporalioSamples.WorkflowStreams;
+namespace TemporalioSamples.WorkflowStreams.ReconnectingSubscriber;
 
 using Temporalio.Extensions.WorkflowStreams;
 

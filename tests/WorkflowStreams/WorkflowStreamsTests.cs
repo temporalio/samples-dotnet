@@ -5,9 +5,14 @@ using Temporalio.Client;
 using Temporalio.Converters;
 using Temporalio.Extensions.WorkflowStreams;
 using Temporalio.Worker;
-using TemporalioSamples.WorkflowStreams;
 using Xunit;
 using Xunit.Abstractions;
+using Basic = TemporalioSamples.WorkflowStreams.BasicPublishSubscribe;
+using Bounded = TemporalioSamples.WorkflowStreams.BoundedLog;
+using External = TemporalioSamples.WorkflowStreams.ExternalPublisher;
+using Listener = TemporalioSamples.WorkflowStreams.ListenerSubscription;
+using Llm = TemporalioSamples.WorkflowStreams.LlmTokenStreaming;
+using Reconnecting = TemporalioSamples.WorkflowStreams.ReconnectingSubscriber;
 
 public class WorkflowStreamsTests : WorkflowEnvironmentTestBase
 {
@@ -25,13 +30,13 @@ public class WorkflowStreamsTests : WorkflowEnvironmentTestBase
         using var worker = new TemporalWorker(
             Client,
             NewWorker().
-                AddActivity(PaymentActivities.ChargeCardAsync).
-                AddWorkflow<OrderWorkflow>());
+                AddActivity(Basic.PaymentActivities.ChargeCardAsync).
+                AddWorkflow<Basic.OrderWorkflow>());
         await worker.ExecuteAsync(async () =>
         {
             var workflowId = $"workflow-streams-order-{Guid.NewGuid()}";
             var handle = await Client.StartWorkflowAsync(
-                (OrderWorkflow wf) => wf.RunAsync(new OrderInput("order-42", null)),
+                (Basic.OrderWorkflow wf) => wf.RunAsync(new Basic.OrderInput("order-42", null)),
                 new(workflowId, worker.Options.TaskQueue!));
             await using var streamClient = new WorkflowStreamClient(Client, workflowId);
 
@@ -41,21 +46,21 @@ public class WorkflowStreamsTests : WorkflowEnvironmentTestBase
             {
                 Topics = new List<string>
                 {
-                    WorkflowStreamsConstants.TopicStatus,
-                    WorkflowStreamsConstants.TopicProgress,
+                    Basic.Constants.TopicStatus,
+                    Basic.Constants.TopicProgress,
                 },
             }))
             {
-                if (item.Topic == WorkflowStreamsConstants.TopicStatus)
+                if (item.Topic == Basic.Constants.TopicStatus)
                 {
-                    var status = Decode<StatusEvent>(item);
+                    var status = Decode<Basic.StatusEvent>(item);
                     statuses.Add(status.Kind);
                     if (status.Kind == "complete")
                     {
                         break;
                     }
                 }
-                else if (item.Topic == WorkflowStreamsConstants.TopicProgress)
+                else if (item.Topic == Basic.Constants.TopicProgress)
                 {
                     progressCount++;
                 }
@@ -73,13 +78,14 @@ public class WorkflowStreamsTests : WorkflowEnvironmentTestBase
         using var worker = new TemporalWorker(
             Client,
             NewWorker().
-                AddActivity(PaymentActivities.ChargeCardAsync).
-                AddWorkflow<OrderWorkflow>());
+                AddActivity(Listener.PaymentActivities.ChargeCardAsync).
+                AddWorkflow<Listener.OrderWorkflow>());
         await worker.ExecuteAsync(async () =>
         {
             var workflowId = $"workflow-streams-listener-{Guid.NewGuid()}";
             var handle = await Client.StartWorkflowAsync(
-                (OrderWorkflow wf) => wf.RunAsync(new OrderInput("order-listener", null)),
+                (Listener.OrderWorkflow wf) =>
+                    wf.RunAsync(new Listener.OrderInput("order-listener", null)),
                 new(workflowId, worker.Options.TaskQueue!));
             await using var streamClient = new WorkflowStreamClient(Client, workflowId);
             var listener = new RecordingListener();
@@ -88,8 +94,8 @@ public class WorkflowStreamsTests : WorkflowEnvironmentTestBase
                 {
                     Topics = new List<string>
                     {
-                        WorkflowStreamsConstants.TopicStatus,
-                        WorkflowStreamsConstants.TopicProgress,
+                        Listener.Constants.TopicStatus,
+                        Listener.Constants.TopicProgress,
                     },
                 },
                 listener);
@@ -107,13 +113,13 @@ public class WorkflowStreamsTests : WorkflowEnvironmentTestBase
     {
         using var worker = new TemporalWorker(
             Client,
-            NewWorker().AddWorkflow<PipelineWorkflow>());
+            NewWorker().AddWorkflow<Reconnecting.PipelineWorkflow>());
         await worker.ExecuteAsync(async () =>
         {
             var workflowId = $"workflow-streams-pipeline-{Guid.NewGuid()}";
             var handle = await Client.StartWorkflowAsync(
-                (PipelineWorkflow wf) => wf.RunAsync(
-                    new PipelineInput(
+                (Reconnecting.PipelineWorkflow wf) => wf.RunAsync(
+                    new Reconnecting.PipelineInput(
                         "pipeline-test",
                         TimeSpan.FromMilliseconds(50),
                         null)),
@@ -123,7 +129,7 @@ public class WorkflowStreamsTests : WorkflowEnvironmentTestBase
             long nextOffset = 0;
             await using (var firstClient = new WorkflowStreamClient(Client, workflowId))
             {
-                await foreach (var item in firstClient.Topic(WorkflowStreamsConstants.TopicStatus).Subscribe())
+                await foreach (var item in firstClient.Topic(Reconnecting.Constants.TopicStatus).Subscribe())
                 {
                     offsets.Add(item.Offset);
                     nextOffset = item.Offset + 1;
@@ -137,10 +143,10 @@ public class WorkflowStreamsTests : WorkflowEnvironmentTestBase
             var remainingStages = new List<string>();
             await using (var secondClient = new WorkflowStreamClient(Client, workflowId))
             {
-                await foreach (var item in secondClient.Topic(WorkflowStreamsConstants.TopicStatus).Subscribe(nextOffset))
+                await foreach (var item in secondClient.Topic(Reconnecting.Constants.TopicStatus).Subscribe(nextOffset))
                 {
                     offsets.Add(item.Offset);
-                    var stage = Decode<StageEvent>(item).Stage;
+                    var stage = Decode<Reconnecting.StageEvent>(item).Stage;
                     remainingStages.Add(stage);
                     if (stage == "complete")
                     {
@@ -161,21 +167,23 @@ public class WorkflowStreamsTests : WorkflowEnvironmentTestBase
     {
         using var worker = new TemporalWorker(
             Client,
-            NewWorker().AddWorkflow<HubWorkflow>());
+            NewWorker().AddWorkflow<External.HubWorkflow>());
         await worker.ExecuteAsync(async () =>
         {
             var workflowId = $"workflow-streams-hub-{Guid.NewGuid()}";
             var handle = await Client.StartWorkflowAsync(
-                (HubWorkflow wf) => wf.RunAsync(new HubInput("test-hub", null)),
+                (External.HubWorkflow wf) =>
+                    wf.RunAsync(new External.HubInput("test-hub", null)),
                 new(workflowId, worker.Options.TaskQueue!));
             await using var subscriber = new WorkflowStreamClient(Client, workflowId);
             await using var publisher = new WorkflowStreamClient(Client, workflowId);
-            publisher.Topic(WorkflowStreamsConstants.TopicNews).Publish(new NewsEvent("test headline"), forceFlush: true);
+            publisher.Topic(External.Constants.TopicNews).
+                Publish(new External.NewsEvent("test headline"), forceFlush: true);
             await publisher.FlushAsync();
 
-            await foreach (var item in subscriber.Topic(WorkflowStreamsConstants.TopicNews).Subscribe())
+            await foreach (var item in subscriber.Topic(External.Constants.TopicNews).Subscribe())
             {
-                Assert.Equal("test headline", Decode<NewsEvent>(item).Headline);
+                Assert.Equal("test headline", Decode<External.NewsEvent>(item).Headline);
                 break;
             }
             await handle.SignalAsync(wf => wf.CloseAsync());
@@ -188,20 +196,20 @@ public class WorkflowStreamsTests : WorkflowEnvironmentTestBase
     {
         using var worker = new TemporalWorker(
             Client,
-            NewWorker().AddWorkflow<TickerWorkflow>());
+            NewWorker().AddWorkflow<Bounded.TickerWorkflow>());
         await worker.ExecuteAsync(async () =>
         {
             var workflowId = $"workflow-streams-ticker-{Guid.NewGuid()}";
             var handle = await Client.StartWorkflowAsync(
-                (TickerWorkflow wf) => wf.RunAsync(
-                    new TickerInput(20, 5, 5, TimeSpan.Zero, null)),
+                (Bounded.TickerWorkflow wf) => wf.RunAsync(
+                    new Bounded.TickerInput(20, 5, 5, TimeSpan.Zero, null)),
                 new(workflowId, worker.Options.TaskQueue!));
             await using var streamClient = new WorkflowStreamClient(Client, workflowId);
 
             await AssertMore.EventuallyAsync(async () =>
                 Assert.True(await streamClient.GetOffsetAsync() >= 10));
 
-            await foreach (var item in streamClient.Topic(WorkflowStreamsConstants.TopicTick).Subscribe(1))
+            await foreach (var item in streamClient.Topic(Bounded.Constants.TopicTick).Subscribe(1))
             {
                 Assert.True(item.Offset >= 5);
                 break;
@@ -214,18 +222,19 @@ public class WorkflowStreamsTests : WorkflowEnvironmentTestBase
     public async Task LlmWorkflow_ReturnsMockedStreamingResult()
     {
         [Activity("StreamCompletion")]
-        static Task<string> StreamCompletionAsync(LlmInput input) =>
+        static Task<string> StreamCompletionAsync(Llm.LlmInput input) =>
             Task.FromResult("a streamed answer");
 
         using var worker = new TemporalWorker(
             Client,
             NewWorker().
                 AddActivity(StreamCompletionAsync).
-                AddWorkflow<LlmWorkflow>());
+                AddWorkflow<Llm.LlmWorkflow>());
         await worker.ExecuteAsync(async () =>
         {
             var result = await Client.ExecuteWorkflowAsync(
-                (LlmWorkflow wf) => wf.RunAsync(new LlmInput("hello", "gpt-4o-mini", null)),
+                (Llm.LlmWorkflow wf) =>
+                    wf.RunAsync(new Llm.LlmInput("hello", "gpt-4o-mini", null)),
                 new($"workflow-streams-llm-{Guid.NewGuid()}", worker.Options.TaskQueue!));
             Assert.Equal("a streamed answer", result);
         });
@@ -265,12 +274,12 @@ public class WorkflowStreamsTests : WorkflowEnvironmentTestBase
             try
             {
                 await Task.Yield();
-                if (item.Topic == WorkflowStreamsConstants.TopicStatus)
+                if (item.Topic == Listener.Constants.TopicStatus)
                 {
                     lock (lockObj)
                     {
                         statuses.Add(DataConverter.Default.PayloadConverter.
-                            ToValue<StatusEvent>(item.Payload).Kind);
+                            ToValue<Listener.StatusEvent>(item.Payload).Kind);
                     }
                 }
             }

@@ -1,4 +1,4 @@
-namespace TemporalioSamples.WorkflowStreams;
+namespace TemporalioSamples.WorkflowStreams.ExternalPublisher;
 
 using Temporalio.Extensions.WorkflowStreams;
 

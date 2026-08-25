@@ -1,4 +1,4 @@
-namespace TemporalioSamples.WorkflowStreams;
+namespace TemporalioSamples.WorkflowStreams.LlmTokenStreaming;
 
 using Temporalio.Extensions.WorkflowStreams;
 

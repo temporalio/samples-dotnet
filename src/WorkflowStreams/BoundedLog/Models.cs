@@ -1,4 +1,4 @@
-namespace TemporalioSamples.WorkflowStreams;
+namespace TemporalioSamples.WorkflowStreams.BoundedLog;
 
 using Temporalio.Extensions.WorkflowStreams;
 

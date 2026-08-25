@@ -1,4 +1,4 @@
-namespace TemporalioSamples.WorkflowStreams;
+namespace TemporalioSamples.WorkflowStreams.ExternalPublisher;
 
 using Temporalio.Extensions.WorkflowStreams;
 using Temporalio.Workflows;
@@ -15,7 +15,7 @@ public class HubWorkflow
     public async Task<string> RunAsync(HubInput input)
     {
         await Workflow.WaitConditionAsync(() => closed);
-        await Workflow.DelayAsync(WorkflowStreamsConstants.DrainDelay);
+        await Workflow.DelayAsync(Constants.DrainDelay);
         return $"hub {input.HubId} closed";
     }
 

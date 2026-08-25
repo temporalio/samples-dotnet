@@ -1,4 +1,4 @@
-namespace TemporalioSamples.WorkflowStreams;
+namespace TemporalioSamples.WorkflowStreams.BoundedLog;
 
 using Temporalio.Extensions.WorkflowStreams;
 using Temporalio.Workflows;
@@ -14,7 +14,7 @@ public class TickerWorkflow
     [WorkflowRun]
     public async Task<string> RunAsync(TickerInput input)
     {
-        var tick = stream.Topic(WorkflowStreamsConstants.TopicTick);
+        var tick = stream.Topic(Constants.TopicTick);
         var interval = input.Interval ?? TimeSpan.FromMilliseconds(200);
 
         for (var n = 0; n < input.Count; n++)
@@ -32,7 +32,7 @@ public class TickerWorkflow
             }
         }
 
-        await Workflow.DelayAsync(WorkflowStreamsConstants.DrainDelay);
+        await Workflow.DelayAsync(Constants.DrainDelay);
         return $"ticker emitted {input.Count} events";
     }
 }

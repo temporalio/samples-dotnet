@@ -1,9 +1,10 @@
-namespace TemporalioSamples.WorkflowStreams;
+namespace TemporalioSamples.WorkflowStreams.LlmTokenStreaming;
 
 using Temporalio.Client;
+using Temporalio.Converters;
 using Temporalio.Extensions.WorkflowStreams;
 
-public static partial class Scenarios
+public static class Scenario
 {
     public static async Task RunLlmAsync(ITemporalClient client, string? prompt)
     {
@@ -18,7 +19,7 @@ public static partial class Scenarios
         var workflowId = $"workflow-streams-llm-{Guid.NewGuid()}";
         var handle = await client.StartWorkflowAsync(
             (LlmWorkflow wf) => wf.RunAsync(input),
-            new(workflowId, WorkflowStreamsConstants.LlmTaskQueue));
+            new(workflowId, Constants.TaskQueue));
         Console.WriteLine(
             $"[llm {workflowId}] streaming response from {input.Model}, awaiting first token...");
         Console.WriteLine();
@@ -29,14 +30,14 @@ public static partial class Scenarios
         {
             Topics = new List<string>
             {
-                WorkflowStreamsConstants.TopicDelta,
-                WorkflowStreamsConstants.TopicRetry,
-                WorkflowStreamsConstants.TopicComplete,
+                Constants.TopicDelta,
+                Constants.TopicRetry,
+                Constants.TopicComplete,
             },
         };
         await foreach (var item in streamClient.Subscribe(options))
         {
-            if (item.Topic == WorkflowStreamsConstants.TopicRetry)
+            if (item.Topic == Constants.TopicRetry)
             {
                 var evt = Decode<RetryEvent>(client, item);
                 Console.Write(ansiRestoreAndClear);
@@ -44,11 +45,11 @@ public static partial class Scenarios
                 Console.WriteLine();
                 Console.Write(ansiSave);
             }
-            else if (item.Topic == WorkflowStreamsConstants.TopicDelta)
+            else if (item.Topic == Constants.TopicDelta)
             {
                 Console.Write(Decode<TextDelta>(client, item).Text);
             }
-            else if (item.Topic == WorkflowStreamsConstants.TopicComplete)
+            else if (item.Topic == Constants.TopicComplete)
             {
                 _ = Decode<TextComplete>(client, item);
                 Console.WriteLine();
@@ -59,4 +60,7 @@ public static partial class Scenarios
         var result = await handle.GetResultAsync();
         Console.WriteLine($"[workflow result: {result.Length} chars]");
     }
+
+    private static T Decode<T>(ITemporalClient client, WorkflowStreamItem item) =>
+        client.Options.DataConverter.PayloadConverter.ToValue<T>(item.Payload);
 }

@@ -1,4 +1,4 @@
-namespace TemporalioSamples.WorkflowStreams;
+namespace TemporalioSamples.WorkflowStreams.LlmTokenStreaming;
 
 using Temporalio.Extensions.WorkflowStreams;
 using Temporalio.Workflows;
@@ -15,7 +15,7 @@ public class LlmWorkflow
         var result = await Workflow.ExecuteActivityAsync(
             () => LlmActivities.StreamCompletionAsync(input),
             new() { StartToCloseTimeout = TimeSpan.FromMinutes(2), });
-        await Workflow.DelayAsync(WorkflowStreamsConstants.DrainDelay);
+        await Workflow.DelayAsync(Constants.DrainDelay);
         return result;
     }
 }
