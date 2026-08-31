@@ -1,0 +1,32 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+  </PropertyGroup>
+
+  <!--
+    TEMPORARY WIRING FOR THE UNRELEASED HELPER.
+
+    This sample depends on Temporalio.Extensions.Gcp.CloudRun.WorkerId, which is not published to NuGet yet.
+    While it is unreleased we reference the SDK from a sibling checkout of
+    https://github.com/temporalio/sdk-dotnet (branch `cloud-run-worker-id`) laid out next to this
+    repo (../../../sdk-dotnet-2), and remove the Temporalio* package references that
+    Directory.Build.props adds by default so the local project references are used instead.
+
+    Once Temporalio.Extensions.Gcp.CloudRun.WorkerId is released, DELETE both item groups below and add:
+      <ItemGroup>
+        <PackageReference Include="Temporalio.Extensions.Gcp.CloudRun.WorkerId" />
+      </ItemGroup>
+  -->
+  <ItemGroup>
+    <PackageReference Remove="Temporalio" />
+    <PackageReference Remove="Temporalio.Extensions.DiagnosticSource" />
+    <PackageReference Remove="Temporalio.Extensions.Hosting" />
+    <PackageReference Remove="Temporalio.Extensions.OpenTelemetry" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="$(MSBuildThisFileDirectory)..\..\..\sdk-dotnet-2\src\Temporalio\Temporalio.csproj" />
+    <ProjectReference Include="$(MSBuildThisFileDirectory)..\..\..\sdk-dotnet-2\src\Temporalio.Extensions.Gcp.CloudRun.WorkerId\Temporalio.Extensions.Gcp.CloudRun.WorkerId.csproj" />
+  </ItemGroup>
+
+</Project>
