@@ -11,17 +11,18 @@ container is stopped.
 ## How it works
 
 Unlike the AWS Lambda extension, Cloud Run runs a long-lived container, so this
-is a small metadata helper rather than a worker wrapper. At startup the sample:
+is a metadata-driven plugin rather than a worker wrapper. The sample registers a
+single `CloudRunPlugin` on `TemporalClientConnectOptions.Plugins`. Because it is
+both a client and a worker plugin, registering it once is enough:
 
-1. Calls `TemporalClientConnectOptions.ApplyGoogleCloudRunDefaultsAsync()`, which
-   reads the instance id from the Cloud Run metadata server and the
-   deployment name and revision from the environment, then sets the client
-   `Identity` to `{instanceId}@{revision}` (only when an identity is not already
-   set).
-2. Calls `TemporalWorkerOptions.ApplyGoogleCloudRunDefaults(metadata)`, which
-   turns on Worker Versioning with a Worker Deployment Version whose deployment
-   name is the Cloud Run name and whose build id is the Cloud Run revision, and
-   sets the default versioning behavior to `Pinned`.
+1. At connect time its client hook reads the instance id from the Cloud Run
+   metadata server and the deployment name and revision from the environment,
+   then sets the client `Identity` to `{instanceId}@{revision}` (only when an
+   identity is not already set).
+2. When the worker is created its worker hook turns on Worker Versioning with a
+   Worker Deployment Version whose deployment name is the Cloud Run name and
+   whose build id is the Cloud Run revision, and sets the default versioning
+   behavior to `Pinned`.
 
 The name and revision come from the environment that Cloud Run injects:
 
@@ -112,7 +113,7 @@ TEMPORAL_ADDRESS=<your-namespace>.<account>.tmprl.cloud:7233,TEMPORAL_NAMESPACE=
 
 Run this from `src/CloudRunWorker`. Cloud Run sets `CLOUD_RUN_WORKER_POOL` to
 `$WORKER_POOL` and `CLOUD_RUN_REVISION` to the revision it creates, which the
-helper turns into the worker identity and Worker Deployment Version. Deploying
+plugin turns into the worker identity and Worker Deployment Version. Deploying
 again creates a new revision, and therefore a new build id.
 
 ## 2. Route the Worker Deployment Version

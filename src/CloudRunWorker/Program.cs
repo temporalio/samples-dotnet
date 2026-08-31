@@ -15,34 +15,27 @@ using var loggerFactory = LoggerFactory.Create(builder => builder.
     SetMinimumLevel(LogLevel.Information));
 var logger = loggerFactory.CreateLogger("CloudRunWorker");
 
+// Register the Cloud Run plugin once on the client. At connect time it reads the Cloud Run instance
+// id from the metadata server, and the worker pool / service name and revision from the environment,
+// then sets the client Identity to "{instanceId}@{revision}" (unless one was already configured).
+// Because it is also a worker plugin, it later enables worker versioning and pins the worker below
+// to the Cloud Run deployment version automatically (deployment name = worker pool / service name,
+// build id = revision).
+//
+// NOTE: this requires the process to be running on a Cloud Run worker pool or service. Running it
+// elsewhere throws at connect time because the metadata server is unreachable.
 var clientOptions = new TemporalClientConnectOptions(address)
 {
     Namespace = temporalNamespace,
     LoggerFactory = loggerFactory,
+    Plugins = new[] { new CloudRunPlugin() },
 };
-
-// Reads the Cloud Run instance id from the metadata server, and the worker pool / service name and
-// revision from the environment. This also sets the client Identity to "{instanceId}@{revision}"
-// (unless one was already configured). The returned metadata is reused for the worker below.
-//
-// NOTE: this requires the process to be running on a Cloud Run worker pool or service. Running it
-// elsewhere throws because the metadata server is unreachable.
-var metadata = await clientOptions.ApplyGoogleCloudRunDefaultsAsync();
-logger.LogInformation(
-    "Resolved Cloud Run worker identity {Identity} (name={Name}, revision={Revision})",
-    metadata.WorkerIdentity,
-    metadata.Name,
-    metadata.Revision);
 
 var client = await TemporalClient.ConnectAsync(clientOptions);
 
 var workerOptions = new TemporalWorkerOptions(taskQueue).
     AddWorkflow<SampleWorkflow>().
     AddActivity(Activities.SayHello);
-
-// Enables worker versioning using the Cloud Run deployment version (deployment name = worker pool /
-// service name, build id = revision) and pins workflows to this version by default.
-workerOptions.ApplyGoogleCloudRunDefaults(metadata);
 
 using var worker = new TemporalWorker(client, workerOptions);
 
