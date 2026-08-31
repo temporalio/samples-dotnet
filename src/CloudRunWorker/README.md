@@ -3,7 +3,7 @@
 This sample demonstrates how to run a long-lived Temporal Worker on
 [Google Cloud Run](https://cloud.google.com/run) and derive its identity and
 [Worker Deployment Version](https://docs.temporal.io/worker-deployments) from
-Cloud Run metadata using the `Temporalio.Extensions.Gcp.CloudRun` package.
+Cloud Run metadata using the `Temporalio.Extensions.Gcp.CloudRun.WorkerId` package.
 
 The sample registers a greeting Workflow and Activity and polls until the
 container is stopped.
@@ -46,7 +46,7 @@ revision that started them until you roll traffic forward.
 
 ## Unreleased dependency
 
-`Temporalio.Extensions.Gcp.CloudRun` is not published to NuGet yet, so this
+`Temporalio.Extensions.Gcp.CloudRun.WorkerId` is not published to NuGet yet, so this
 sample cannot be built or deployed from a released package. To let it build
 locally, `TemporalioSamples.CloudRunWorker.csproj` references the SDK from a
 sibling checkout of [sdk-dotnet](https://github.com/temporalio/sdk-dotnet) laid
@@ -64,7 +64,7 @@ entries) and replace them with:
 
 ```xml
 <ItemGroup>
-  <PackageReference Include="Temporalio.Extensions.Gcp.CloudRun" />
+  <PackageReference Include="Temporalio.Extensions.Gcp.CloudRun.WorkerId" />
 </ItemGroup>
 ```
 
