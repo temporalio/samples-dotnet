@@ -2,6 +2,9 @@
 
 This sample shows how to create a generic host worker for a workflow and an ASP.NET web application that starts it.
 
+The worker also uses `LogForwardingOptions` to forward logs from the internal Core SDK, which are otherwise written to
+the console and never seen by `ILogger`, to the host's injected logger factory.
+
 To run, first see [README.md](../../README.md) for prerequisites. Then, start the worker by running the following in the
 [Worker](Worker) directory:
 

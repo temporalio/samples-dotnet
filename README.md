@@ -36,7 +36,7 @@ Prerequisites:
 * [NexusMultiArg](src/NexusMultiArg) - Nexus service implementation calling a workflow with multiple arguments.
 * [NexusSimple](src/NexusSimple) - Simple Nexus service implementation.
 * [NexusStandaloneActivity](src/NexusStandaloneActivity) - Nexus Operation backed by a Standalone Activity.
-* [OpenTelemetry](src/OpenTelemetry) - Demonstrates how to set up OpenTelemetry tracing and metrics for both the client and worker, using both the .NET metrics API and internal forwarding from the Core SDK.
+* [OpenTelemetry](src/OpenTelemetry) - Demonstrates how to set up OpenTelemetry tracing and metrics for both the client and worker, using both the .NET metrics API and internal forwarding from the Core SDK. Also shows how to forward internal Core SDK logs to an `ILogger`.
 * [Patching](src/Patching) - Alter workflows safely with Patch and DeprecatePatch.
 * [Polling](src/Polling) - Recommended implementation of an activity that needs to periodically poll an external resource waiting its successful completion.
 * [SafeMessageHandlers](src/SafeMessageHandlers) - Use `Semaphore` to ensure operations are atomically processed in a workflow.

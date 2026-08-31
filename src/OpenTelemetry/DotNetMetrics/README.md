@@ -43,3 +43,19 @@ Similar to traces, you can select either `worker` or `workflow`.
 `workflow` will show the metrics emitted by the client. It may look something like:
 
 ![Client Metrics Screenshot](client-metrics-screenshot.png)
+
+## Logs
+
+The Core SDK writes its own logs to the console, where `ILogger` never sees them. Setting `Forwarding` on
+`LoggingOptions` routes them to the given logger instead:
+
+```csharp
+Logging = new LoggingOptions()
+{
+    // Core SDK logs default to WARN for Temporal's crates, ERROR for everything else.
+    Filter = new TelemetryFilterOptions(core: TelemetryFilterOptions.Level.Info),
+    Forwarding = new LogForwardingOptions(loggerFactory.CreateLogger("Temporalio.Core")),
+}
+```
+
+This sample sends them to the console, but any provider works.
