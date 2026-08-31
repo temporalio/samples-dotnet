@@ -8,3 +8,6 @@ Demonstrates how to use OpenTelemetry tracing and metrics with the .NET SDK. The
   a .NET `Meter` that can then be used with OpenTelemetry.
 
 Both of these samples use the same OpenTelemetry tracing approach but have different metrics approaches.
+
+Both also use `LogForwardingOptions` to forward logs from the internal Core logic, which are otherwise written to the
+console and never seen by `ILogger`.

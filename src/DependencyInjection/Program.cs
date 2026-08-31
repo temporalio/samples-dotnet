@@ -1,6 +1,7 @@
 using Temporalio.Client;
 using Temporalio.Common.EnvConfig;
 using Temporalio.Extensions.Hosting;
+using Temporalio.Runtime;
 using TemporalioSamples.DependencyInjection;
 
 async Task RunWorkerAsync()
@@ -9,17 +10,35 @@ async Task RunWorkerAsync()
         .ConfigureLogging(ctx =>
             ctx.AddSimpleConsole().SetMinimumLevel(LogLevel.Information))
         .ConfigureServices(ctx =>
-            ctx.
-                // Add the database client at the scoped level
-                AddScoped<IMyDatabaseClient, MyDatabaseClient>().
-                // Add the worker
-                AddHostedTemporalWorker(
-                    clientTargetHost: "localhost:7233",
-                    clientNamespace: "default",
-                    taskQueue: "dependency-injection-sample").
+        {
+            // Add the database client at the scoped level
+            ctx.AddScoped<IMyDatabaseClient, MyDatabaseClient>();
+
+            // Add the client the worker will use. The Core SDK writes its logs to the console
+            // itself unless Forwarding is set, in which case they go to the injected ILogger.
+            ctx.AddTemporalClient(
+                clientTargetHost: "localhost:7233",
+                clientNamespace: "default").
+                Configure<ILoggerFactory>((options, loggerFactory) =>
+                    options.Runtime = new TemporalRuntime(new TemporalRuntimeOptions()
+                    {
+                        Telemetry = new TelemetryOptions()
+                        {
+                            Logging = new LoggingOptions()
+                            {
+                                // Core SDK logs default to WARN; lowered here so there is more to see.
+                                Filter = new TelemetryFilterOptions(core: TelemetryFilterOptions.Level.Info),
+                                Forwarding = new LogForwardingOptions(loggerFactory.CreateLogger("Temporalio.Core")),
+                            },
+                        },
+                    }));
+
+            // Add the worker, which uses the injected client
+            ctx.AddHostedTemporalWorker("dependency-injection-sample").
                 // Add the activities class at the scoped level
                 AddScopedActivities<MyActivities>().
-                AddWorkflow<MyWorkflow>())
+                AddWorkflow<MyWorkflow>();
+        })
         .Build();
     await host.RunAsync();
 }
