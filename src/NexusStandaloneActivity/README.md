@@ -6,18 +6,17 @@
 > https://github.com/temporalio/cli/releases/tag/v1.7.4-standalone-nexus-operations.
 
 This sample shows how to implement a Nexus Operation whose backing execution is a **Standalone
-Activity**. `TemporalOperationHandler` maps the Temporal execution onto the Nexus Operation:
-starting the operation starts the Activity, and when the Activity finishes Temporal delivers its
-result to the Nexus caller.
+Activity**. Starting the operation starts the Activity, and when the Activity finishes Temporal
+delivers its result to the Nexus caller.
 
 ### Sample structure
 
-| File | Purpose                                                                                                          |
-|---|------------------------------------------------------------------------------------------------------------------|
-| [`IGreetingService.cs`](IGreetingService.cs) | Nexus service definition shared by caller and handler                                                            |
-| [`Handler/GreetingActivities.cs`](Handler/GreetingActivities.cs) | The Standalone Activity backing the operation                                                                    |
-| [`Handler/GreetingService.cs`](Handler/GreetingService.cs) | Operation implementation, via `TemporalOperationHandler.FromHandleFactory` and `StartActivityAsync`              |
-| [`Program.cs`](Program.cs) | Worker hosting the Nexus handler and the Activity, plus the starter that executes the operation from client code |
+| File                                                             | Purpose                                                                                                          |
+|------------------------------------------------------------------|------------------------------------------------------------------------------------------------------------------|
+| [`IGreetingService.cs`](IGreetingService.cs)                     | Nexus service definition shared by caller and handler                                                            |
+| [`Handler/GreetingActivities.cs`](Handler/GreetingActivities.cs) | The Standalone Activity backing the Nexus Operation                                                              |
+| [`Handler/GreetingService.cs`](Handler/GreetingService.cs)       | Operation implementation, via `TemporalOperation` and `StartActivityAsync`                                       |
+| [`Program.cs`](Program.cs)                                       | Worker hosting the Nexus handler and the Activity, plus the starter that executes the operation from client code |
 
 The starter and worker connect to two different namespaces (a "caller" namespace and a "handler"
 namespace) — this mirrors how Nexus is typically used to cross namespace boundaries. The client is

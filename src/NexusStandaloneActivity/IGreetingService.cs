@@ -2,8 +2,7 @@ namespace TemporalioSamples.NexusStandaloneActivity;
 
 using NexusRpc;
 
-// Nexus service definition shared by the caller and the handler. It declares a single operation
-// whose backing execution is a Standalone Activity.
+// Nexus service definition shared by the caller and the handler.
 [NexusService]
 public interface IGreetingService
 {
