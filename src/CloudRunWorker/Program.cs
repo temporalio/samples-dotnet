@@ -1,7 +1,7 @@
 using System.Runtime.InteropServices;
 using Microsoft.Extensions.Logging;
 using Temporalio.Client;
-using Temporalio.Extensions.Gcp.CloudRun;
+using Temporalio.Extensions.Gcp.CloudRun.WorkerId;
 using Temporalio.Worker;
 using TemporalioSamples.CloudRunWorker;
 
