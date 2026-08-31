@@ -28,7 +28,7 @@ var clientOptions = new TemporalClientConnectOptions(address)
 {
     Namespace = temporalNamespace,
     LoggerFactory = loggerFactory,
-    Plugins = new[] { new CloudRunPlugin() },
+    Plugins = new[] { new WorkerIdPlugin() },
 };
 
 var client = await TemporalClient.ConnectAsync(clientOptions);

@@ -3,7 +3,7 @@ namespace TemporalioSamples.CloudRunWorker;
 using Microsoft.Extensions.Logging;
 using Temporalio.Workflows;
 
-// Worker versioning is turned on by the CloudRunPlugin registered in Program.cs, which sets the
+// Worker versioning is turned on by the WorkerIdPlugin registered in Program.cs, which sets the
 // deployment's default versioning behavior to Pinned. A workflow can still override that with
 // [Workflow(VersioningBehavior = ...)]; this sample relies on the pinned default from the plugin.
 [Workflow]

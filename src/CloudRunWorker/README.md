@@ -12,7 +12,7 @@ container is stopped.
 
 Unlike the AWS Lambda extension, Cloud Run runs a long-lived container, so this
 is a metadata-driven plugin rather than a worker wrapper. The sample registers a
-single `CloudRunPlugin` on `TemporalClientConnectOptions.Plugins`. Because it is
+single `WorkerIdPlugin` on `TemporalClientConnectOptions.Plugins`. Because it is
 both a client and a worker plugin, registering it once is enough:
 
 1. At connect time its client hook reads the instance id from the Cloud Run
