@@ -42,7 +42,7 @@
     <ProjectReference Include="..\src\WorkflowStreams\BasicPublishSubscribe\TemporalioSamples.WorkflowStreams.BasicPublishSubscribe.csproj" />
     <ProjectReference Include="..\src\WorkflowStreams\BoundedLog\TemporalioSamples.WorkflowStreams.BoundedLog.csproj" />
     <ProjectReference Include="..\src\WorkflowStreams\ExternalPublisher\TemporalioSamples.WorkflowStreams.ExternalPublisher.csproj" />
-    <ProjectReference Include="..\src\WorkflowStreams\ListenerSubscription\TemporalioSamples.WorkflowStreams.ListenerSubscription.csproj" />
+    <ProjectReference Include="..\src\WorkflowStreams\ConcurrentSubscriptions\TemporalioSamples.WorkflowStreams.ConcurrentSubscriptions.csproj" />
     <ProjectReference Include="..\src\WorkflowStreams\LlmTokenStreaming\TemporalioSamples.WorkflowStreams.LlmTokenStreaming.csproj" />
     <ProjectReference Include="..\src\WorkflowStreams\ReconnectingSubscriber\TemporalioSamples.WorkflowStreams.ReconnectingSubscriber.csproj" />
     <ProjectReference Include="..\src\WorkflowUpdate\TemporalioSamples.WorkflowUpdate.csproj" />

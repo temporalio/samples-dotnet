@@ -19,7 +19,7 @@ public static class Scenario
         await using (var streamClient = new WorkflowStreamClient(client, workflowId))
         {
             var seen = 0;
-            await foreach (var item in streamClient.Topic(Constants.TopicStatus).Subscribe())
+            await foreach (var item in streamClient.Topic(Constants.TopicStatus).SubscribeAsync())
             {
                 var evt = Decode<StageEvent>(client, item);
                 nextOffset = item.Offset + 1;
@@ -35,7 +35,7 @@ public static class Scenario
         Console.WriteLine("--- phase 2: reconnected subscriber ---");
         await using (var streamClient = new WorkflowStreamClient(client, workflowId))
         {
-            await foreach (var item in streamClient.Topic(Constants.TopicStatus).Subscribe(nextOffset))
+            await foreach (var item in streamClient.Topic(Constants.TopicStatus).SubscribeAsync(nextOffset))
             {
                 var evt = Decode<StageEvent>(client, item);
                 Console.WriteLine($"offset={item.Offset}  stage={evt.Stage}");

@@ -9,8 +9,8 @@ using Xunit;
 using Xunit.Abstractions;
 using Basic = TemporalioSamples.WorkflowStreams.BasicPublishSubscribe;
 using Bounded = TemporalioSamples.WorkflowStreams.BoundedLog;
+using Concurrent = TemporalioSamples.WorkflowStreams.ConcurrentSubscriptions;
 using External = TemporalioSamples.WorkflowStreams.ExternalPublisher;
-using Listener = TemporalioSamples.WorkflowStreams.ListenerSubscription;
 using Llm = TemporalioSamples.WorkflowStreams.LlmTokenStreaming;
 using Reconnecting = TemporalioSamples.WorkflowStreams.ReconnectingSubscriber;
 
@@ -42,7 +42,7 @@ public class WorkflowStreamsTests : WorkflowEnvironmentTestBase
 
             var statuses = new List<string>();
             var progressCount = 0;
-            await foreach (var item in streamClient.Subscribe(new()
+            await foreach (var item in streamClient.SubscribeAsync(new()
             {
                 Topics = new List<string>
                 {
@@ -73,38 +73,41 @@ public class WorkflowStreamsTests : WorkflowEnvironmentTestBase
     }
 
     [Fact]
-    public async Task ListenerSubscription_DeliversSerializedCallbacks()
+    public async Task SubscriptionAsyncEnumerable_DeliversItemsInOrder()
     {
         using var worker = new TemporalWorker(
             Client,
             NewWorker().
-                AddActivity(Listener.PaymentActivities.ChargeCardAsync).
-                AddWorkflow<Listener.OrderWorkflow>());
+                AddActivity(Concurrent.PaymentActivities.ChargeCardAsync).
+                AddWorkflow<Concurrent.OrderWorkflow>());
         await worker.ExecuteAsync(async () =>
         {
-            var workflowId = $"workflow-streams-listener-{Guid.NewGuid()}";
+            var workflowId = $"workflow-streams-concurrent-{Guid.NewGuid()}";
             var handle = await Client.StartWorkflowAsync(
-                (Listener.OrderWorkflow wf) =>
-                    wf.RunAsync(new Listener.OrderInput("order-listener", null)),
+                (Concurrent.OrderWorkflow wf) =>
+                    wf.RunAsync(new Concurrent.OrderInput("order-concurrent", null)),
                 new(workflowId, worker.Options.TaskQueue!));
             await using var streamClient = new WorkflowStreamClient(Client, workflowId);
-            var listener = new RecordingListener();
-            using var subscription = streamClient.Subscribe(
-                new SubscribeOptions
+            var statuses = new List<string>();
+            await foreach (var item in streamClient.SubscribeAsync(
+                new WorkflowStreamSubscribeOptions
                 {
                     Topics = new List<string>
                     {
-                        Listener.Constants.TopicStatus,
-                        Listener.Constants.TopicProgress,
+                        Concurrent.Constants.TopicStatus,
+                        Concurrent.Constants.TopicProgress,
                     },
-                },
-                listener);
+                }))
+            {
+                await Task.Yield();
+                if (item.Topic == Concurrent.Constants.TopicStatus)
+                {
+                    statuses.Add(Decode<Concurrent.StatusEvent>(item).Kind);
+                }
+            }
 
-            await subscription.Completion;
-            Assert.Equal("charge-order-listener", await handle.GetResultAsync());
-            Assert.Equal(1, listener.MaxConcurrentCallbacks);
-            Assert.Equal(ExpectedOrderStatuses, listener.Statuses);
-            Assert.True(listener.Completed);
+            Assert.Equal("charge-order-concurrent", await handle.GetResultAsync());
+            Assert.Equal(ExpectedOrderStatuses, statuses);
         });
     }
 
@@ -129,7 +132,7 @@ public class WorkflowStreamsTests : WorkflowEnvironmentTestBase
             long nextOffset = 0;
             await using (var firstClient = new WorkflowStreamClient(Client, workflowId))
             {
-                await foreach (var item in firstClient.Topic(Reconnecting.Constants.TopicStatus).Subscribe())
+                await foreach (var item in firstClient.Topic(Reconnecting.Constants.TopicStatus).SubscribeAsync())
                 {
                     offsets.Add(item.Offset);
                     nextOffset = item.Offset + 1;
@@ -143,7 +146,7 @@ public class WorkflowStreamsTests : WorkflowEnvironmentTestBase
             var remainingStages = new List<string>();
             await using (var secondClient = new WorkflowStreamClient(Client, workflowId))
             {
-                await foreach (var item in secondClient.Topic(Reconnecting.Constants.TopicStatus).Subscribe(nextOffset))
+                await foreach (var item in secondClient.Topic(Reconnecting.Constants.TopicStatus).SubscribeAsync(nextOffset))
                 {
                     offsets.Add(item.Offset);
                     var stage = Decode<Reconnecting.StageEvent>(item).Stage;
@@ -181,7 +184,7 @@ public class WorkflowStreamsTests : WorkflowEnvironmentTestBase
                 Publish(new External.NewsEvent("test headline"), forceFlush: true);
             await publisher.FlushAsync();
 
-            await foreach (var item in subscriber.Topic(External.Constants.TopicNews).Subscribe())
+            await foreach (var item in subscriber.Topic(External.Constants.TopicNews).SubscribeAsync())
             {
                 Assert.Equal("test headline", Decode<External.NewsEvent>(item).Headline);
                 break;
@@ -209,7 +212,7 @@ public class WorkflowStreamsTests : WorkflowEnvironmentTestBase
             await AssertMore.EventuallyAsync(async () =>
                 Assert.True(await streamClient.GetOffsetAsync() >= 10));
 
-            await foreach (var item in streamClient.Topic(Bounded.Constants.TopicTick).Subscribe(1))
+            await foreach (var item in streamClient.Topic(Bounded.Constants.TopicTick).SubscribeAsync(1))
             {
                 Assert.True(item.Offset >= 5);
                 break;
@@ -245,50 +248,4 @@ public class WorkflowStreamsTests : WorkflowEnvironmentTestBase
 
     private T Decode<T>(WorkflowStreamItem item) =>
         Client.Options.DataConverter.PayloadConverter.ToValue<T>(item.Payload);
-
-    private sealed class RecordingListener : WorkflowStreamListener
-    {
-        private readonly object lockObj = new();
-        private readonly List<string> statuses = new();
-        private int activeCallbacks;
-
-        public bool Completed { get; private set; }
-
-        public int MaxConcurrentCallbacks { get; private set; }
-
-        public IReadOnlyCollection<string> Statuses
-        {
-            get
-            {
-                lock (lockObj)
-                {
-                    return statuses.ToArray();
-                }
-            }
-        }
-
-        public override async Task OnNextAsync(WorkflowStreamItem item)
-        {
-            var active = Interlocked.Increment(ref activeCallbacks);
-            MaxConcurrentCallbacks = Math.Max(MaxConcurrentCallbacks, active);
-            try
-            {
-                await Task.Yield();
-                if (item.Topic == Listener.Constants.TopicStatus)
-                {
-                    lock (lockObj)
-                    {
-                        statuses.Add(DataConverter.Default.PayloadConverter.
-                            ToValue<Listener.StatusEvent>(item.Payload).Kind);
-                    }
-                }
-            }
-            finally
-            {
-                _ = Interlocked.Decrement(ref activeCallbacks);
-            }
-        }
-
-        public override void OnCompleted() => Completed = true;
-    }
 }

@@ -147,7 +147,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TemporalioSamples.WorkflowS
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TemporalioSamples.WorkflowStreams.ExternalPublisher", "src\WorkflowStreams\ExternalPublisher\TemporalioSamples.WorkflowStreams.ExternalPublisher.csproj", "{B2222222-2222-4222-8222-222222222222}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TemporalioSamples.WorkflowStreams.ListenerSubscription", "src\WorkflowStreams\ListenerSubscription\TemporalioSamples.WorkflowStreams.ListenerSubscription.csproj", "{C3333333-3333-4333-8333-333333333333}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TemporalioSamples.WorkflowStreams.ConcurrentSubscriptions", "src\WorkflowStreams\ConcurrentSubscriptions\TemporalioSamples.WorkflowStreams.ConcurrentSubscriptions.csproj", "{C3333333-3333-4333-8333-333333333333}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TemporalioSamples.WorkflowStreams.LlmTokenStreaming", "src\WorkflowStreams\LlmTokenStreaming\TemporalioSamples.WorkflowStreams.LlmTokenStreaming.csproj", "{D4444444-4444-4444-8444-444444444444}"
 EndProject

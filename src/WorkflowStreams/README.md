@@ -12,7 +12,7 @@ Each scenario is a self-contained project with its own worker, client, models, c
 instructions:
 
 - [Basic publish/subscribe](BasicPublishSubscribe)
-- [Listener subscription](ListenerSubscription)
+- [Concurrent subscriptions](ConcurrentSubscriptions)
 - [Reconnecting subscriber](ReconnectingSubscriber)
 - [External publisher](ExternalPublisher)
 - [Bounded log](BoundedLog)

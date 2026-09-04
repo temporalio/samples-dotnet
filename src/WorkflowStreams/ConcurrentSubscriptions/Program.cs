@@ -2,7 +2,7 @@ using Microsoft.Extensions.Logging;
 using Temporalio.Client;
 using Temporalio.Common.EnvConfig;
 using Temporalio.Worker;
-using TemporalioSamples.WorkflowStreams.ListenerSubscription;
+using TemporalioSamples.WorkflowStreams.ConcurrentSubscriptions;
 
 var connectOptions = ClientEnvConfig.LoadClientConnectOptions();
 connectOptions.TargetHost ??= "localhost:7233";
@@ -29,5 +29,5 @@ if (args.ElementAtOrDefault(0) == "worker")
 }
 else
 {
-    await Scenario.RunListenerAsync(client);
+    await Scenario.RunSubscriptionsAsync(client);
 }

@@ -1,8 +1,8 @@
-namespace TemporalioSamples.WorkflowStreams.ListenerSubscription;
+namespace TemporalioSamples.WorkflowStreams.ConcurrentSubscriptions;
 
 public static class Constants
 {
-    public const string TaskQueue = "workflow-streams-listener-subscription";
+    public const string TaskQueue = "workflow-streams-concurrent-subscriptions";
 
     public const string TopicStatus = "status";
 

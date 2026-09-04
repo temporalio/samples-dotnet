@@ -26,7 +26,7 @@ public static class Scenario
         Console.Write(ansiSave);
 
         await using var streamClient = new WorkflowStreamClient(client, workflowId);
-        var options = new SubscribeOptions
+        var options = new WorkflowStreamSubscribeOptions
         {
             Topics = new List<string>
             {
@@ -35,7 +35,7 @@ public static class Scenario
                 Constants.TopicComplete,
             },
         };
-        await foreach (var item in streamClient.Subscribe(options))
+        await foreach (var item in streamClient.SubscribeAsync(options))
         {
             if (item.Topic == Constants.TopicRetry)
             {

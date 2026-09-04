@@ -24,7 +24,7 @@ public static class Scenario
         async Task SubscribeAsync()
         {
             await using var streamClient = new WorkflowStreamClient(client, workflowId);
-            await foreach (var item in streamClient.Topic(Constants.TopicNews).Subscribe())
+            await foreach (var item in streamClient.Topic(Constants.TopicNews).SubscribeAsync())
             {
                 var evt = Decode<NewsEvent>(client, item);
                 if (evt.Headline == Constants.DoneHeadline)

@@ -23,7 +23,7 @@ public static class Scenario
         async Task FastSubscriberAsync()
         {
             await using var streamClient = new WorkflowStreamClient(client, workflowId);
-            await foreach (var item in streamClient.Topic(Constants.TopicTick).Subscribe())
+            await foreach (var item in streamClient.Topic(Constants.TopicTick).SubscribeAsync())
             {
                 var evt = Decode<TickEvent>(client, item);
                 Console.WriteLine($"[fast] offset={item.Offset,3}  n={evt.N}");
@@ -44,7 +44,7 @@ public static class Scenario
             }
 
             var first = true;
-            await foreach (var item in streamClient.Topic(Constants.TopicTick).Subscribe(StaleOffset))
+            await foreach (var item in streamClient.Topic(Constants.TopicTick).SubscribeAsync(StaleOffset))
             {
                 var evt = Decode<TickEvent>(client, item);
                 if (first && item.Offset > StaleOffset)

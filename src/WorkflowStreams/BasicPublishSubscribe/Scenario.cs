@@ -15,7 +15,7 @@ public static class Scenario
         Console.WriteLine($"Started workflow: {workflowId}");
 
         await using var streamClient = new WorkflowStreamClient(client, workflowId);
-        var options = new SubscribeOptions
+        var options = new WorkflowStreamSubscribeOptions
         {
             Topics = new List<string>
             {
@@ -23,7 +23,7 @@ public static class Scenario
                 Constants.TopicProgress,
             },
         };
-        await foreach (var item in streamClient.Subscribe(options))
+        await foreach (var item in streamClient.SubscribeAsync(options))
         {
             if (item.Topic == Constants.TopicStatus)
             {

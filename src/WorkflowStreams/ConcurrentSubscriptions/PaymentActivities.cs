@@ -1,4 +1,4 @@
-namespace TemporalioSamples.WorkflowStreams.ListenerSubscription;
+namespace TemporalioSamples.WorkflowStreams.ConcurrentSubscriptions;
 
 using Microsoft.Extensions.Logging;
 using Temporalio.Activities;
