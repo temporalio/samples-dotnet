@@ -35,13 +35,16 @@ using var meterProvider = Sdk.
     AddOtlpExporter().
     Build();
 
+// Shared by the client and by Core SDK log forwarding below.
+using var loggerFactory = LoggerFactory.Create(builder =>
+    builder.
+        AddSimpleConsole(options => options.TimestampFormat = "[HH:mm:ss] ").
+        SetMinimumLevel(LogLevel.Information));
+
 // Create a client to localhost on default namespace
 var client = await TemporalClient.ConnectAsync(new("localhost:7233")
 {
-    LoggerFactory = LoggerFactory.Create(builder =>
-        builder.
-            AddSimpleConsole(options => options.TimestampFormat = "[HH:mm:ss] ").
-            SetMinimumLevel(LogLevel.Information)),
+    LoggerFactory = loggerFactory,
     Interceptors = new[] { new TracingInterceptor() },
     Runtime = new TemporalRuntime(new TemporalRuntimeOptions()
     {
@@ -50,6 +53,15 @@ var client = await TemporalClient.ConnectAsync(new("localhost:7233")
             Metrics = new MetricsOptions()
             {
                 CustomMetricMeter = new CustomMetricMeter(meter),
+            },
+            Logging = new LoggingOptions()
+            {
+                // Core SDK logs default to WARN; lowered here so there is more to see.
+                Filter = new TelemetryFilterOptions(core: TelemetryFilterOptions.Level.Info),
+
+                // The Core SDK writes its logs to the console itself unless Forwarding is set, in
+                // which case they go to this ILogger instead.
+                Forwarding = new LogForwardingOptions(loggerFactory.CreateLogger("Temporalio.Core")),
             },
         },
     }),

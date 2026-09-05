@@ -1,5 +1,6 @@
 ﻿using Microsoft.Extensions.Logging;
 using OpenTelemetry;
+using OpenTelemetry.Logs;
 using OpenTelemetry.Metrics;
 using OpenTelemetry.Resources;
 using OpenTelemetry.Trace;
@@ -25,13 +26,24 @@ using var tracerProvider = Sdk.
     AddOtlpExporter().
     Build();
 
+// Shared by the client and by Core SDK log forwarding below. The OpenTelemetry provider exports
+// logs to the dashboard alongside the traces and metrics.
+using var loggerFactory = LoggerFactory.Create(builder =>
+    builder.
+        AddSimpleConsole(options => options.TimestampFormat = "[HH:mm:ss] ").
+        AddOpenTelemetry(options =>
+        {
+            options.SetResourceBuilder(resourceBuilder);
+            options.IncludeFormattedMessage = true;
+            options.IncludeScopes = true;
+            options.AddOtlpExporter();
+        }).
+        SetMinimumLevel(LogLevel.Information));
+
 // Create a client to localhost on default namespace
 var connectOptions = ClientEnvConfig.LoadClientConnectOptions();
 connectOptions.TargetHost ??= "localhost:7233";
-connectOptions.LoggerFactory = LoggerFactory.Create(builder =>
-    builder.
-        AddSimpleConsole(options => options.TimestampFormat = "[HH:mm:ss] ").
-        SetMinimumLevel(LogLevel.Information));
+connectOptions.LoggerFactory = loggerFactory;
 connectOptions.Interceptors = new[] { new TracingInterceptor() };
 connectOptions.Runtime = new TemporalRuntime(new TemporalRuntimeOptions()
 {
@@ -43,6 +55,15 @@ connectOptions.Runtime = new TemporalRuntime(new TemporalRuntimeOptions()
             {
                 Url = new Uri("http://localhost:4317"),
             },
+        },
+        Logging = new LoggingOptions()
+        {
+            // Core SDK logs default to WARN; lowered here so there is more to see.
+            Filter = new TelemetryFilterOptions(core: TelemetryFilterOptions.Level.Info),
+
+            // The Core SDK writes its logs to the console itself unless Forwarding is set, in
+            // which case they go to this ILogger instead.
+            Forwarding = new LogForwardingOptions(loggerFactory.CreateLogger("Temporalio.Core")),
         },
     },
 });

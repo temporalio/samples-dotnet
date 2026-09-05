@@ -153,6 +153,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TemporalioSamples.WorkflowS
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TemporalioSamples.WorkflowStreams.ReconnectingSubscriber", "src\WorkflowStreams\ReconnectingSubscriber\TemporalioSamples.WorkflowStreams.ReconnectingSubscriber.csproj", "{E5555555-5555-4555-8555-555555555555}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "NexusStandaloneActivity", "NexusStandaloneActivity", "{5D5AFBCD-B4B7-4A4E-91C8-FD80E4C1E27B}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TemporalioSamples.NexusStandaloneActivity", "src\NexusStandaloneActivity\TemporalioSamples.NexusStandaloneActivity.csproj", "{4D8C9F9B-F8E3-4160-9286-32C3966A0125}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -883,6 +887,18 @@ Global
 		{E5555555-5555-4555-8555-555555555555}.Release|x64.Build.0 = Release|Any CPU
 		{E5555555-5555-4555-8555-555555555555}.Release|x86.ActiveCfg = Release|Any CPU
 		{E5555555-5555-4555-8555-555555555555}.Release|x86.Build.0 = Release|Any CPU
+		{4D8C9F9B-F8E3-4160-9286-32C3966A0125}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4D8C9F9B-F8E3-4160-9286-32C3966A0125}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4D8C9F9B-F8E3-4160-9286-32C3966A0125}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{4D8C9F9B-F8E3-4160-9286-32C3966A0125}.Debug|x64.Build.0 = Debug|Any CPU
+		{4D8C9F9B-F8E3-4160-9286-32C3966A0125}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{4D8C9F9B-F8E3-4160-9286-32C3966A0125}.Debug|x86.Build.0 = Debug|Any CPU
+		{4D8C9F9B-F8E3-4160-9286-32C3966A0125}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4D8C9F9B-F8E3-4160-9286-32C3966A0125}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4D8C9F9B-F8E3-4160-9286-32C3966A0125}.Release|x64.ActiveCfg = Release|Any CPU
+		{4D8C9F9B-F8E3-4160-9286-32C3966A0125}.Release|x64.Build.0 = Release|Any CPU
+		{4D8C9F9B-F8E3-4160-9286-32C3966A0125}.Release|x86.ActiveCfg = Release|Any CPU
+		{4D8C9F9B-F8E3-4160-9286-32C3966A0125}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -959,5 +975,7 @@ Global
 		{C3333333-3333-4333-8333-333333333333} = {1A647B41-53D0-4638-AE5A-6630BAAE45FC}
 		{D4444444-4444-4444-8444-444444444444} = {1A647B41-53D0-4638-AE5A-6630BAAE45FC}
 		{E5555555-5555-4555-8555-555555555555} = {1A647B41-53D0-4638-AE5A-6630BAAE45FC}
+		{5D5AFBCD-B4B7-4A4E-91C8-FD80E4C1E27B} = {1A647B41-53D0-4638-AE5A-6630BAAE45FC}
+		{4D8C9F9B-F8E3-4160-9286-32C3966A0125} = {5D5AFBCD-B4B7-4A4E-91C8-FD80E4C1E27B}
 	EndGlobalSection
 EndGlobal
