@@ -1,6 +1,7 @@
 namespace TemporalioSamples.NexusMessaging.CallerPattern.Handler;
 
 using NexusRpc.Handlers;
+using Temporalio.Client;
 using Temporalio.Nexus;
 using TemporalioSamples.NexusMessaging.CallerPattern;
 using TemporalioSamples.NexusMessaging.Common;
@@ -11,54 +12,56 @@ using TemporalioSamples.NexusMessaging.Common;
 [NexusServiceHandler(typeof(INexusGreetingService))]
 public class NexusGreetingService
 {
-    // OperationHandler.Sync means the result is returned inline to the Nexus caller
-    // (as opposed to WorkflowRunOperationHandler, which returns an async operation token).
-    // The lambda may still be async internally.
+    // Every operation is a TemporalOperationHandler: the start function receives a Temporal
+    // client scoped to the invocation and returns a TemporalOperationResult. SyncResult returns
+    // the value inline to the Nexus caller; starting a workflow or an update instead hands back
+    // an operation token so the result is delivered over the Nexus completion callback.
 
     // Query: read-only, no state mutation — uses workflow query
     [NexusOperationHandler]
     public IOperationHandler<INexusGreetingService.GetLanguagesInput, INexusGreetingService.GetLanguagesOutput> GetLanguages() =>
-        OperationHandler.Sync<INexusGreetingService.GetLanguagesInput, INexusGreetingService.GetLanguagesOutput>(
-            async (ctx, input) =>
+        TemporalOperationHandler.FromHandleFactory<INexusGreetingService.GetLanguagesInput, INexusGreetingService.GetLanguagesOutput>(
+            async (context, client, input) =>
             {
-                // Access the Temporal client from the Nexus operation context
-                var client = NexusOperationExecutionContext.Current.TemporalClient;
-                var handle = client.GetWorkflowHandle<GreetingWorkflow>(WorkflowIdForUser(input.UserId));
-                return await handle.QueryAsync(wf => wf.QueryLanguages(input.IncludeUnsupported));
+                var handle = client.TemporalClient.GetWorkflowHandle<GreetingWorkflow>(WorkflowIdForUser(input.UserId));
+                var result = await handle.QueryAsync(wf => wf.QueryLanguages(input.IncludeUnsupported));
+                return TemporalOperationResult<INexusGreetingService.GetLanguagesOutput>.SyncResult(result);
             });
 
     // Query: read-only — returns the workflow's current language
     [NexusOperationHandler]
     public IOperationHandler<INexusGreetingService.GetLanguageInput, Language> GetLanguage() =>
-        OperationHandler.Sync<INexusGreetingService.GetLanguageInput, Language>(
-            async (ctx, input) =>
+        TemporalOperationHandler.FromHandleFactory<INexusGreetingService.GetLanguageInput, Language>(
+            async (context, client, input) =>
             {
-                var client = NexusOperationExecutionContext.Current.TemporalClient;
-                var handle = client.GetWorkflowHandle<GreetingWorkflow>(WorkflowIdForUser(input.UserId));
-                return await handle.QueryAsync(wf => wf.QueryLanguage());
+                var handle = client.TemporalClient.GetWorkflowHandle<GreetingWorkflow>(WorkflowIdForUser(input.UserId));
+                var result = await handle.QueryAsync(wf => wf.QueryLanguage());
+                return TemporalOperationResult<Language>.SyncResult(result);
             });
 
-    // Update: mutates state and returns the previous value — uses workflow update
+    // Update: mutates state and returns the previous value — uses workflow update.
+    // Starting the update through the Nexus client makes this an asynchronous Nexus operation:
+    // the caller receives an operation token and the update result is delivered later over the
+    // Nexus completion callback. If the update is already complete when the start call returns,
+    // the result comes back synchronously instead.
     [NexusOperationHandler]
     public IOperationHandler<INexusGreetingService.SetLanguageInput, Language> SetLanguage() =>
-        OperationHandler.Sync<INexusGreetingService.SetLanguageInput, Language>(
-            async (ctx, input) =>
-            {
-                var client = NexusOperationExecutionContext.Current.TemporalClient;
-                var handle = client.GetWorkflowHandle<GreetingWorkflow>(WorkflowIdForUser(input.UserId));
-                return await handle.ExecuteUpdateAsync(wf => wf.SetLanguageAsync(input.Language));
-            });
+        TemporalOperationHandler.FromHandleFactory<INexusGreetingService.SetLanguageInput, Language>(
+            (context, client, input) =>
+                client.StartWorkflowUpdateAsync<GreetingWorkflow, Language>(
+                    WorkflowIdForUser(input.UserId),
+                    wf => wf.SetLanguageAsync(input.Language),
+                    new(WorkflowUpdateStage.Accepted)));
 
     // Signal: fire-and-forget, no return value needed — uses workflow signal
     [NexusOperationHandler]
     public IOperationHandler<INexusGreetingService.ApproveInput, NoValue> Approve() =>
-        OperationHandler.Sync<INexusGreetingService.ApproveInput, NoValue>(
-            async (ctx, input) =>
+        TemporalOperationHandler.FromHandleFactory<INexusGreetingService.ApproveInput, NoValue>(
+            async (context, client, input) =>
             {
-                var client = NexusOperationExecutionContext.Current.TemporalClient;
-                var handle = client.GetWorkflowHandle<GreetingWorkflow>(WorkflowIdForUser(input.UserId));
+                var handle = client.TemporalClient.GetWorkflowHandle<GreetingWorkflow>(WorkflowIdForUser(input.UserId));
                 await handle.SignalAsync(wf => wf.ApproveAsync(input.Name));
-                return default;
+                return TemporalOperationResult<NoValue>.SyncResult(default);
             });
 
     private static string WorkflowIdForUser(string userId) => $"GreetingWorkflow_for_{userId}";
