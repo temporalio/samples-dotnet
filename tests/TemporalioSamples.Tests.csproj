@@ -40,6 +40,12 @@
     <ProjectReference Include="..\src\UpdateWithStartEarlyReturn\TemporalioSamples.UpdateWithStartEarlyReturn.csproj" />
     <ProjectReference Include="..\src\UpdateWithStartLazyInit\TemporalioSamples.UpdateWithStartLazyInit.csproj" />
     <ProjectReference Include="..\src\WorkerSpecificTaskQueues\TemporalioSamples.WorkerSpecificTaskQueues.csproj" />
+    <ProjectReference Include="..\src\WorkflowStreams\BasicPublishSubscribe\TemporalioSamples.WorkflowStreams.BasicPublishSubscribe.csproj" />
+    <ProjectReference Include="..\src\WorkflowStreams\BoundedLog\TemporalioSamples.WorkflowStreams.BoundedLog.csproj" />
+    <ProjectReference Include="..\src\WorkflowStreams\ExternalPublisher\TemporalioSamples.WorkflowStreams.ExternalPublisher.csproj" />
+    <ProjectReference Include="..\src\WorkflowStreams\ConcurrentSubscriptions\TemporalioSamples.WorkflowStreams.ConcurrentSubscriptions.csproj" />
+    <ProjectReference Include="..\src\WorkflowStreams\LlmTokenStreaming\TemporalioSamples.WorkflowStreams.LlmTokenStreaming.csproj" />
+    <ProjectReference Include="..\src\WorkflowStreams\ReconnectingSubscriber\TemporalioSamples.WorkflowStreams.ReconnectingSubscriber.csproj" />
     <ProjectReference Include="..\src\WorkflowUpdate\TemporalioSamples.WorkflowUpdate.csproj" />
     <ProjectReference Include="..\src\WorkerVersioning\TemporalioSamples.WorkerVersioning.csproj" />
     <ProjectReference Include="..\src\SleepForDays\TemporalioSamples.SleepForDays.csproj" />

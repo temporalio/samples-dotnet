@@ -1,1 +1,3 @@
 * @temporalio/sdk
+/src/WorkflowStreams/   @temporalio/sdk @temporalio/ai-sdk
+/tests/WorkflowStreams/ @temporalio/sdk @temporalio/ai-sdk
