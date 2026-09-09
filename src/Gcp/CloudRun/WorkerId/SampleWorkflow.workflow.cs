@@ -1,11 +1,10 @@
-namespace TemporalioSamples.CloudRunWorker;
+namespace TemporalioSamples.Gcp.CloudRun.WorkerId;
 
 using Microsoft.Extensions.Logging;
 using Temporalio.Workflows;
 
-// Worker versioning is turned on by the WorkerIdPlugin registered in Program.cs, which sets the
-// deployment's default versioning behavior to Pinned. A workflow can still override that with
-// [Workflow(VersioningBehavior = ...)]; this sample relies on the pinned default from the plugin.
+// A minimal greeting workflow that runs one activity. The WorkerIdPlugin only sets the worker
+// identity, so this workflow runs exactly as it would on any other worker.
 [Workflow]
 public class SampleWorkflow
 {

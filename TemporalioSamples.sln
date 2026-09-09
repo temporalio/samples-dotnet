@@ -141,6 +141,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "SearchAttributes", "SearchA
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TemporalioSamples.SearchAttributes", "src\SearchAttributes\TemporalioSamples.SearchAttributes.csproj", "{97376F57-BA10-464B-AFBD-583E187DE947}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TemporalioSamples.Gcp.CloudRun.WorkerId", "src\Gcp\CloudRun\WorkerId\TemporalioSamples.Gcp.CloudRun.WorkerId.csproj", "{995322ED-0CF3-40F5-B521-380A9591DACC}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -799,6 +801,18 @@ Global
 		{97376F57-BA10-464B-AFBD-583E187DE947}.Release|x64.Build.0 = Release|Any CPU
 		{97376F57-BA10-464B-AFBD-583E187DE947}.Release|x86.ActiveCfg = Release|Any CPU
 		{97376F57-BA10-464B-AFBD-583E187DE947}.Release|x86.Build.0 = Release|Any CPU
+		{995322ED-0CF3-40F5-B521-380A9591DACC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{995322ED-0CF3-40F5-B521-380A9591DACC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{995322ED-0CF3-40F5-B521-380A9591DACC}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{995322ED-0CF3-40F5-B521-380A9591DACC}.Debug|x64.Build.0 = Debug|Any CPU
+		{995322ED-0CF3-40F5-B521-380A9591DACC}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{995322ED-0CF3-40F5-B521-380A9591DACC}.Debug|x86.Build.0 = Debug|Any CPU
+		{995322ED-0CF3-40F5-B521-380A9591DACC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{995322ED-0CF3-40F5-B521-380A9591DACC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{995322ED-0CF3-40F5-B521-380A9591DACC}.Release|x64.ActiveCfg = Release|Any CPU
+		{995322ED-0CF3-40F5-B521-380A9591DACC}.Release|x64.Build.0 = Release|Any CPU
+		{995322ED-0CF3-40F5-B521-380A9591DACC}.Release|x86.ActiveCfg = Release|Any CPU
+		{995322ED-0CF3-40F5-B521-380A9591DACC}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

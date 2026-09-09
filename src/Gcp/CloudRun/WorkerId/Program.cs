@@ -3,7 +3,7 @@ using Microsoft.Extensions.Logging;
 using Temporalio.Client;
 using Temporalio.Extensions.Gcp.CloudRun.WorkerId;
 using Temporalio.Worker;
-using TemporalioSamples.CloudRunWorker;
+using TemporalioSamples.Gcp.CloudRun.WorkerId;
 
 // Cloud Run injects these via `--set-env-vars`; fall back to a local dev server for convenience.
 var address = GetEnvironmentVariable("TEMPORAL_ADDRESS") ?? "localhost:7233";
@@ -13,14 +13,13 @@ var taskQueue = GetEnvironmentVariable("TEMPORAL_TASK_QUEUE") ?? "cloud-run-work
 using var loggerFactory = LoggerFactory.Create(builder => builder.
     AddSimpleConsole(options => options.TimestampFormat = "[HH:mm:ss] ").
     SetMinimumLevel(LogLevel.Information));
-var logger = loggerFactory.CreateLogger("CloudRunWorker");
+var logger = loggerFactory.CreateLogger("CloudRunWorkerId");
 
 // Register the Cloud Run plugin once on the client. At connect time it reads the Cloud Run instance
 // id from the metadata server, and the worker pool / service name and revision from the environment,
-// then sets the client Identity to "{instanceId}@{revision}" (unless one was already configured).
-// Because it is also a worker plugin, it later enables worker versioning and pins the worker below
-// to the Cloud Run deployment version automatically (deployment name = worker pool / service name,
-// build id = revision).
+// then sets the client Identity to the worker identity "{instanceId}@{revision}" (unless one was
+// already configured). Every worker created from this client inherits that identity. The plugin only
+// sets the worker identity; it does not configure anything else.
 //
 // NOTE: this requires the process to be running on a Cloud Run worker pool or service. Running it
 // elsewhere throws at connect time because the metadata server is unreachable.
@@ -32,6 +31,11 @@ var clientOptions = new TemporalClientConnectOptions(address)
 };
 
 var client = await TemporalClient.ConnectAsync(clientOptions);
+
+// The plugin already applied this identity to the client above; read the metadata directly to log
+// the worker identity this process runs under.
+var metadata = await GoogleCloudRunMetadata.FetchAsync();
+logger.LogInformation("Cloud Run worker identity: {WorkerIdentity}", metadata.WorkerIdentity);
 
 var workerOptions = new TemporalWorkerOptions(taskQueue).
     AddWorkflow<SampleWorkflow>().
