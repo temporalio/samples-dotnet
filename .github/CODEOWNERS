@@ -1,1 +1,10 @@
 * @temporalio/sdk
+
+# SDK & Nexus teams share ownership of these files
+/README.md @temporalio/sdk @temporalio/nexus
+/TemporalioSamples.sln @temporalio/sdk @temporalio/nexus
+/tests/TemporalioSamples.Tests.csproj @temporalio/sdk @temporalio/nexus
+
+# The Nexus team owns any folder whose name starts with "Nexus"
+/src/Nexus*/ @temporalio/nexus
+/tests/Nexus*/ @temporalio/nexus
