@@ -7,7 +7,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{1A647B41-53D
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TemporalioSamples.ActivityWorker", "src\ActivityWorker\TemporalioSamples.ActivityWorker.csproj", "{7AECC7C6-9A21-4B8A-84D9-AFC4F5840CAF}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TemporalioSamples.CloudRunWorker", "src\CloudRunWorker\TemporalioSamples.CloudRunWorker.csproj", "{E0F934F9-10A7-41A0-A85E-EE6D0E267367}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TemporalioSamples.Gcp.CloudRun.OpenTelemetry", "src\Gcp\CloudRun\OpenTelemetry\TemporalioSamples.Gcp.CloudRun.OpenTelemetry.csproj", "{E0F934F9-10A7-41A0-A85E-EE6D0E267367}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TemporalioSamples.Tests", "tests\TemporalioSamples.Tests.csproj", "{3FA7E5DF-03B7-4586-A980-85C155B376C5}"
 EndProject

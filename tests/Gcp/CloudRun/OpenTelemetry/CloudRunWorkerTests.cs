@@ -1,9 +1,9 @@
-namespace TemporalioSamples.Tests.CloudRunWorker;
+namespace TemporalioSamples.Tests.Gcp.CloudRun.OpenTelemetry;
 
 using Temporalio.Client;
 using Temporalio.Testing;
 using Temporalio.Worker;
-using TemporalioSamples.CloudRunWorker;
+using TemporalioSamples.Gcp.CloudRun.OpenTelemetry;
 using Xunit;
 using Xunit.Abstractions;
 
