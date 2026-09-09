@@ -4,7 +4,7 @@ using Temporalio.Client;
 using Temporalio.Common.EnvConfig;
 using Temporalio.Extensions.Gcp.CloudRun.OpenTelemetry;
 using Temporalio.Worker;
-using TemporalioSamples.CloudRunWorker;
+using TemporalioSamples.Gcp.CloudRun.OpenTelemetry;
 
 // Build client connection options from environment configuration (TEMPORAL_ADDRESS,
 // TEMPORAL_NAMESPACE, TEMPORAL_API_KEY, ...). With no API key and no TLS block this connects in

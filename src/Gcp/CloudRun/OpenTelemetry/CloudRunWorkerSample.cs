@@ -1,4 +1,4 @@
-namespace TemporalioSamples.CloudRunWorker;
+namespace TemporalioSamples.Gcp.CloudRun.OpenTelemetry;
 
 using Temporalio.Worker;
 
