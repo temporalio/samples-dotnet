@@ -1,4 +1,4 @@
-namespace TemporalioSamples.CloudRunWorker;
+namespace TemporalioSamples.Gcp.CloudRun.WorkerId;
 
 using Microsoft.Extensions.Logging;
 using Temporalio.Activities;
