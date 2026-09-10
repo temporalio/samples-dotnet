@@ -6,6 +6,7 @@ using Temporalio.Worker;
 using TemporalioSamples.Gcp.CloudRun.WorkerId;
 
 // Cloud Run injects these via `--set-env-vars`; fall back to a local dev server for convenience.
+// @@@SNIPSTART dotnet-cloud-run-worker-id
 var address = GetEnvironmentVariable("TEMPORAL_ADDRESS") ?? "localhost:7233";
 var temporalNamespace = GetEnvironmentVariable("TEMPORAL_NAMESPACE") ?? "default";
 var taskQueue = GetEnvironmentVariable("TEMPORAL_TASK_QUEUE") ?? "cloud-run-worker-sample";
@@ -31,6 +32,7 @@ var clientOptions = new TemporalClientConnectOptions(address)
 };
 
 var client = await TemporalClient.ConnectAsync(clientOptions);
+// @@@SNIPEND
 
 // The plugin already applied this identity to the client above; read the metadata directly to log
 // the worker identity this process runs under.
