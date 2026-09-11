@@ -4,6 +4,8 @@ This sample shows how to execute Activities directly from a Temporal Client, wit
 
 For full documentation, see [Standalone Activities](https://docs.temporal.io/develop/dotnet/standalone-activities).
 
+**Note: Temporal CLI support for Standalone Activities requires CLI version 1.9.0.** See setup guide: https://docs.temporal.io/cli/setup-cli
+
 ### Sample directory structure
 
 - [MyActivities.cs](MyActivities.cs) - Activity definition with `[Activity]` attribute
@@ -31,6 +33,3 @@ List standalone activity executions:
 Count standalone activity executions:
 
     dotnet run count-activities
-
-Note: `list-activities` and `count-activities` are only available in the
-[Standalone Activity prerelease CLI](https://github.com/temporalio/cli/releases/tag/v1.6.2-standalone-activity).
