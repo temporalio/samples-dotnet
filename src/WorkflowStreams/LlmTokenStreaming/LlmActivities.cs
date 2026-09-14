@@ -21,9 +21,9 @@ public static class LlmActivities
 
         await using var streamClient = WorkflowStreamClient.FromActivity(
             new() { BatchInterval = TimeSpan.FromMilliseconds(200), });
-        var deltas = streamClient.Topic(Constants.TopicDelta);
-        var complete = streamClient.Topic(Constants.TopicComplete);
-        var retry = streamClient.Topic(Constants.TopicRetry);
+        var deltas = streamClient.GetTopic<TextDelta>(Constants.TopicDelta);
+        var complete = streamClient.GetTopic<TextComplete>(Constants.TopicComplete);
+        var retry = streamClient.GetTopic<RetryEvent>(Constants.TopicRetry);
 
         var activityContext = ActivityExecutionContext.Current;
         if (activityContext.Info.Attempt > 1)

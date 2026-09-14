@@ -14,7 +14,7 @@ public class TickerWorkflow
     [WorkflowRun]
     public async Task<string> RunAsync(TickerInput input)
     {
-        var tick = stream.Topic(Constants.TopicTick);
+        var tick = stream.GetTopic<TickEvent>(Constants.TopicTick);
         var interval = input.Interval ?? TimeSpan.FromMilliseconds(200);
 
         for (var n = 0; n < input.Count; n++)

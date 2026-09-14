@@ -14,7 +14,7 @@ public class PipelineWorkflow
     [WorkflowRun]
     public async Task<string> RunAsync(PipelineInput input)
     {
-        var status = stream.Topic(Constants.TopicStatus);
+        var status = stream.GetTopic<StageEvent>(Constants.TopicStatus);
         var stageInterval = input.StageInterval ?? TimeSpan.FromSeconds(2);
         var stages = new[]
         {

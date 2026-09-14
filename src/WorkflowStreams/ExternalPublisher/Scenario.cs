@@ -1,7 +1,6 @@
 namespace TemporalioSamples.WorkflowStreams.ExternalPublisher;
 
 using Temporalio.Client;
-using Temporalio.Converters;
 using Temporalio.Extensions.WorkflowStreams;
 
 public static class Scenario
@@ -24,9 +23,10 @@ public static class Scenario
         async Task SubscribeAsync()
         {
             await using var streamClient = new WorkflowStreamClient(client, workflowId);
-            await foreach (var item in streamClient.Topic(Constants.TopicNews).SubscribeAsync())
+            await foreach (var item in streamClient.
+                GetTopic<NewsEvent>(Constants.TopicNews).SubscribeAsync())
             {
-                var evt = Decode<NewsEvent>(client, item);
+                var evt = item.Value;
                 if (evt.Headline == Constants.DoneHeadline)
                 {
                     break;
@@ -38,7 +38,7 @@ public static class Scenario
         async Task PublishAsync()
         {
             await using var streamClient = new WorkflowStreamClient(client, workflowId);
-            var news = streamClient.Topic(Constants.TopicNews);
+            var news = streamClient.GetTopic<NewsEvent>(Constants.TopicNews);
             foreach (var headline in Headlines)
             {
                 news.Publish(new NewsEvent(headline));
@@ -54,7 +54,4 @@ public static class Scenario
         await Task.WhenAll(SubscribeAsync(), PublishAsync());
         Console.WriteLine($"Workflow result: {await handle.GetResultAsync()}");
     }
-
-    private static T Decode<T>(ITemporalClient client, WorkflowStreamItem item) =>
-        client.Options.DataConverter.PayloadConverter.ToValue<T>(item.Payload);
 }

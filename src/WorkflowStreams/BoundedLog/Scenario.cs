@@ -1,7 +1,6 @@
 namespace TemporalioSamples.WorkflowStreams.BoundedLog;
 
 using Temporalio.Client;
-using Temporalio.Converters;
 using Temporalio.Extensions.WorkflowStreams;
 
 public static class Scenario
@@ -23,9 +22,10 @@ public static class Scenario
         async Task FastSubscriberAsync()
         {
             await using var streamClient = new WorkflowStreamClient(client, workflowId);
-            await foreach (var item in streamClient.Topic(Constants.TopicTick).SubscribeAsync())
+            await foreach (var item in streamClient.
+                GetTopic<TickEvent>(Constants.TopicTick).SubscribeAsync())
             {
-                var evt = Decode<TickEvent>(client, item);
+                var evt = item.Value;
                 Console.WriteLine($"[fast] offset={item.Offset,3}  n={evt.N}");
                 if (evt.N == TickCount - 1)
                 {
@@ -44,9 +44,10 @@ public static class Scenario
             }
 
             var first = true;
-            await foreach (var item in streamClient.Topic(Constants.TopicTick).SubscribeAsync(StaleOffset))
+            await foreach (var item in streamClient.
+                GetTopic<TickEvent>(Constants.TopicTick).SubscribeAsync(StaleOffset))
             {
-                var evt = Decode<TickEvent>(client, item);
+                var evt = item.Value;
                 if (first && item.Offset > StaleOffset)
                 {
                     Console.WriteLine(
@@ -66,7 +67,4 @@ public static class Scenario
         await Task.WhenAll(FastSubscriberAsync(), LateSubscriberAsync());
         Console.WriteLine($"Workflow result: {await handle.GetResultAsync()}");
     }
-
-    private static T Decode<T>(ITemporalClient client, WorkflowStreamItem item) =>
-        client.Options.DataConverter.PayloadConverter.ToValue<T>(item.Payload);
 }

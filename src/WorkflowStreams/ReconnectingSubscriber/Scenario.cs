@@ -1,7 +1,6 @@
 namespace TemporalioSamples.WorkflowStreams.ReconnectingSubscriber;
 
 using Temporalio.Client;
-using Temporalio.Converters;
 using Temporalio.Extensions.WorkflowStreams;
 
 public static class Scenario
@@ -19,9 +18,10 @@ public static class Scenario
         await using (var streamClient = new WorkflowStreamClient(client, workflowId))
         {
             var seen = 0;
-            await foreach (var item in streamClient.Topic(Constants.TopicStatus).SubscribeAsync())
+            await foreach (var item in streamClient.
+                GetTopic<StageEvent>(Constants.TopicStatus).SubscribeAsync())
             {
-                var evt = Decode<StageEvent>(client, item);
+                var evt = item.Value;
                 nextOffset = item.Offset + 1;
                 Console.WriteLine($"offset={item.Offset}  stage={evt.Stage}");
                 if (++seen == 2)
@@ -35,9 +35,10 @@ public static class Scenario
         Console.WriteLine("--- phase 2: reconnected subscriber ---");
         await using (var streamClient = new WorkflowStreamClient(client, workflowId))
         {
-            await foreach (var item in streamClient.Topic(Constants.TopicStatus).SubscribeAsync(nextOffset))
+            await foreach (var item in streamClient.
+                GetTopic<StageEvent>(Constants.TopicStatus).SubscribeAsync(nextOffset))
             {
-                var evt = Decode<StageEvent>(client, item);
+                var evt = item.Value;
                 Console.WriteLine($"offset={item.Offset}  stage={evt.Stage}");
                 if (evt.Stage == "complete")
                 {
@@ -48,7 +49,4 @@ public static class Scenario
 
         Console.WriteLine($"Workflow result: {await handle.GetResultAsync()}");
     }
-
-    private static T Decode<T>(ITemporalClient client, WorkflowStreamItem item) =>
-        client.Options.DataConverter.PayloadConverter.ToValue<T>(item.Payload);
 }

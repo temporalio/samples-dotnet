@@ -14,8 +14,8 @@ public class OrderWorkflow
     [WorkflowRun]
     public async Task<string> RunAsync(OrderInput input)
     {
-        var status = stream.Topic(Constants.TopicStatus);
-        var progress = stream.Topic(Constants.TopicProgress);
+        var status = stream.GetTopic<StatusEvent>(Constants.TopicStatus);
+        var progress = stream.GetTopic<ProgressEvent>(Constants.TopicProgress);
 
         status.Publish(new StatusEvent("received", input.OrderId));
         var chargeId = await Workflow.ExecuteActivityAsync(

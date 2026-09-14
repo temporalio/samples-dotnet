@@ -11,7 +11,7 @@ public static class PaymentActivities
     {
         await using var streamClient = WorkflowStreamClient.FromActivity(
             new() { BatchInterval = TimeSpan.FromMilliseconds(200), });
-        var progress = streamClient.Topic(Constants.TopicProgress);
+        var progress = streamClient.GetTopic<ProgressEvent>(Constants.TopicProgress);
 
         progress.Publish(new ProgressEvent("charging card..."));
         ActivityExecutionContext.Current.Logger.LogInformation(

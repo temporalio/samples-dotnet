@@ -132,7 +132,9 @@ public class WorkflowStreamsTests : WorkflowEnvironmentTestBase
             long nextOffset = 0;
             await using (var firstClient = new WorkflowStreamClient(Client, workflowId))
             {
-                await foreach (var item in firstClient.Topic(Reconnecting.Constants.TopicStatus).SubscribeAsync())
+                await foreach (var item in firstClient.
+                    GetTopic<Reconnecting.StageEvent>(Reconnecting.Constants.TopicStatus).
+                    SubscribeAsync())
                 {
                     offsets.Add(item.Offset);
                     nextOffset = item.Offset + 1;
@@ -146,10 +148,12 @@ public class WorkflowStreamsTests : WorkflowEnvironmentTestBase
             var remainingStages = new List<string>();
             await using (var secondClient = new WorkflowStreamClient(Client, workflowId))
             {
-                await foreach (var item in secondClient.Topic(Reconnecting.Constants.TopicStatus).SubscribeAsync(nextOffset))
+                await foreach (var item in secondClient.
+                    GetTopic<Reconnecting.StageEvent>(Reconnecting.Constants.TopicStatus).
+                    SubscribeAsync(nextOffset))
                 {
                     offsets.Add(item.Offset);
-                    var stage = Decode<Reconnecting.StageEvent>(item).Stage;
+                    var stage = item.Value.Stage;
                     remainingStages.Add(stage);
                     if (stage == "complete")
                     {
@@ -180,13 +184,15 @@ public class WorkflowStreamsTests : WorkflowEnvironmentTestBase
                 new(workflowId, worker.Options.TaskQueue!));
             await using var subscriber = new WorkflowStreamClient(Client, workflowId);
             await using var publisher = new WorkflowStreamClient(Client, workflowId);
-            publisher.Topic(External.Constants.TopicNews).
+            publisher.GetTopic<External.NewsEvent>(External.Constants.TopicNews).
                 Publish(new External.NewsEvent("test headline"), forceFlush: true);
             await publisher.FlushAsync();
 
-            await foreach (var item in subscriber.Topic(External.Constants.TopicNews).SubscribeAsync())
+            await foreach (var item in subscriber.
+                GetTopic<External.NewsEvent>(External.Constants.TopicNews).
+                SubscribeAsync())
             {
-                Assert.Equal("test headline", Decode<External.NewsEvent>(item).Headline);
+                Assert.Equal("test headline", item.Value.Headline);
                 break;
             }
             await handle.SignalAsync(wf => wf.CloseAsync());
@@ -212,7 +218,9 @@ public class WorkflowStreamsTests : WorkflowEnvironmentTestBase
             await AssertMore.EventuallyAsync(async () =>
                 Assert.True(await streamClient.GetOffsetAsync() >= 10));
 
-            await foreach (var item in streamClient.Topic(Bounded.Constants.TopicTick).SubscribeAsync(1))
+            await foreach (var item in streamClient.
+                GetTopic<Bounded.TickEvent>(Bounded.Constants.TopicTick).
+                SubscribeAsync(1))
             {
                 Assert.True(item.Offset >= 5);
                 break;
