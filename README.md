@@ -53,6 +53,7 @@ Prerequisites:
 * [UpdateWithStartLazyInit](src/UpdateWithStartLazyInit) - Use update with start to lazily start a workflow before sending update.
 * [WorkerSpecificTaskQueues](src/WorkerSpecificTaskQueues) - Use a unique task queue per Worker to have certain Activities only run on that specific Worker.
 * [WorkerVersioning](src/WorkerVersioning) - How to use the Worker Versioning feature to more easily deploy changes to Workflow & other code.
+* [WorkflowStreams](src/WorkflowStreams) - Host a durable publish/subscribe stream inside a Workflow.
 * [WorkflowUpdate](src/WorkflowUpdate) - How to use the Workflow Update feature while blocking in update method for concurrent updates.
 
 ## Development

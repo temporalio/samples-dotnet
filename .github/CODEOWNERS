@@ -8,3 +8,7 @@
 # The Nexus team owns any folder whose name starts with "Nexus"
 /src/Nexus*/ @temporalio/nexus
 /tests/Nexus*/ @temporalio/nexus
+
+# SDK & AI SDK teams share ownership of Workflow Streams samples
+/src/WorkflowStreams/   @temporalio/sdk @temporalio/ai-sdk
+/tests/WorkflowStreams/ @temporalio/sdk @temporalio/ai-sdk
