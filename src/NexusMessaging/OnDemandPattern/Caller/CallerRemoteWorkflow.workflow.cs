@@ -18,6 +18,17 @@ public class CallerRemoteWorkflow
         var userIdOne = "user-one";
         var userIdTwo = "user-two";
 
+        // Attach information before the Workflow exists. Since AttachApprovalContext is backed
+        // by Signal-with-Start on the handler, this call creates the Workflow and delivers the
+        // note to it.
+        await client.ExecuteNexusOperationAsync(
+            svc => svc.AttachApprovalContext(new INexusRemoteGreetingService.AttachApprovalContextInput(
+                "queued for localization review by the nightly batch", userIdOne)));
+        log.Add($"Attached approval context before the workflow existed: {userIdOne}");
+
+        // The Workflow for this user is already running due to AttachApprovalContext. The handler
+        // sets the conflict policy to UseExisting, so this call attaches the Operation's
+        // completion callback to the running execution.
         var handleOne = await client.StartNexusOperationAsync(
             svc => svc.RunFromRemote(new INexusRemoteGreetingService.RunFromRemoteInput(userIdOne)));
         log.Add($"Started remote workflow for user: {userIdOne}");
@@ -25,6 +36,13 @@ public class CallerRemoteWorkflow
         var handleTwo = await client.StartNexusOperationAsync(
             svc => svc.RunFromRemote(new INexusRemoteGreetingService.RunFromRemoteInput(userIdTwo)));
         log.Add($"Started remote workflow for user: {userIdTwo}");
+
+        // This user's Workflow was created by RunFromRemote just above, so here Signal-with-Start
+        // skips the start and only delivers the Signal.
+        await client.ExecuteNexusOperationAsync(
+            svc => svc.AttachApprovalContext(new INexusRemoteGreetingService.AttachApprovalContextInput(
+                "translation approved by the localization team", userIdTwo)));
+        log.Add($"Attached approval context to the running workflow: {userIdTwo}");
 
         // Interact with workflow one: get languages, set language, approve
         var languagesOne = await client.ExecuteNexusOperationAsync(
