@@ -15,6 +15,7 @@ var assemblyName = typeof(TemporalClient).Assembly.GetName();
 
 var instanceId = args.ElementAtOrDefault(0) ?? throw new ArgumentException("Must pass 'worker' or 'workflow' as the single argument");
 
+// @@@SNIPSTART dotnet-cloud-run-otel
 var resourceBuilder = ResourceBuilder.
     CreateDefault().
     AddService("TemporalioSamples.OpenTelemetry", serviceInstanceId: instanceId);
@@ -68,6 +69,7 @@ connectOptions.Runtime = new TemporalRuntime(new TemporalRuntimeOptions()
     },
 });
 var client = await TemporalClient.ConnectAsync(connectOptions);
+// @@@SNIPEND
 
 async Task RunWorkerAsync()
 {
