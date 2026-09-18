@@ -1,4 +1,4 @@
-# Cloud Run WorkerPool: a polling Temporal worker + a Collector sidecar. Render placeholders with `envsubst` (see README) then `gcloud run worker-pools replace`. For Temporal Cloud, add TEMPORAL_API_KEY from a Secret Manager secretKeyRef.
+# Cloud Run WorkerPool: a Temporal Worker + a Collector sidecar. Render placeholders with `envsubst` (see README) then `gcloud run worker-pools replace`. For Temporal Cloud, add TEMPORAL_API_KEY from a Secret Manager secretKeyRef.
 apiVersion: run.googleapis.com/v1
 kind: WorkerPool
 metadata:
