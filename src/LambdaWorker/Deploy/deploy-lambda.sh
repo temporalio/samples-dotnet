@@ -66,7 +66,7 @@ else
   for attempt in {1..12}; do
     if CREATE_OUTPUT="$(aws lambda create-function \
       --function-name "$FUNCTION_NAME" \
-      --runtime dotnet8 \
+      --runtime dotnet10 \
       --handler TemporalioSamples.LambdaWorker.Worker::TemporalioSamples.LambdaWorker.Worker.LambdaFunction::HandlerAsync \
       --role "$EXECUTION_ROLE_ARN" \
       --architectures "$ARCHITECTURE" \
