@@ -1,10 +1,4 @@
-# Cloud Run WorkerPool: a continuously-polling Temporal worker + a Google-Built OpenTelemetry
-# Collector sidecar. Render placeholders with `envsubst` (see README) then apply with
-# `gcloud run worker-pools replace`.
-#
-# This sample connects to a Temporal server over TEMPORAL_ADDRESS with no API key / no TLS (e.g. a
-# local dev server exposed via an ngrok TCP tunnel). For Temporal Cloud, add a TEMPORAL_API_KEY env
-# var sourced from a Secret Manager secretKeyRef (see the Java/Python samples).
+# Cloud Run WorkerPool: a polling Temporal worker + a Collector sidecar. Render placeholders with `envsubst` (see README) then `gcloud run worker-pools replace`. For Temporal Cloud, add TEMPORAL_API_KEY from a Secret Manager secretKeyRef.
 apiVersion: run.googleapis.com/v1
 kind: WorkerPool
 metadata:

@@ -6,13 +6,9 @@ using Temporalio.Extensions.Gcp.CloudRun.OpenTelemetry;
 using Temporalio.Worker;
 using TemporalioSamples.Gcp.CloudRun.OpenTelemetry;
 
-// Build client connection options from environment configuration (TEMPORAL_ADDRESS,
-// TEMPORAL_NAMESPACE, TEMPORAL_API_KEY, ...). With no API key and no TLS block this connects in
-// plaintext, which is what a local dev server (reached over an ngrok TCP tunnel) needs.
+// Connect from environment config (TEMPORAL_ADDRESS, TEMPORAL_NAMESPACE, TEMPORAL_API_KEY, ...).
 var connectOptions = ClientEnvConfig.LoadClientConnectOptions();
 connectOptions.TargetHost ??= "localhost:7233";
-
-// Send all Temporal logs to stdout so Cloud Run captures them in Cloud Logging.
 connectOptions.LoggerFactory = LoggerFactory.Create(builder =>
     builder.
         AddSimpleConsole(options => options.TimestampFormat = "[HH:mm:ss] ").
@@ -20,9 +16,7 @@ connectOptions.LoggerFactory = LoggerFactory.Create(builder =>
 
 var taskQueue = Environment.GetEnvironmentVariable("TEMPORAL_TASK_QUEUE") ?? "cloud-run-worker";
 
-// The --starter mode runs a single workflow (useful for kicking off work locally against the same
-// server the deployed worker polls). Applying the defaults here too propagates a trace context into
-// the workflow so the deployed worker's spans join the same distributed trace.
+// --starter runs a single workflow, e.g. to kick off work against the same server the worker polls.
 if (args.Contains("--starter"))
 {
     using var starterTelemetry = connectOptions.ApplyGoogleCloudRunOpenTelemetryDefaults();
@@ -35,9 +29,8 @@ if (args.Contains("--starter"))
     return;
 }
 
-// Apply the Google Cloud Run OpenTelemetry defaults: adds the tracing interceptor and configures a
-// Temporal runtime that exports Core metrics + traces over OTLP to the local collector sidecar. The
-// returned handle owns the tracer provider and is flushed on shutdown.
+// Adds the tracing interceptor and a runtime exporting Core metrics + traces over OTLP to the
+// collector sidecar; the returned handle owns the tracer provider.
 using var telemetry = connectOptions.ApplyGoogleCloudRunOpenTelemetryDefaults();
 
 var client = await TemporalClient.ConnectAsync(connectOptions);
@@ -49,7 +42,7 @@ Console.CancelKeyPress += (_, eventArgs) =>
     cts.Cancel();
 };
 
-// Cloud Run signals shutdown with SIGTERM (about 10 seconds before SIGKILL).
+// Cloud Run sends SIGTERM ~10s before SIGKILL.
 using var sigterm = PosixSignalRegistration.Create(PosixSignal.SIGTERM, _ => cts.Cancel());
 
 using var worker = new TemporalWorker(
@@ -69,7 +62,6 @@ catch (OperationCanceledException)
     Console.WriteLine("Worker shutting down");
 }
 
-// Flush buffered traces within the Cloud Run shutdown grace window. Core metrics are exported
-// periodically by the runtime and have no explicit flush.
+// Flush traces within the shutdown grace window (Core metrics export periodically, no explicit flush).
 await telemetry.FlushAsync(TimeSpan.FromSeconds(2));
 Console.WriteLine("Worker stopped");

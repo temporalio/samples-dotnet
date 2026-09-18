@@ -18,7 +18,6 @@ Prerequisites:
 * [AspNet](src/AspNet) - Demonstration of a generic host worker and an ASP.NET workflow starter.
 * [Bedrock](src/Bedrock) - Orchestrate a chatbot with Amazon Bedrock.
 * [ClientMtls](src/ClientMtls) - How to use client certificate authentication, e.g. for Temporal Cloud.
-* [Gcp/CloudRun/OpenTelemetry](src/Gcp/CloudRun/OpenTelemetry) - Run a continuously-polling worker in a Google Cloud Run worker pool, exporting OpenTelemetry metrics and traces to a collector sidecar.
 * [ContextPropagation](src/ContextPropagation) - Context propagation via interceptors.
 * [CounterInterceptor](src/CounterInterceptor/) - Simple Workflow and Client Interceptors example.
 * [DependencyInjection](src/DependencyInjection) - How to inject dependencies in activities and use generic hosts for workers
@@ -26,6 +25,7 @@ Prerequisites:
 * [EagerWorkflowStart](src/EagerWorkflowStart) - Demonstrates usage of Eager Workflow Start to reduce latency for workflows that start with a local activity.
 * [Encryption](src/Encryption) - End-to-end encryption with Temporal payload codecs.
 * [EnvConfig](src/EnvConfig) - Load client configuration from TOML files with programmatic overrides
+* [Gcp/CloudRun/OpenTelemetry](src/Gcp/CloudRun/OpenTelemetry) - Run a polling worker on a Google Cloud Run worker pool, exporting OpenTelemetry metrics and traces to a collector sidecar.
 * [LambdaWorker](src/LambdaWorker) - Run a Temporal Worker inside an AWS Lambda function.
 * [Mutex](src/Mutex) - How to implement a mutex as a workflow. Demonstrates how to avoid race conditions or parallel mutually exclusive operations on the same resource.
 * [NexusCancellation](src/NexusCancellation) - Demonstrates how to cancel a running Nexus operation from a caller workflow.

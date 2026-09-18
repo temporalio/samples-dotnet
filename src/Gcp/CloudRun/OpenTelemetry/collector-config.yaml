@@ -1,9 +1,4 @@
-# Google-Built OpenTelemetry Collector config for the Cloud Run worker-pool sidecar.
-#   metrics -> Google Managed Service for Prometheus (googlemanagedprometheus)
-#   traces  -> Cloud Trace via the Telemetry API (OTLP), authenticated with the runtime SA (ADC)
-# The worker exports OTLP/gRPC to localhost:4317; the collector detects GCP resource attributes and
-# fans out. Auth uses the worker-pool service account's Application Default Credentials via the
-# googleclientauth extension (no key files).
+# Google-Built OpenTelemetry Collector config for the sidecar: metrics -> Managed Service for Prometheus, traces -> Cloud Trace. Auth via the worker-pool service account (ADC).
 receivers:
   otlp:
     protocols:
@@ -25,8 +20,7 @@ processors:
   resourcedetection:
     detectors: [gcp]
     timeout: 10s
-  # Rename Temporal datapoint labels that collide with the target labels Google Managed Service for
-  # Prometheus injects (e.g. Temporal emits a `namespace` label).
+  # Rename Temporal datapoint labels that collide with the target labels Managed Service for Prometheus injects (e.g. `namespace`).
   transform/collision:
     metric_statements:
       - context: datapoint
