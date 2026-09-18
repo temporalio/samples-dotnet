@@ -1,4 +1,4 @@
-<Project Sdk="Aspire.AppHost.Sdk/13.4.6">
+<Project Sdk="Aspire.AppHost.Sdk">
 
     <PropertyGroup>
         <OutputType>Exe</OutputType>
@@ -8,7 +8,6 @@
     </PropertyGroup>
     
     <ItemGroup>
-      <PackageReference Include="Aspire.Hosting.AppHost" />
       <PackageReference Include="TemporalCommunity.Aspire.Hosting" />
       <ProjectReference Include="..\TemporalioSamples.SampleClient\TemporalioSamples.SampleClient.csproj" />
       <ProjectReference Include="..\TemporalioSamples.SampleWorker\TemporalioSamples.SampleWorker.csproj" />
