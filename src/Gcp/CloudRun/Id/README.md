@@ -1,6 +1,6 @@
-# Cloud Run Worker Identity
+# Cloud Run Id
 
-Run a long-lived Temporal Worker on a
+Run a Temporal Worker on a
 [Google Cloud Run worker pool](https://cloud.google.com/run/docs/deploy-worker-pools) and derive its
 identity from Cloud Run instance metadata using the `Temporalio.Extensions.Gcp.CloudRun.Id` package.
 
@@ -36,7 +36,7 @@ gcloud run worker-pools deploy "$WORKER_POOL" --image "$WORKER_IMAGE" --region "
 ```
 
 Cloud Run sets `CLOUD_RUN_WORKER_POOL` and `CLOUD_RUN_REVISION`, which the plugin turns into the
-worker identity. The sample connects in plaintext; for Temporal Cloud add API key / mTLS to
+client identity. The sample connects in plaintext; for Temporal Cloud add API key / mTLS to
 `Program.cs`.
 
 ## Run a workflow

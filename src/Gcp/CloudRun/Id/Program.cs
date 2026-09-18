@@ -5,7 +5,7 @@ using Temporalio.Extensions.Gcp.CloudRun.Id;
 using Temporalio.Worker;
 using TemporalioSamples.Gcp.CloudRun.Id;
 
-// @@@SNIPSTART dotnet-cloud-run-worker-id
+// @@@SNIPSTART dotnet-cloud-run-id
 var address = GetEnvironmentVariable("TEMPORAL_ADDRESS") ?? "localhost:7233";
 var temporalNamespace = GetEnvironmentVariable("TEMPORAL_NAMESPACE") ?? "default";
 var taskQueue = GetEnvironmentVariable("TEMPORAL_TASK_QUEUE") ?? "cloud-run-worker-sample";
@@ -26,7 +26,7 @@ var clientOptions = new TemporalClientConnectOptions(address)
 var client = await TemporalClient.ConnectAsync(clientOptions);
 // @@@SNIPEND
 var metadata = await GoogleCloudRunMetadata.FetchAsync();
-logger.LogInformation("Cloud Run worker identity: {Identity}", metadata.Identity);
+logger.LogInformation("Cloud Run identity: {Identity}", metadata.Identity);
 
 var workerOptions = new TemporalWorkerOptions(taskQueue).
     AddWorkflow<SampleWorkflow>().
