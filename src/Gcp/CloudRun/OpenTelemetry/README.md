@@ -1,6 +1,6 @@
 # Cloud Run OpenTelemetry Worker
 
-Run a continuously-polling Temporal Worker on a
+Run a Temporal Worker on a
 [Google Cloud Run worker pool](https://cloud.google.com/run/docs/deploy-worker-pools) that exports
 Core SDK metrics and traces to a
 [Google-Built OpenTelemetry Collector](https://cloud.google.com/stackdriver/docs/instrumentation/opentelemetry-collector-cloud-run)
