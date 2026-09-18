@@ -8,7 +8,7 @@ identity from Cloud Run instance metadata using the `Temporalio.Extensions.Gcp.C
 time the plugin sets the client `Identity` to `{instanceId}@{revision}` from the Cloud Run metadata
 server and environment, and every Worker created from the client inherits it. A greeting workflow and
 activity poll the task queue until the container stops. Worker pools run instances that take no HTTP
-traffic, matching a polling Worker; the same code also works on a Cloud Run service.
+traffic, which suits a Temporal Worker; the same code also works on a Cloud Run service.
 
 > The extension is not on nuget.org yet, so the sample restores it from the committed
 > `local-packages/` feed (see `nuget.config`) until it ships.
