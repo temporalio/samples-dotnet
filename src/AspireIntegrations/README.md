@@ -17,7 +17,7 @@ This sample demonstrates how to use the `TemporalCommunity.Aspire.Hosting` NuGet
 ## Prerequisites
 
 ### Required
-- **[.NET SDK](https://dot.net)** 8.0 or later
+- **[.NET SDK](https://dot.net)** 10.0 or later
 - **[Aspire tooling](https://learn.microsoft.com/dotnet/aspire/fundamentals/setup-tooling)** 13.0 or later
 
 ### For Container-based Setup
