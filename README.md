@@ -30,9 +30,11 @@ Prerequisites:
 * [NexusCancellation](src/NexusCancellation) - Demonstrates how to cancel a running Nexus operation from a caller workflow.
 * [NexusContextPropagation](src/NexusContextPropagation) - Context propagation through Nexus services.
 * [NexusDependencyInjection](src/NexusDependencyInjection) - How to configure a Nexus service handler for dependency injection using a generic host worker.
-* [Nexus Messaging](src/NexusMessaging): Demonstrates how send signal, update and query messages through Nexus.
+* [Nexus Messaging](src/NexusMessaging): Demonstrates how to send signal, update and query messages through Nexus.
     This contains two samples, one sending messages to an existing workflow and a second that creates a workflow through Nexus
     and sends messages to it.
+* [Nexus Messaging V2](src/NexusMessagingV2): Demonstrates how to send signal, update and query messages through Nexus.
+  This version contains additional pre-release features.
 * [NexusMultiArg](src/NexusMultiArg) - Nexus service implementation calling a workflow with multiple arguments.
 * [NexusSimple](src/NexusSimple) - Simple Nexus service implementation.
 * [NexusStandaloneActivity](src/NexusStandaloneActivity) - Nexus Operation backed by a Standalone Activity.
