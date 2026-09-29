@@ -21,9 +21,6 @@ public interface INexusRemoteGreetingService
     [NexusOperation]
     void Approve(ApproveInput input);
 
-    [NexusOperation]
-    void AttachApprovalContext(AttachApprovalContextInput input);
-
     public record RunFromRemoteInput(string UserId);
 
     public record GetLanguagesInput(bool IncludeUnsupported, string UserId);
@@ -35,6 +32,4 @@ public interface INexusRemoteGreetingService
     public record SetLanguageInput(Language Language, string UserId);
 
     public record ApproveInput(string Name, string UserId);
-
-    public record AttachApprovalContextInput(string Note, string UserId);
 }

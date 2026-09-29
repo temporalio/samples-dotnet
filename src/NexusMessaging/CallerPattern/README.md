@@ -14,24 +14,19 @@ The caller Workflow:
 
 ### Running
 
-This sample requires a Temporal dev server build that supports Workflow Update callbacks. Download
-the compatible binary from the [Temporal CLI pre-release instructions](https://docs.temporal.io/standalone-nexus-operation#temporal-cli-support).
-
-Start the Temporal dev server with the required namespaces pre-created and Workflow Update
-callbacks enabled:
+Start a Temporal server:
 
 ```bash
-./temporal server start-dev \
-  --dynamic-config-value history.enableUpdateCallbacks=true \
-  --dynamic-config-value history.enableCHASMSignalBacklinks=true \
-  --namespace nexus-messaging-handler-namespace \
-  --namespace nexus-messaging-caller-namespace
+temporal server start-dev
 ```
 
-Create the Nexus endpoint:
+Create the namespaces and Nexus endpoint:
 
 ```bash
-./temporal operator nexus endpoint create \
+temporal operator namespace create --namespace nexus-messaging-handler-namespace
+temporal operator namespace create --namespace nexus-messaging-caller-namespace
+
+temporal operator nexus endpoint create \
   --name nexus-messaging-caller-pattern-endpoint \
   --target-namespace nexus-messaging-handler-namespace \
   --target-task-queue nexus-messaging-handler-sample
@@ -53,13 +48,4 @@ In a third terminal, run the following command to start the example:
 
 ```bash
 dotnet run --project src/NexusMessaging -- caller-workflow
-```
-
-Expected output:
-
-```
-Supported languages: Chinese, English
-Current language: English
-Set language from English to Chinese
-Approved workflow
 ```

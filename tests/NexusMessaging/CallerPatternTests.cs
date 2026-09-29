@@ -1,7 +1,6 @@
 namespace TemporalioSamples.Tests.NexusMessaging;
 
 using Temporalio.Client;
-using Temporalio.Testing;
 using Temporalio.Worker;
 using TemporalioSamples.NexusMessaging.CallerPattern.Caller;
 using TemporalioSamples.NexusMessaging.CallerPattern.Handler;
@@ -9,40 +8,23 @@ using TemporalioSamples.NexusMessaging.Common;
 using Xunit;
 using Xunit.Abstractions;
 
-public class CallerPatternTests : TestBase
+public class CallerPatternTests : WorkflowEnvironmentTestBase
 {
-    public CallerPatternTests(ITestOutputHelper output)
-        : base(output)
+    public CallerPatternTests(ITestOutputHelper output, WorkflowEnvironment env)
+        : base(output, env)
     {
     }
 
     [Fact]
     public async Task RunAsync_CallerWorkflow_Succeeds()
     {
-        // SetLanguage is backed by a Workflow Update, which needs a dev server build that supports
-        // update callbacks.
-        await using var env = await WorkflowEnvironment.StartLocalAsync(new()
-        {
-            DevServerOptions = new()
-            {
-                DownloadVersion = "v1.7.4-standalone-nexus-operations",
-                ExtraArgs =
-                [
-                    "--dynamic-config-value",
-                    "history.enableUpdateCallbacks=true",
-                    "--dynamic-config-value",
-                    "history.enableCHASMSignalBacklinks=true",
-                ],
-            },
-        });
-
         var handlerTaskQueue = $"tq-{Guid.NewGuid()}";
-        await env.CreateNexusEndpointAsync(NexusEndpoints.GreetingService, handlerTaskQueue);
+        await Env.TestEnv.CreateNexusEndpointAsync(NexusEndpoints.GreetingService, handlerTaskQueue);
         var userId = $"user-{Guid.NewGuid()}";
         var workflowId = $"GreetingWorkflow_for_{userId}";
 
         // Start entity workflow
-        await env.Client.StartWorkflowAsync(
+        await Client.StartWorkflowAsync(
             (GreetingWorkflow wf) => wf.RunAsync(userId),
             new(id: workflowId, taskQueue: handlerTaskQueue)
             {
@@ -51,7 +33,7 @@ public class CallerPatternTests : TestBase
 
         // Run handler worker
         using var handlerWorker = new TemporalWorker(
-            env.Client,
+            Client,
             new TemporalWorkerOptions(handlerTaskQueue).
                 AddNexusService(new NexusGreetingService()).
                 AddWorkflow<GreetingWorkflow>().
@@ -60,12 +42,12 @@ public class CallerPatternTests : TestBase
         {
             // Run caller worker
             using var callerWorker = new TemporalWorker(
-                env.Client,
+                Client,
                 new TemporalWorkerOptions($"tq-{Guid.NewGuid()}").
                     AddWorkflow<CallerWorkflow>());
             await callerWorker.ExecuteAsync(async () =>
             {
-                var result = await env.Client.ExecuteWorkflowAsync(
+                var result = await Client.ExecuteWorkflowAsync(
                     (CallerWorkflow wf) => wf.RunAsync(userId),
                     new(id: $"wf-{Guid.NewGuid()}", taskQueue: callerWorker.Options.TaskQueue!));
 
