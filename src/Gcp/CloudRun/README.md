@@ -14,9 +14,6 @@ Cloud Run extensions together:
 `ApplyGoogleCloudRunOpenTelemetryDefaults()`, which adds the tracing interceptor and an OTLP exporter
 aimed at the sidecar, then runs a greeting workflow and activity until SIGTERM.
 
-> The extensions are not on nuget.org yet, so the sample restores them from the committed
-> `local-packages/` feed (see `nuget.config`) until they ship.
-
 ## Prerequisites
 
 - A Temporal server the worker pool can reach (`TEMPORAL_ADDRESS` / `TEMPORAL_NAMESPACE`)
