@@ -33,6 +33,7 @@ export WORKER_IMAGE=$REGION-docker.pkg.dev/$(gcloud config get-value project)/sa
 export TEMPORAL_ADDRESS=<host:7233> TEMPORAL_NAMESPACE=<namespace> TEMPORAL_TASK_QUEUE=cloud-run-worker
 export COLLECTOR_CONFIG_SECRET=otel-collector-config COLLECTOR_CONFIG_SECRET_VERSION=latest
 
+gcloud artifacts repositories create samples --repository-format=docker --location "$REGION"
 docker build -f src/Gcp/CloudRun/Dockerfile -t "$WORKER_IMAGE" . && docker push "$WORKER_IMAGE"
 gcloud secrets create "$COLLECTOR_CONFIG_SECRET" --data-file=src/Gcp/CloudRun/collector-config.yaml
 
