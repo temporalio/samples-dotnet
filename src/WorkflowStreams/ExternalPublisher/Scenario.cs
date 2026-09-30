@@ -18,6 +18,7 @@ public static class Scenario
         var handle = await client.StartWorkflowAsync(
             (HubWorkflow wf) => wf.RunAsync(new HubInput("newsroom", null)),
             new(workflowId, Constants.TaskQueue));
+        var initialRunId = handle.FirstExecutionRunId;
         Console.WriteLine($"Started workflow: {workflowId}");
 
         async Task SubscribeAsync()
@@ -39,10 +40,21 @@ public static class Scenario
         {
             await using var streamClient = new WorkflowStreamClient(client, workflowId);
             var news = streamClient.GetTopic<NewsEvent>(Constants.TopicNews);
-            foreach (var headline in Headlines)
+            for (var index = 0; index < Headlines.Length; index++)
             {
+                var headline = Headlines[index];
                 news.Publish(new NewsEvent(headline));
                 Console.WriteLine($"[publisher]  sent: {headline}");
+                if (index == 0)
+                {
+                    await streamClient.FlushAsync();
+                    await handle.SignalAsync(wf => wf.ContinueAsNewAsync());
+                    while ((await handle.DescribeAsync()).RunId == initialRunId)
+                    {
+                        await Task.Delay(TimeSpan.FromMilliseconds(100));
+                    }
+                    Console.WriteLine("[publisher]  workflow continued as new");
+                }
                 await Task.Delay(TimeSpan.FromMilliseconds(500));
             }
             news.Publish(new NewsEvent(Constants.DoneHeadline), forceFlush: true);

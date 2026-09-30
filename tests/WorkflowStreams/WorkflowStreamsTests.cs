@@ -170,7 +170,7 @@ public class WorkflowStreamsTests : WorkflowEnvironmentTestBase
     }
 
     [Fact]
-    public async Task ExternalPublisher_PublishesAndClosesHub()
+    public async Task ExternalPublisher_FollowsContinueAsNewAndClosesHub()
     {
         using var worker = new TemporalWorker(
             Client,
@@ -182,19 +182,30 @@ public class WorkflowStreamsTests : WorkflowEnvironmentTestBase
                 (External.HubWorkflow wf) =>
                     wf.RunAsync(new External.HubInput("test-hub", null)),
                 new(workflowId, worker.Options.TaskQueue!));
+            var initialRunId = handle.FirstExecutionRunId;
             await using var subscriber = new WorkflowStreamClient(Client, workflowId);
             await using var publisher = new WorkflowStreamClient(Client, workflowId);
-            publisher.GetTopic<External.NewsEvent>(External.Constants.TopicNews).
-                Publish(new External.NewsEvent("test headline"), forceFlush: true);
-            await publisher.FlushAsync();
-
-            await foreach (var item in subscriber.
+            var topic = publisher.GetTopic<External.NewsEvent>(External.Constants.TopicNews);
+            await using var subscription = subscriber.
                 GetTopic<External.NewsEvent>(External.Constants.TopicNews).
-                SubscribeAsync())
-            {
-                Assert.Equal("test headline", item.Value.Headline);
-                break;
-            }
+                SubscribeAsync().GetAsyncEnumerator();
+
+            topic.Publish(new External.NewsEvent("before continue-as-new"), forceFlush: true);
+            await publisher.FlushAsync();
+            Assert.True(await subscription.MoveNextAsync());
+            Assert.Equal("before continue-as-new", subscription.Current.Value.Headline);
+
+            var waitingMove = subscription.MoveNextAsync().AsTask();
+            await handle.SignalAsync(wf => wf.ContinueAsNewAsync());
+            await AssertMore.EventuallyAsync(async () =>
+                Assert.NotEqual(initialRunId, (await handle.DescribeAsync()).RunId));
+
+            topic.Publish(new External.NewsEvent("after continue-as-new"), forceFlush: true);
+            await publisher.FlushAsync();
+            Assert.True(await waitingMove);
+            Assert.Equal("after continue-as-new", subscription.Current.Value.Headline);
+            Assert.Equal(1, subscription.Current.Offset);
+
             await handle.SignalAsync(wf => wf.CloseAsync());
             Assert.Equal("hub test-hub closed", await handle.GetResultAsync());
         });
