@@ -6,15 +6,22 @@ updates:
       interval: "weekly"
     cooldown:
       default-days: 14
+    # The samples pin package versions and a routine bump doesn't change what they
+    # demonstrate, so versions are raised by hand when a sample needs a newer package.
+    # Security updates are exempt from this limit.
+    open-pull-requests-limit: 0
+    # With version updates disabled, a group can only ever apply to security updates.
     groups:
       # The Microsoft.Extensions.* packages share release cadence and are bumped
       # together in a single PR.
       microsoft-extensions:
+        applies-to: security-updates
         patterns:
           - "Microsoft.Extensions.*"
       # The official xunit packages share release cadence and are bumped
       # together in a single PR.
       xunit:
+        applies-to: security-updates
         patterns:
           - "xunit"
           - "xunit.console"
@@ -22,23 +29,9 @@ updates:
       # The Temporalio packages ship together as one SDK release and share a
       # version, so they are bumped together in a single PR.
       temporalio:
+        applies-to: security-updates
         patterns:
           - "Temporalio*"
-    ignore:
-      # Aspire packages are bumped manually in lock-step with the Aspire.AppHost.Sdk
-      # version, which Dependabot can't update. Security updates still flow through.
-      - dependency-name: "Aspire*"
-        update-types:
-          - "version-update:semver-major"
-          - "version-update:semver-minor"
-          - "version-update:semver-patch"
-      # AWS SDK packages update very frequently; the samples do not require
-      # the latest versions. Security updates still flow through.
-      - dependency-name: "AWSSDK.BedrockRuntime"
-        update-types:
-          - "version-update:semver-major"
-          - "version-update:semver-minor"
-          - "version-update:semver-patch"
   - package-ecosystem: "github-actions"
     directory: "/"
     schedule:

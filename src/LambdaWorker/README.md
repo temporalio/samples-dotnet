@@ -17,7 +17,7 @@ included in the Lambda deployment package.
 - The Temporal CLI
 - AWS CLI credentials with permission to manage Lambda, IAM, CloudFormation,
   CloudWatch Logs, CloudWatch metrics, and X-Ray in the target account
-- .NET 8, `zip`, and `openssl`
+- .NET 10 SDK, `zip`, and `openssl`
 - An ADOT Collector Lambda layer ARN for the target region and architecture;
   see the
   [ADOT Lambda documentation](https://aws-otel.github.io/docs/getting-started/lambda#getting-started-with-aws-lambda-layers)

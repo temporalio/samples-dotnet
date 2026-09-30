@@ -6,14 +6,11 @@
 
   <ItemGroup>
     <PackageVersion Include="Amazon.Lambda.Core" Version="3.1.0" />
-    <PackageVersion Include="Aspire.Hosting.AppHost" Version="13.4.6" />
     <PackageVersion Include="AWSSDK.BedrockRuntime" Version="4.0.100" />
     <PackageVersion Include="coverlet.collector" Version="10.0.1" />
     <PackageVersion Include="MartinCostello.Logging.XUnit" Version="0.7.1" />
-    <PackageVersion Include="Microsoft.AspNetCore.Mvc.Testing" Version="8.0.28" />
-    <PackageVersion Include="Microsoft.Extensions.Hosting" Version="10.0.10" />
-    <PackageVersion Include="Microsoft.Extensions.Logging" Version="10.0.10" />
-    <PackageVersion Include="Microsoft.Extensions.Logging.Console" Version="10.0.10" />
+    <PackageVersion Include="Microsoft.AspNetCore.Mvc.Testing" Version="10.0.10" />
+    <PackageVersion Include="Microsoft.Extensions.Hosting" Version="10.0.11" />
     <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="18.7.0" />
     <PackageVersion Include="Microsoft.VisualStudio.Threading.Analyzers" Version="18.7.23" />
     <PackageVersion Include="NexusRpc" Version="0.4.0" />
@@ -21,13 +18,13 @@
     <PackageVersion Include="OpenTelemetry.Exporter.OpenTelemetryProtocol" Version="1.16.0" />
     <PackageVersion Include="StyleCop.Analyzers" Version="1.2.0-beta.435" />
     <PackageVersion Include="System.CommandLine" Version="2.0.0-beta4.22272.1" />
-    <PackageVersion Include="Temporalio" Version="1.19.0" />
-    <PackageVersion Include="Temporalio.Extensions.Aws.Lambda" Version="1.18.0" />
-    <PackageVersion Include="Temporalio.Extensions.Aws.Lambda.OpenTelemetry" Version="1.18.0" />
-    <PackageVersion Include="Temporalio.Extensions.DiagnosticSource" Version="1.18.0" />
-    <PackageVersion Include="Temporalio.Extensions.Hosting" Version="1.18.0" />
-    <PackageVersion Include="Temporalio.Extensions.OpenTelemetry" Version="1.18.0" />
-    <PackageVersion Include="Temporalio.Extensions.WorkflowStreams" Version="1.19.0" />
+    <PackageVersion Include="Temporalio" Version="1.20.0" />
+    <PackageVersion Include="Temporalio.Extensions.Aws.Lambda" Version="1.20.0" />
+    <PackageVersion Include="Temporalio.Extensions.Aws.Lambda.OpenTelemetry" Version="1.20.0" />
+    <PackageVersion Include="Temporalio.Extensions.DiagnosticSource" Version="1.20.0" />
+    <PackageVersion Include="Temporalio.Extensions.Hosting" Version="1.20.0" />
+    <PackageVersion Include="Temporalio.Extensions.OpenTelemetry" Version="1.20.0" />
+    <PackageVersion Include="Temporalio.Extensions.WorkflowStreams" Version="1.20.0" />
     <PackageVersion Include="TemporalCommunity.Aspire.Hosting" Version="0.1.0" />
     <PackageVersion Include="xunit" Version="2.9.3" />
     <PackageVersion Include="xunit.console" Version="2.9.3" />
