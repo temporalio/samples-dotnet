@@ -1,9 +1,9 @@
-namespace TemporalioSamples.NexusMessaging.OnDemandPattern.Handler;
+namespace TemporalioSamples.NexusMessagingTemporalOperation.OnDemandPattern.Handler;
 
 using Temporalio.Exceptions;
 using Temporalio.Workflows;
-using TemporalioSamples.NexusMessaging.Common;
-using TemporalioSamples.NexusMessaging.OnDemandPattern;
+using TemporalioSamples.NexusMessagingTemporalOperation.Common;
+using TemporalioSamples.NexusMessagingTemporalOperation.OnDemandPattern;
 
 [Workflow]
 public class GreetingWorkflow
@@ -17,6 +17,7 @@ public class GreetingWorkflow
     private Language currentLanguage = Language.English;
     private bool approved;
     private string approvedBy = string.Empty;
+    private string? approvalContext;
 
     [WorkflowRun]
     public async Task<string> RunAsync(string userId)
@@ -77,6 +78,13 @@ public class GreetingWorkflow
     {
         approved = true;
         approvedBy = name;
+        return Task.CompletedTask;
+    }
+
+    [WorkflowSignal]
+    public Task AttachApprovalContextAsync(string note)
+    {
+        approvalContext = note;
         return Task.CompletedTask;
     }
 }
