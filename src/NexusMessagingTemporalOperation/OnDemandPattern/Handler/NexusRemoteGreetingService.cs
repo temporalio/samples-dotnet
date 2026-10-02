@@ -1,11 +1,11 @@
-namespace TemporalioSamples.NexusMessagingV2.OnDemandPattern.Handler;
+namespace TemporalioSamples.NexusMessagingTemporalOperation.OnDemandPattern.Handler;
 
 using NexusRpc.Handlers;
 using Temporalio.Api.Enums.V1;
 using Temporalio.Client;
 using Temporalio.Nexus;
-using TemporalioSamples.NexusMessagingV2.Common;
-using TemporalioSamples.NexusMessagingV2.OnDemandPattern;
+using TemporalioSamples.NexusMessagingTemporalOperation.Common;
+using TemporalioSamples.NexusMessagingTemporalOperation.OnDemandPattern;
 
 // On-demand pattern: no workflow is pre-started. The caller creates workflow instances
 // through Nexus operations. Each operation includes a UserId so the handler can derive

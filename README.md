@@ -33,8 +33,8 @@ Prerequisites:
 * [Nexus Messaging](src/NexusMessaging): Demonstrates how to send signal, update and query messages through Nexus.
     This contains two samples, one sending messages to an existing workflow and a second that creates a workflow through Nexus
     and sends messages to it.
-* [Nexus Messaging V2](src/NexusMessagingV2): Demonstrates how to send signal, update and query messages through Nexus.
-  This version contains additional pre-release features.
+* [Nexus Messaging Temporal Operation](src/NexusMessagingTemporalOperation): Demonstrates how to send signal, update and query messages through Nexus.
+  This version uses the `[TemporalOperation]` attribute to declare a Temporal-backed Nexus operation start handler directly on a method within a `[NexusServiceHandler]` class.
 * [NexusMultiArg](src/NexusMultiArg) - Nexus service implementation calling a workflow with multiple arguments.
 * [NexusSimple](src/NexusSimple) - Simple Nexus service implementation.
 * [NexusStandaloneActivity](src/NexusStandaloneActivity) - Nexus Operation backed by a Standalone Activity.

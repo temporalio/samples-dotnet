@@ -1,11 +1,14 @@
-namespace TemporalioSamples.NexusMessagingV2.CallerPattern;
+namespace TemporalioSamples.NexusMessagingTemporalOperation.OnDemandPattern;
 
 using NexusRpc;
-using TemporalioSamples.NexusMessagingV2.Common;
+using TemporalioSamples.NexusMessagingTemporalOperation.Common;
 
 [NexusService]
-public interface INexusGreetingService
+public interface INexusRemoteGreetingService
 {
+    [NexusOperation]
+    string RunFromRemote(RunFromRemoteInput input);
+
     [NexusOperation]
     GetLanguagesOutput GetLanguages(GetLanguagesInput input);
 
@@ -18,6 +21,11 @@ public interface INexusGreetingService
     [NexusOperation]
     void Approve(ApproveInput input);
 
+    [NexusOperation]
+    void AttachApprovalContext(AttachApprovalContextInput input);
+
+    public record RunFromRemoteInput(string UserId);
+
     public record GetLanguagesInput(bool IncludeUnsupported, string UserId);
 
     public record GetLanguagesOutput(IReadOnlyList<Language> Languages);
@@ -27,4 +35,6 @@ public interface INexusGreetingService
     public record SetLanguageInput(Language Language, string UserId);
 
     public record ApproveInput(string Name, string UserId);
+
+    public record AttachApprovalContextInput(string Note, string UserId);
 }

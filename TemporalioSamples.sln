@@ -145,7 +145,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "NexusStandaloneActivity", "
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TemporalioSamples.NexusStandaloneActivity", "src\NexusStandaloneActivity\TemporalioSamples.NexusStandaloneActivity.csproj", "{4D8C9F9B-F8E3-4160-9286-32C3966A0125}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TemporalioSamples.NexusMessagingV2", "src\NexusMessagingV2\TemporalioSamples.NexusMessagingV2.csproj", "{02BFCAD9-F6E2-42FA-AA7F-264515D6D158}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TemporalioSamples.NexusMessagingTemporalOperation", "src\NexusMessagingTemporalOperation\TemporalioSamples.NexusMessagingTemporalOperation.csproj", "{02BFCAD9-F6E2-42FA-AA7F-264515D6D158}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

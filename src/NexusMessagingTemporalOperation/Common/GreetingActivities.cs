@@ -1,4 +1,4 @@
-namespace TemporalioSamples.NexusMessagingV2.Common;
+namespace TemporalioSamples.NexusMessagingTemporalOperation.Common;
 
 using Temporalio.Activities;
 

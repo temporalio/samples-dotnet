@@ -47,7 +47,7 @@
     <ProjectReference Include="..\src\StandaloneActivity\TemporalioSamples.StandaloneActivity.csproj" />
     <ProjectReference Include="..\src\NexusMessaging\TemporalioSamples.NexusMessaging.csproj" />
     <ProjectReference Include="..\src\SearchAttributes\TemporalioSamples.SearchAttributes.csproj" />
-    <ProjectReference Include="..\src\NexusMessagingV2\TemporalioSamples.NexusMessagingV2.csproj" />
+    <ProjectReference Include="..\src\NexusMessagingTemporalOperation\TemporalioSamples.NexusMessagingTemporalOperation.csproj" />
   </ItemGroup>
 
 </Project>

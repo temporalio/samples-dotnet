@@ -44,19 +44,19 @@ Create the Nexus endpoint:
 In one terminal, start the handler worker:
 
 ```bash
-dotnet run --project src/NexusMessagingV2 -- remote-handler-worker
+dotnet run --project src/NexusMessagingTemporalOperation -- remote-handler-worker
 ```
 
 In a second terminal, start the caller worker:
 
 ```bash
-dotnet run --project src/NexusMessagingV2 -- remote-caller-worker
+dotnet run --project src/NexusMessagingTemporalOperation -- remote-caller-worker
 ```
 
 In a third terminal, run the following command to start the example:
 
 ```bash
-dotnet run --project src/NexusMessagingV2 -- remote-caller-workflow
+dotnet run --project src/NexusMessagingTemporalOperation -- remote-caller-workflow
 ```
 
 Expected output:

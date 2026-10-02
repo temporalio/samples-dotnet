@@ -1,4 +1,4 @@
-namespace TemporalioSamples.NexusMessagingV2.CallerPattern.Caller;
+namespace TemporalioSamples.NexusMessagingTemporalOperation.CallerPattern.Caller;
 
 public static class NexusEndpoints
 {

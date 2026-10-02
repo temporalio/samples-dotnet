@@ -1,11 +1,11 @@
-namespace TemporalioSamples.Tests.NexusMessagingV2;
+namespace TemporalioSamples.Tests.NexusMessagingTemporalOperation;
 
 using Temporalio.Client;
 using Temporalio.Testing;
 using Temporalio.Worker;
-using TemporalioSamples.NexusMessagingV2.Common;
-using TemporalioSamples.NexusMessagingV2.OnDemandPattern.Caller;
-using TemporalioSamples.NexusMessagingV2.OnDemandPattern.Handler;
+using TemporalioSamples.NexusMessagingTemporalOperation.Common;
+using TemporalioSamples.NexusMessagingTemporalOperation.OnDemandPattern.Caller;
+using TemporalioSamples.NexusMessagingTemporalOperation.OnDemandPattern.Handler;
 using Xunit;
 using Xunit.Abstractions;
 

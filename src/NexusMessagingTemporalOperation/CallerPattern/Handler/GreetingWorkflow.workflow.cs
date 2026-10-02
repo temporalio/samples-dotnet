@@ -1,9 +1,9 @@
-namespace TemporalioSamples.NexusMessagingV2.CallerPattern.Handler;
+namespace TemporalioSamples.NexusMessagingTemporalOperation.CallerPattern.Handler;
 
 using Temporalio.Exceptions;
 using Temporalio.Workflows;
-using TemporalioSamples.NexusMessagingV2.CallerPattern;
-using TemporalioSamples.NexusMessagingV2.Common;
+using TemporalioSamples.NexusMessagingTemporalOperation.CallerPattern;
+using TemporalioSamples.NexusMessagingTemporalOperation.Common;
 
 [Workflow]
 public class GreetingWorkflow

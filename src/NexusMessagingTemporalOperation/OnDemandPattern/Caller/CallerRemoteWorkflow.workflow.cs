@@ -1,8 +1,8 @@
-namespace TemporalioSamples.NexusMessagingV2.OnDemandPattern.Caller;
+namespace TemporalioSamples.NexusMessagingTemporalOperation.OnDemandPattern.Caller;
 
 using Temporalio.Workflows;
-using TemporalioSamples.NexusMessagingV2.Common;
-using TemporalioSamples.NexusMessagingV2.OnDemandPattern;
+using TemporalioSamples.NexusMessagingTemporalOperation.Common;
+using TemporalioSamples.NexusMessagingTemporalOperation.OnDemandPattern;
 
 [Workflow]
 public class CallerRemoteWorkflow

@@ -1,10 +1,10 @@
-namespace TemporalioSamples.NexusMessagingV2.CallerPattern.Handler;
+namespace TemporalioSamples.NexusMessagingTemporalOperation.CallerPattern.Handler;
 
 using NexusRpc.Handlers;
 using Temporalio.Client;
 using Temporalio.Nexus;
-using TemporalioSamples.NexusMessagingV2.CallerPattern;
-using TemporalioSamples.NexusMessagingV2.Common;
+using TemporalioSamples.NexusMessagingTemporalOperation.CallerPattern;
+using TemporalioSamples.NexusMessagingTemporalOperation.Common;
 
 // Entity pattern: the handler worker pre-starts a GreetingWorkflow per user at boot time.
 // This service routes each Nexus operation to that existing workflow by deriving the

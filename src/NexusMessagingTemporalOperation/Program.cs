@@ -2,13 +2,13 @@ using Microsoft.Extensions.Logging;
 using Temporalio.Client;
 using Temporalio.Common.EnvConfig;
 using Temporalio.Worker;
-using TemporalioSamples.NexusMessagingV2.CallerPattern.Caller;
-using TemporalioSamples.NexusMessagingV2.CallerPattern.Handler;
-using TemporalioSamples.NexusMessagingV2.Common;
-using TemporalioSamples.NexusMessagingV2.OnDemandPattern.Caller;
-using CallerGreetingWorkflow = TemporalioSamples.NexusMessagingV2.CallerPattern.Handler.GreetingWorkflow;
-using OnDemandGreetingWorkflow = TemporalioSamples.NexusMessagingV2.OnDemandPattern.Handler.GreetingWorkflow;
-using OnDemandNexusService = TemporalioSamples.NexusMessagingV2.OnDemandPattern.Handler.NexusRemoteGreetingService;
+using TemporalioSamples.NexusMessagingTemporalOperation.CallerPattern.Caller;
+using TemporalioSamples.NexusMessagingTemporalOperation.CallerPattern.Handler;
+using TemporalioSamples.NexusMessagingTemporalOperation.Common;
+using TemporalioSamples.NexusMessagingTemporalOperation.OnDemandPattern.Caller;
+using CallerGreetingWorkflow = TemporalioSamples.NexusMessagingTemporalOperation.CallerPattern.Handler.GreetingWorkflow;
+using OnDemandGreetingWorkflow = TemporalioSamples.NexusMessagingTemporalOperation.OnDemandPattern.Handler.GreetingWorkflow;
+using OnDemandNexusService = TemporalioSamples.NexusMessagingTemporalOperation.OnDemandPattern.Handler.NexusRemoteGreetingService;
 
 using var loggerFactory = LoggerFactory.Create(builder =>
     builder.
