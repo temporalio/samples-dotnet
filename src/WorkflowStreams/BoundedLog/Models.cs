@@ -7,6 +7,7 @@ public record TickerInput(
     int KeepLast = 10,
     int TruncateEvery = 5,
     TimeSpan? Interval = null,
-    WorkflowStreamState? StreamState = null);
+    WorkflowStreamState? StreamState = null,
+    int ExpectedSubscribers = 2);
 
 public record TickEvent(int N);

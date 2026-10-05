@@ -32,6 +32,7 @@ public static class Scenario
                     break;
                 }
             }
+            await handle.SignalAsync(wf => wf.SubscriberCompleteAsync("fast"));
         }
 
         async Task LateSubscriberAsync()
@@ -62,6 +63,7 @@ public static class Scenario
                     break;
                 }
             }
+            await handle.SignalAsync(wf => wf.SubscriberCompleteAsync("late"));
         }
 
         await Task.WhenAll(FastSubscriberAsync(), LateSubscriberAsync());

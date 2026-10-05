@@ -27,7 +27,9 @@ public static class Scenario
 #pragma warning restore CA2000
             workflowHandles.Add(workflowHandle);
             streamClients.Add(streamClient);
-            subscriptions.Add(RenderSubscriptionAsync(streamClient, client, orderId));
+            var payloadConverter = client.Options.DataConverter.WithSerializationContext(
+                new ISerializationContext.Workflow(client.Options.Namespace, workflowId)).PayloadConverter;
+            subscriptions.Add(RenderSubscriptionAsync(streamClient, payloadConverter, orderId));
         }
 
         try
@@ -50,7 +52,7 @@ public static class Scenario
 
     private static async Task RenderSubscriptionAsync(
         WorkflowStreamClient streamClient,
-        ITemporalClient client,
+        IPayloadConverter payloadConverter,
         string orderId)
     {
         await foreach (var item in streamClient.SubscribeAsync(new()
@@ -65,17 +67,14 @@ public static class Scenario
             if (item.Topic == Constants.TopicStatus)
             {
                 Console.WriteLine(
-                    $"[{orderId}] [status]   {Decode<StatusEvent>(client, item).Kind}");
+                    $"[{orderId}] [status]   {payloadConverter.ToValue<StatusEvent>(item.Payload).Kind}");
             }
             else if (item.Topic == Constants.TopicProgress)
             {
                 Console.WriteLine(
-                    $"[{orderId}] [progress] {Decode<ProgressEvent>(client, item).Message}");
+                    $"[{orderId}] [progress] {payloadConverter.ToValue<ProgressEvent>(item.Payload).Message}");
             }
         }
         Console.WriteLine($"[{orderId}] stream completed");
     }
-
-    private static T Decode<T>(ITemporalClient client, WorkflowStreamItem item) =>
-        client.Options.DataConverter.PayloadConverter.ToValue<T>(item.Payload);
 }

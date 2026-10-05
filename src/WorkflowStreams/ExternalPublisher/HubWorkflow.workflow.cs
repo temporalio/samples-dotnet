@@ -25,6 +25,9 @@ public class HubWorkflow
                 (HubWorkflow wf) => wf.RunAsync(new(input.HubId, streamState)));
         }
 
+        // Poll Updates cannot read the stream after this Workflow closes. This delay is a
+        // stopgap that gives active subscribers time to fetch the final events; it does not
+        // guarantee delivery to slow subscribers. Use subscriber acknowledgements when needed.
         await Workflow.DelayAsync(Constants.DrainDelay);
         return $"hub {input.HubId} closed";
     }

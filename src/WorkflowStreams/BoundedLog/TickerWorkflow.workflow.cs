@@ -7,6 +7,7 @@ using Temporalio.Workflows;
 public class TickerWorkflow
 {
     private readonly WorkflowStream stream;
+    private readonly SortedSet<string> completedSubscribers = new(StringComparer.Ordinal);
 
     [WorkflowInit]
     public TickerWorkflow(TickerInput input) => stream = new(input.StreamState);
@@ -32,7 +33,15 @@ public class TickerWorkflow
             }
         }
 
-        await Workflow.DelayAsync(Constants.DrainDelay);
+        // Keep poll Updates available until all expected subscribers acknowledge the final
+        // tick. The timeout lets the Workflow finish if a subscriber never connects or fails.
+        await Workflow.WaitConditionAsync(
+            () => completedSubscribers.Count >= input.ExpectedSubscribers,
+            Constants.SubscriberTimeout);
         return $"ticker emitted {input.Count} events";
     }
+
+    [WorkflowSignal]
+    public async Task SubscriberCompleteAsync(string subscriberId) =>
+        completedSubscribers.Add(subscriberId);
 }

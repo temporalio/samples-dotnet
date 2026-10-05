@@ -47,6 +47,9 @@ public static class Scenario
                 Console.WriteLine($"[publisher]  sent: {headline}");
                 if (index == 0)
                 {
+                    // Flush the first headline into this run, then wait for the successor run
+                    // before publishing more. This demonstrates that the existing publisher
+                    // and subscriber follow Continue-As-New while preserving stream offsets.
                     await streamClient.FlushAsync();
                     await handle.SignalAsync(wf => wf.ContinueAsNewAsync());
                     while ((await handle.DescribeAsync()).RunId == initialRunId)

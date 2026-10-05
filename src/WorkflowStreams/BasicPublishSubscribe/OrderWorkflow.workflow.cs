@@ -25,6 +25,9 @@ public class OrderWorkflow
         progress.Publish(new ProgressEvent($"charge id: {chargeId}"));
         status.Publish(new StatusEvent("complete", input.OrderId));
 
+        // Poll Updates cannot read the stream after this Workflow closes. This delay is a
+        // stopgap that gives active subscribers time to fetch the final events; it does not
+        // guarantee delivery to slow subscribers. Use subscriber acknowledgements when needed.
         await Workflow.DelayAsync(Constants.DrainDelay);
         return chargeId;
     }

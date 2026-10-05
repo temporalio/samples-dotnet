@@ -6,5 +6,5 @@ public static class Constants
 
     public const string TopicTick = "tick";
 
-    public static readonly TimeSpan DrainDelay = TimeSpan.FromMilliseconds(500);
+    public static readonly TimeSpan SubscriberTimeout = TimeSpan.FromMinutes(1);
 }

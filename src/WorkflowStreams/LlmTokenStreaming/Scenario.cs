@@ -26,6 +26,8 @@ public static class Scenario
         Console.Write(ansiSave);
 
         await using var streamClient = new WorkflowStreamClient(client, workflowId);
+        var payloadConverter = client.Options.DataConverter.WithSerializationContext(
+            new ISerializationContext.Workflow(client.Options.Namespace, workflowId)).PayloadConverter;
         var options = new WorkflowStreamSubscribeOptions
         {
             Topics = new List<string>
@@ -39,7 +41,7 @@ public static class Scenario
         {
             if (item.Topic == Constants.TopicRetry)
             {
-                var evt = Decode<RetryEvent>(client, item);
+                var evt = payloadConverter.ToValue<RetryEvent>(item.Payload);
                 Console.Write(ansiRestoreAndClear);
                 Console.WriteLine($"[retry attempt {evt.Attempt}] resetting output");
                 Console.WriteLine();
@@ -47,11 +49,11 @@ public static class Scenario
             }
             else if (item.Topic == Constants.TopicDelta)
             {
-                Console.Write(Decode<TextDelta>(client, item).Text);
+                Console.Write(payloadConverter.ToValue<TextDelta>(item.Payload).Text);
             }
             else if (item.Topic == Constants.TopicComplete)
             {
-                _ = Decode<TextComplete>(client, item);
+                _ = payloadConverter.ToValue<TextComplete>(item.Payload);
                 Console.WriteLine();
                 break;
             }
@@ -60,7 +62,4 @@ public static class Scenario
         var result = await handle.GetResultAsync();
         Console.WriteLine($"[workflow result: {result.Length} chars]");
     }
-
-    private static T Decode<T>(ITemporalClient client, WorkflowStreamItem item) =>
-        client.Options.DataConverter.PayloadConverter.ToValue<T>(item.Payload);
 }
