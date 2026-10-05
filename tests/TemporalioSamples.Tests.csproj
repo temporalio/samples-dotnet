@@ -25,6 +25,7 @@
     <ProjectReference Include="..\src\ContextPropagation\TemporalioSamples.ContextPropagation.csproj" />
     <ProjectReference Include="..\src\CounterInterceptor\TemporalioSamples.CounterInterceptor.csproj" />
     <ProjectReference Include="..\src\EagerWorkflowStart\TemporalioSamples.EagerWorkflowStart.csproj" />
+    <ProjectReference Include="..\src\Gcp\CloudRun\TemporalioSamples.Gcp.CloudRun.csproj" />
     <ProjectReference Include="..\src\LambdaWorker\Worker\TemporalioSamples.LambdaWorker.Worker.csproj" />
     <ProjectReference Include="..\src\Encryption\Codec\TemporalioSamples.Encryption.Codec.csproj" />
     <ProjectReference Include="..\src\Encryption\CodecServer\TemporalioSamples.Encryption.CodecServer.csproj" />

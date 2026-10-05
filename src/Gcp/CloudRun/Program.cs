@@ -29,18 +29,6 @@ using var telemetry = connectOptions.ApplyGoogleCloudRunOpenTelemetryDefaults();
 
 var client = await TemporalClient.ConnectAsync(connectOptions);
 // @@@SNIPEND
-
-// --starter runs a single workflow, e.g. to kick off work against the same server the worker polls.
-if (args.Contains("--starter"))
-{
-    var greeting = await client.ExecuteWorkflowAsync(
-        (GreetingWorkflow wf) => wf.RunAsync("Temporal"),
-        new($"cloud-run-worker-{Guid.NewGuid():N}", taskQueue));
-    Console.WriteLine("Workflow result: {0}", greeting);
-    await telemetry.FlushAsync(TimeSpan.FromSeconds(2));
-    return;
-}
-
 using var cts = new CancellationTokenSource();
 Console.CancelKeyPress += (_, eventArgs) =>
 {
@@ -48,12 +36,21 @@ Console.CancelKeyPress += (_, eventArgs) =>
     cts.Cancel();
 };
 
-// Cloud Run sends SIGTERM ~10s before SIGKILL.
-using var sigterm = PosixSignalRegistration.Create(PosixSignal.SIGTERM, _ => cts.Cancel());
+// Cloud Run sends SIGTERM ~10s before SIGKILL; defer the default termination so the worker can drain.
+using var sigterm = PosixSignalRegistration.Create(
+    PosixSignal.SIGTERM,
+    ctx =>
+    {
+        ctx.Cancel = true;
+        cts.Cancel();
+    });
 
 using var worker = new TemporalWorker(
     client,
-    new TemporalWorkerOptions(taskQueue).
+    new TemporalWorkerOptions(taskQueue)
+    {
+        GracefulShutdownTimeout = TimeSpan.FromSeconds(5),
+    }.
         AddWorkflow<GreetingWorkflow>().
         AddActivity(GreetingActivities.SayHello));
 

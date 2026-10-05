@@ -19,7 +19,7 @@ aimed at the sidecar, then runs a greeting workflow and activity until SIGTERM.
 - A Temporal server the worker pool can reach (`TEMPORAL_ADDRESS` / `TEMPORAL_NAMESPACE`)
 - A Google Cloud project with the Cloud Run and Artifact Registry APIs enabled
 - [`gcloud`](https://cloud.google.com/sdk/docs/install), authenticated with the project set
-- The [Temporal CLI](https://docs.temporal.io/cli) and .NET 8
+- The [Temporal CLI](https://docs.temporal.io/cli) and .NET 10
 
 ## Deploy
 
@@ -33,10 +33,12 @@ export WORKER_IMAGE=$REGION-docker.pkg.dev/$(gcloud config get-value project)/sa
 export TEMPORAL_ADDRESS=<host:7233> TEMPORAL_NAMESPACE=<namespace> TEMPORAL_TASK_QUEUE=cloud-run-worker
 export COLLECTOR_CONFIG_SECRET=otel-collector-config COLLECTOR_CONFIG_SECRET_VERSION=latest
 
+# One-time setup: Artifact Registry repo and collector-config secret.
 gcloud artifacts repositories create samples --repository-format=docker --location "$REGION"
-docker build -f src/Gcp/CloudRun/Dockerfile -t "$WORKER_IMAGE" . && docker push "$WORKER_IMAGE"
 gcloud secrets create "$COLLECTOR_CONFIG_SECRET" --data-file=src/Gcp/CloudRun/collector-config.yaml
 
+# Build, push, and deploy (re-run to update).
+docker build -f src/Gcp/CloudRun/Dockerfile -t "$WORKER_IMAGE" . && docker push "$WORKER_IMAGE"
 envsubst < src/Gcp/CloudRun/worker-pool.yaml > /tmp/worker-pool.yaml
 gcloud run worker-pools replace /tmp/worker-pool.yaml --region "$REGION"
 ```
