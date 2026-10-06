@@ -1,9 +1,9 @@
-namespace TemporalioSamples.NexusMessaging.OnDemandPattern.Handler;
+namespace TemporalioSamples.NexusMessagingTemporalOperation.CallerPattern.Handler;
 
 using Temporalio.Exceptions;
 using Temporalio.Workflows;
-using TemporalioSamples.NexusMessaging.Common;
-using TemporalioSamples.NexusMessaging.OnDemandPattern;
+using TemporalioSamples.NexusMessagingTemporalOperation.CallerPattern;
+using TemporalioSamples.NexusMessagingTemporalOperation.Common;
 
 [Workflow]
 public class GreetingWorkflow
@@ -29,7 +29,7 @@ public class GreetingWorkflow
     }
 
     [WorkflowQuery]
-    public INexusRemoteGreetingService.GetLanguagesOutput QueryLanguages(bool includeUnsupported)
+    public INexusGreetingService.GetLanguagesOutput QueryLanguages(bool includeUnsupported)
     {
         if (includeUnsupported)
         {

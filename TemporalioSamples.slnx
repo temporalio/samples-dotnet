@@ -11,7 +11,6 @@
     <Project Path="src/EagerWorkflowStart/TemporalioSamples.EagerWorkflowStart.csproj" />
     <Project Path="src/EnvConfig/TemporalioSamples.EnvConfig.csproj" />
     <Project Path="src/Mutex/TemporalioSamples.Mutex.csproj" />
-    <Project Path="src/NexusMessaging/TemporalioSamples.NexusMessaging.csproj" />
     <Project Path="src/Patching/TemporalioSamples.Patching.csproj" />
     <Project Path="src/SafeMessageHandlers/TemporalioSamples.SafeMessageHandlers.csproj" />
     <Project Path="src/Saga/TemporalioSamples.Saga.csproj" />
@@ -59,6 +58,12 @@
   </Folder>
   <Folder Name="/src/NexusDependencyInjection/">
     <Project Path="src/NexusDependencyInjection/TemporalioSamples.NexusDependencyInjection.csproj" />
+  </Folder>
+  <Folder Name="/src/NexusMessaging/">
+    <Project Path="src/NexusMessaging/TemporalioSamples.NexusMessaging.csproj" />
+  </Folder>
+  <Folder Name="/src/NexusMessagingTemporalOperation/">
+    <Project Path="src/NexusMessagingTemporalOperation/TemporalioSamples.NexusMessagingTemporalOperation.csproj" />
   </Folder>
   <Folder Name="/src/NexusMultiArg/">
     <Project Path="src/NexusMultiArg/TemporalioSamples.NexusMultiArg.csproj" />
