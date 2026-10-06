@@ -46,6 +46,9 @@
     <Project Path="src/Encryption/Starter/TemporalioSamples.Encryption.Starter.csproj" />
     <Project Path="src/Encryption/Worker/TemporalioSamples.Encryption.Worker.csproj" />
   </Folder>
+  <Folder Name="/src/Gcp/">
+    <Project Path="src/Gcp/CloudRun/TemporalioSamples.Gcp.CloudRun.csproj" />
+  </Folder>
   <Folder Name="/src/LambdaWorker/">
     <Project Path="src/LambdaWorker/Starter/TemporalioSamples.LambdaWorker.Starter.csproj" />
     <Project Path="src/LambdaWorker/Worker/TemporalioSamples.LambdaWorker.Worker.csproj" />
