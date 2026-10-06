@@ -1,13 +1,17 @@
+# These owners will be the default owners for everything in the repo.
+# Later matches override earlier entries.
 * @temporalio/sdk
 
-# SDK & Nexus teams share ownership of these files
-/README.md @temporalio/sdk @temporalio/nexus
-/TemporalioSamples.slnx @temporalio/sdk @temporalio/nexus
-/tests/TemporalioSamples.Tests.csproj @temporalio/sdk @temporalio/nexus
+# IMPORTANT: Make sure to add `@temporalio/sdk` on every override below.
+# This is required so that SDK team can do repo-wide maintenance tasks.
+/Directory.Packages.props @temporalio/sdk @temporalio/nexus @temporalio/ai-sdk
+/README.md @temporalio/sdk @temporalio/nexus @temporalio/ai-sdk
+/TemporalioSamples.slnx @temporalio/sdk @temporalio/nexus @temporalio/ai-sdk
+/tests/TemporalioSamples.Tests.csproj @temporalio/sdk @temporalio/nexus @temporalio/ai-sdk
 
-# The Nexus team owns any folder whose name starts with "Nexus"
-/src/Nexus*/ @temporalio/nexus
-/tests/Nexus*/ @temporalio/nexus
+# SDK & Nexus teams share ownership of Nexus samples
+/src/Nexus*/ @temporalio/sdk @temporalio/nexus
+/tests/Nexus*/ @temporalio/sdk @temporalio/nexus
 
 # SDK & AI SDK teams share ownership of Workflow Streams samples
 /src/WorkflowStreams/   @temporalio/sdk @temporalio/ai-sdk
