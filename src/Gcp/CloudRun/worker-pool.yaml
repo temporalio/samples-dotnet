@@ -27,6 +27,12 @@ spec:
               value: "${TEMPORAL_NAMESPACE}"
             - name: TEMPORAL_TASK_QUEUE
               value: "${TEMPORAL_TASK_QUEUE}"
+            # Temporal Cloud API key, read from Secret Manager (same pattern as the collector config).
+            - name: TEMPORAL_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  key: "${TEMPORAL_API_KEY_SECRET_VERSION}"
+                  name: "${TEMPORAL_API_KEY_SECRET}"
             - name: OTEL_EXPORTER_OTLP_ENDPOINT
               value: http://localhost:4317
           resources:

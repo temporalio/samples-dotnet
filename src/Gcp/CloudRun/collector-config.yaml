@@ -1,5 +1,7 @@
 # Google-Built OpenTelemetry Collector config for the sidecar: metrics -> Managed Service for Prometheus, traces -> Cloud Trace. Auth via the worker-pool service account (ADC).
 receivers:
+  # otelcol-google 0.156.0 has no `otlp_grpc` receiver (that name exists only as an exporter); `otlp`
+  # is the canonical OTLP receiver here.
   otlp:
     protocols:
       grpc:
@@ -17,7 +19,7 @@ processors:
     check_interval: 1s
     limit_percentage: 65
     spike_limit_percentage: 20
-  resourcedetection:
+  resource_detection:
     detectors: [gcp]
     timeout: 10s
   # Rename Temporal datapoint labels that collide with the target labels Managed Service for Prometheus injects (e.g. `namespace`).
@@ -46,7 +48,7 @@ processors:
 
 exporters:
   googlemanagedprometheus:
-  otlp:
+  otlp_grpc:
     endpoint: telemetry.googleapis.com:443
     compression: none
     balancer_name: pick_first
@@ -65,12 +67,12 @@ service:
   pipelines:
     metrics:
       receivers: [otlp]
-      processors: [memory_limiter, resourcedetection, transform/collision]
+      processors: [memory_limiter, resource_detection, transform/collision]
       exporters: [googlemanagedprometheus]
     traces:
       receivers: [otlp]
-      processors: [memory_limiter, resourcedetection, transform/set_project_id, batch/traces]
-      exporters: [otlp]
+      processors: [memory_limiter, resource_detection, transform/set_project_id, batch/traces]
+      exporters: [otlp_grpc]
   telemetry:
     metrics:
       readers:

@@ -32,20 +32,25 @@ export SERVICE_ACCOUNT_EMAIL=<sa>@<project>.iam.gserviceaccount.com
 export WORKER_IMAGE=$REGION-docker.pkg.dev/$(gcloud config get-value project)/samples/cloud-run
 export TEMPORAL_ADDRESS=<host:7233> TEMPORAL_NAMESPACE=<namespace> TEMPORAL_TASK_QUEUE=cloud-run-worker
 export COLLECTOR_CONFIG_SECRET=otel-collector-config COLLECTOR_CONFIG_SECRET_VERSION=latest
+# Temporal Cloud: the API key the worker authenticates with, stored in Secret Manager.
+export TEMPORAL_API_KEY_SECRET=temporal-api-key TEMPORAL_API_KEY_SECRET_VERSION=latest
 
-# One-time setup: Artifact Registry repo and collector-config secret.
+# One-time setup: Artifact Registry repo, collector-config secret, and Temporal Cloud API key secret.
 gcloud artifacts repositories create samples --repository-format=docker --location "$REGION"
 gcloud secrets create "$COLLECTOR_CONFIG_SECRET" --data-file=src/Gcp/CloudRun/collector-config.yaml
+# Temporal Cloud: store the API key (from `tcld apikey create ...`) so the worker can read it.
+printf '%s' "<temporal-cloud-api-key>" | gcloud secrets create "$TEMPORAL_API_KEY_SECRET" --data-file=-
 
-# Build, push, and deploy (re-run to update).
-docker build -f src/Gcp/CloudRun/Dockerfile -t "$WORKER_IMAGE" . && docker push "$WORKER_IMAGE"
+# Build, push, and deploy (re-run to update). Cloud Run requires linux/amd64 images, so build for
+# that platform explicitly (on arm64 Macs a native build would produce an unrunnable arm64 image).
+docker build --platform linux/amd64 -f src/Gcp/CloudRun/Dockerfile -t "$WORKER_IMAGE" . && docker push "$WORKER_IMAGE"
 envsubst < src/Gcp/CloudRun/worker-pool.yaml > /tmp/worker-pool.yaml
-gcloud run worker-pools replace /tmp/worker-pool.yaml --region "$REGION"
+gcloud run worker-pools replace /tmp/worker-pool.yaml
 ```
 
 The service account needs the `monitoring.metricWriter`, `cloudtrace.agent`, and
-`secretmanager.secretAccessor` roles. For Temporal Cloud, add `TEMPORAL_API_KEY` from a Secret
-Manager `secretKeyRef` (see `worker-pool.yaml`).
+`secretmanager.secretAccessor` roles. The worker reads `TEMPORAL_API_KEY` from the Secret Manager
+secret above (see `worker-pool.yaml`) to authenticate to Temporal Cloud.
 
 ## Run a workflow
 
