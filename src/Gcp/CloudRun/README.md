@@ -54,8 +54,11 @@ secret above (see `worker-pool.yaml`) to authenticate to Temporal Cloud.
 
 ## Run a workflow
 
+For Temporal Cloud, pass your connection values (`--address`, `--namespace`, `--api-key`):
+
 ```bash
-temporal workflow execute --task-queue cloud-run-worker --type GreetingWorkflow --input '"Temporal"'
+temporal workflow execute --task-queue cloud-run-worker --type GreetingWorkflow --input '"Temporal"' \
+  --address "$TEMPORAL_ADDRESS" --namespace "$TEMPORAL_NAMESPACE" --api-key "$TEMPORAL_API_KEY" --tls
 ```
 
 Metrics appear in Metrics Explorer and traces in Trace Explorer, tagged with the Cloud Run identity.
