@@ -9,6 +9,8 @@
     <PackageVersion Include="AWSSDK.BedrockRuntime" Version="4.0.100" />
     <PackageVersion Include="coverlet.collector" Version="10.0.1" />
     <PackageVersion Include="MartinCostello.Logging.XUnit" Version="0.7.1" />
+    <!-- Transitive pin via Aspire -> StreamJsonRpc for GHSA-qhrr-8q5h-9q3h; remove once StreamJsonRpc references >= 2.5.303 -->
+    <PackageVersion Include="MessagePack" Version="2.5.307" />
     <PackageVersion Include="Microsoft.AspNetCore.Mvc.Testing" Version="10.0.10" />
     <PackageVersion Include="Microsoft.Extensions.Hosting" Version="10.0.11" />
     <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="18.7.0" />
