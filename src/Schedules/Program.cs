@@ -1,3 +1,4 @@
+using System.CommandLine;
 using Microsoft.Extensions.Logging;
 using Temporalio.Api.Enums.V1;
 using Temporalio.Client;
@@ -6,24 +7,21 @@ using Temporalio.Common.EnvConfig;
 using Temporalio.Worker;
 using TemporalioSamples.Schedules;
 
-// Create a client to localhost on default namespace
-var connectOptions = ClientEnvConfig.LoadClientConnectOptions();
-connectOptions.TargetHost ??= "localhost:7233";
-connectOptions.LoggerFactory = LoggerFactory.Create(builder =>
-    builder.
-        AddSimpleConsole(options => options.TimestampFormat = "[HH:mm:ss] ").
-        SetMinimumLevel(LogLevel.Information));
-var client = await TemporalClient.ConnectAsync(connectOptions);
-
-async Task RunWorkerAsync()
+async Task<TemporalClient> ConnectClientAsync()
 {
-    // Cancellation token cancelled on ctrl+c
-    using var tokenSource = new CancellationTokenSource();
-    Console.CancelKeyPress += (_, eventArgs) =>
-    {
-        tokenSource.Cancel();
-        eventArgs.Cancel = true;
-    };
+    // Create a client to localhost on default namespace
+    var connectOptions = ClientEnvConfig.LoadClientConnectOptions();
+    connectOptions.TargetHost ??= "localhost:7233";
+    connectOptions.LoggerFactory = LoggerFactory.Create(builder =>
+        builder.
+            AddSimpleConsole(options => options.TimestampFormat = "[HH:mm:ss] ").
+            SetMinimumLevel(LogLevel.Information));
+    return await TemporalClient.ConnectAsync(connectOptions);
+}
+
+async Task RunWorkerAsync(ParseResult parseResult, CancellationToken cancellationToken)
+{
+    var client = await ConnectClientAsync();
 
     // Run worker until cancelled
     Console.WriteLine("Running worker");
@@ -35,7 +33,7 @@ async Task RunWorkerAsync()
             AddWorkflow<MyWorkflow>());
     try
     {
-        await worker.ExecuteAsync(tokenSource.Token);
+        await worker.ExecuteAsync(cancellationToken);
     }
     catch (OperationCanceledException)
     {
@@ -43,8 +41,10 @@ async Task RunWorkerAsync()
     }
 }
 
-async Task ScheduleStartAsync()
+async Task ScheduleStartAsync(ParseResult parseResult, CancellationToken cancellationToken)
 {
+    var client = await ConnectClientAsync();
+
     Console.WriteLine("Scheduling workflow");
 
     var text = "Dear future self, please take out the recycling tonight. Sincerely, past you";
@@ -87,8 +87,10 @@ dotnet run schedule-delete
 ");
 }
 
-async Task ScheduleGoFasterAsync()
+async Task ScheduleGoFasterAsync(ParseResult parseResult, CancellationToken cancellationToken)
 {
+    var client = await ConnectClientAsync();
+
     var handle = client.GetScheduleHandle("sample-schedule");
 
     await handle.UpdateAsync(input =>
@@ -107,47 +109,59 @@ async Task ScheduleGoFasterAsync()
     Console.WriteLine("Schedule is now triggered every 5 seconds.");
 }
 
-async Task SchedulePauseAsync()
+async Task SchedulePauseAsync(ParseResult parseResult, CancellationToken cancellationToken)
 {
+    var client = await ConnectClientAsync();
+
     var handle = client.GetScheduleHandle("sample-schedule");
     await handle.PauseAsync();
     Console.WriteLine("Schedule is now paused.");
 }
 
-async Task ScheduleUnpauseAsync()
+async Task ScheduleUnpauseAsync(ParseResult parseResult, CancellationToken cancellationToken)
 {
+    var client = await ConnectClientAsync();
+
     var handle = client.GetScheduleHandle("sample-schedule");
     await handle.UnpauseAsync();
     Console.WriteLine("Schedule is now unpaused.");
 }
 
-async Task ScheduleDeleteAsync()
+async Task ScheduleDeleteAsync(ParseResult parseResult, CancellationToken cancellationToken)
 {
+    var client = await ConnectClientAsync();
+
     var handle = client.GetScheduleHandle("sample-schedule");
     await handle.DeleteAsync();
     Console.WriteLine("Schedule is now deleted.");
 }
 
-switch (args.ElementAtOrDefault(0))
+// Cancellation token passed to actions is cancelled on ctrl+c
+var workerCommand = new Command("worker", "Run worker");
+workerCommand.SetAction(RunWorkerAsync);
+
+var scheduleStartCommand = new Command("schedule-start", "Create schedule");
+scheduleStartCommand.SetAction(ScheduleStartAsync);
+
+var scheduleGoFasterCommand = new Command("schedule-go-faster", "Update schedule to run every 5 seconds");
+scheduleGoFasterCommand.SetAction(ScheduleGoFasterAsync);
+
+var schedulePauseCommand = new Command("schedule-pause", "Pause schedule");
+schedulePauseCommand.SetAction(SchedulePauseAsync);
+
+var scheduleUnpauseCommand = new Command("schedule-unpause", "Unpause schedule");
+scheduleUnpauseCommand.SetAction(ScheduleUnpauseAsync);
+
+var scheduleDeleteCommand = new Command("schedule-delete", "Delete schedule");
+scheduleDeleteCommand.SetAction(ScheduleDeleteAsync);
+
+var rootCommand = new RootCommand("Schedules sample")
 {
-    case "worker":
-        await RunWorkerAsync();
-        break;
-    case "schedule-start":
-        await ScheduleStartAsync();
-        break;
-    case "schedule-go-faster":
-        await ScheduleGoFasterAsync();
-        break;
-    case "schedule-pause":
-        await SchedulePauseAsync();
-        break;
-    case "schedule-unpause":
-        await ScheduleUnpauseAsync();
-        break;
-    case "schedule-delete":
-        await ScheduleDeleteAsync();
-        break;
-    default:
-        throw new ArgumentException("Must pass 'worker', 'schedule-start', 'schedule-go-faster', 'schedule-pause', 'schedule-unpause' or 'schedule-delete' as the single argument");
-}
+    workerCommand,
+    scheduleStartCommand,
+    scheduleGoFasterCommand,
+    schedulePauseCommand,
+    scheduleUnpauseCommand,
+    scheduleDeleteCommand,
+};
+return await rootCommand.Parse(args).InvokeAsync();

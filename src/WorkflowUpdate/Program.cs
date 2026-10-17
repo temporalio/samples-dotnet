@@ -1,27 +1,25 @@
+using System.CommandLine;
 using Microsoft.Extensions.Logging;
 using Temporalio.Client;
 using Temporalio.Common.EnvConfig;
 using Temporalio.Worker;
 using TemporalioSamples.WorkflowUpdate;
 
-// Create a client to localhost on default namespace
-var connectOptions = ClientEnvConfig.LoadClientConnectOptions();
-connectOptions.TargetHost ??= "localhost:7233";
-connectOptions.LoggerFactory = LoggerFactory.Create(builder =>
-    builder.
-        AddSimpleConsole(options => options.TimestampFormat = "[HH:mm:ss] ").
-        SetMinimumLevel(LogLevel.Information));
-var client = await TemporalClient.ConnectAsync(connectOptions);
-
-async Task RunWorkerAsync()
+async Task<TemporalClient> ConnectClientAsync()
 {
-    // Cancellation token cancelled on ctrl+c
-    using var tokenSource = new CancellationTokenSource();
-    Console.CancelKeyPress += (_, eventArgs) =>
-    {
-        tokenSource.Cancel();
-        eventArgs.Cancel = true;
-    };
+    // Create a client to localhost on default namespace
+    var connectOptions = ClientEnvConfig.LoadClientConnectOptions();
+    connectOptions.TargetHost ??= "localhost:7233";
+    connectOptions.LoggerFactory = LoggerFactory.Create(builder =>
+        builder.
+            AddSimpleConsole(options => options.TimestampFormat = "[HH:mm:ss] ").
+            SetMinimumLevel(LogLevel.Information));
+    return await TemporalClient.ConnectAsync(connectOptions);
+}
+
+async Task RunWorkerAsync(ParseResult parseResult, CancellationToken cancellationToken)
+{
+    var client = await ConnectClientAsync();
 
     // Run worker until cancelled
     Console.WriteLine("Running worker");
@@ -31,7 +29,7 @@ async Task RunWorkerAsync()
             AddWorkflow<WorkflowUpdate>());
     try
     {
-        await worker.ExecuteAsync(tokenSource.Token);
+        await worker.ExecuteAsync(cancellationToken);
     }
     catch (OperationCanceledException)
     {
@@ -39,8 +37,10 @@ async Task RunWorkerAsync()
     }
 }
 
-async Task ExecuteWorkflowAsync()
+async Task ExecuteWorkflowAsync(ParseResult parseResult, CancellationToken cancellationToken)
 {
+    var client = await ConnectClientAsync();
+
     Console.WriteLine("Executing workflow");
 
     var handle = await client.StartWorkflowAsync(
@@ -62,14 +62,12 @@ async Task ExecuteWorkflowAsync()
     Console.WriteLine("Workflow completes");
 }
 
-switch (args.ElementAtOrDefault(0))
-{
-    case "worker":
-        await RunWorkerAsync();
-        break;
-    case "workflow":
-        await ExecuteWorkflowAsync();
-        break;
-    default:
-        throw new ArgumentException("Must pass 'worker' or 'workflow' as the single argument");
-}
+// Cancellation token passed to actions is cancelled on ctrl+c
+var workerCommand = new Command("worker", "Run worker");
+workerCommand.SetAction(RunWorkerAsync);
+
+var workflowCommand = new Command("workflow", "Execute workflow");
+workflowCommand.SetAction(ExecuteWorkflowAsync);
+
+var rootCommand = new RootCommand("Workflow update sample") { workerCommand, workflowCommand };
+return await rootCommand.Parse(args).InvokeAsync();

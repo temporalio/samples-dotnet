@@ -1,28 +1,26 @@
+using System.CommandLine;
 using Microsoft.Extensions.Logging;
 using Temporalio.Client;
 using Temporalio.Common.EnvConfig;
 using Temporalio.Worker;
 using TemporalioSamples.Dsl;
 
-// Create a client to localhost on default namespace
-var connectOptions = ClientEnvConfig.LoadClientConnectOptions();
-connectOptions.TargetHost ??= "localhost:7233";
-
-connectOptions.LoggerFactory = LoggerFactory.Create(builder =>
-    builder.
-        AddSimpleConsole(options => options.TimestampFormat = "[HH:mm:ss] ").
-        SetMinimumLevel(LogLevel.Information));
-var client = await TemporalClient.ConnectAsync(connectOptions);
-
-async Task RunWorkerAsync()
+async Task<TemporalClient> ConnectClientAsync()
 {
-    // Cancellation token cancelled on ctrl+c
-    using var tokenSource = new CancellationTokenSource();
-    Console.CancelKeyPress += (_, eventArgs) =>
-    {
-        tokenSource.Cancel();
-        eventArgs.Cancel = true;
-    };
+    // Create a client to localhost on default namespace
+    var connectOptions = ClientEnvConfig.LoadClientConnectOptions();
+    connectOptions.TargetHost ??= "localhost:7233";
+
+    connectOptions.LoggerFactory = LoggerFactory.Create(builder =>
+        builder.
+            AddSimpleConsole(options => options.TimestampFormat = "[HH:mm:ss] ").
+            SetMinimumLevel(LogLevel.Information));
+    return await TemporalClient.ConnectAsync(connectOptions);
+}
+
+async Task RunWorkerAsync(ParseResult parseResult, CancellationToken cancellationToken)
+{
+    var client = await ConnectClientAsync();
 
     // Run worker until cancelled
     Console.WriteLine("Running worker");
@@ -33,7 +31,7 @@ async Task RunWorkerAsync()
             .AddWorkflow<DslWorkflow>());
     try
     {
-        await worker.ExecuteAsync(tokenSource.Token);
+        await worker.ExecuteAsync(cancellationToken);
     }
     catch (OperationCanceledException)
     {
@@ -41,9 +39,14 @@ async Task RunWorkerAsync()
     }
 }
 
-async Task ExecuteWorkflowAsync(string yamlFile)
+var yamlFileArgument = new Argument<string>("yaml-file") { Description = "Path to the workflow YAML file" };
+
+async Task ExecuteWorkflowAsync(ParseResult parseResult, CancellationToken cancellationToken)
 {
-    var yamlContent = await File.ReadAllTextAsync(yamlFile);
+    var client = await ConnectClientAsync();
+
+    var yamlFile = parseResult.GetRequiredValue(yamlFileArgument);
+    var yamlContent = await File.ReadAllTextAsync(yamlFile, cancellationToken);
     var dslInput = DslInput.Parse(yamlContent);
 
     Console.WriteLine($"Executing workflow from {yamlFile}");
@@ -58,16 +61,12 @@ async Task ExecuteWorkflowAsync(string yamlFile)
     }
 }
 
-switch (args.ElementAtOrDefault(0))
-{
-    case "worker":
-        await RunWorkerAsync();
-        break;
-    case "workflow":
-        var yamlFile = args.ElementAtOrDefault(1)
-            ?? throw new ArgumentException("Must provide YAML file path as second argument");
-        await ExecuteWorkflowAsync(yamlFile);
-        break;
-    default:
-        throw new ArgumentException("Must pass 'worker' or 'workflow' as the first argument");
-}
+// Cancellation token passed to actions is cancelled on ctrl+c
+var workerCommand = new Command("worker", "Run worker");
+workerCommand.SetAction(RunWorkerAsync);
+
+var workflowCommand = new Command("workflow", "Execute workflow from a YAML file") { yamlFileArgument };
+workflowCommand.SetAction(ExecuteWorkflowAsync);
+
+var rootCommand = new RootCommand("DSL sample") { workerCommand, workflowCommand };
+return await rootCommand.Parse(args).InvokeAsync();

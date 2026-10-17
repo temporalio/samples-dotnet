@@ -1,3 +1,4 @@
+using System.CommandLine;
 using Temporalio.Client;
 using Temporalio.Common.EnvConfig;
 using Temporalio.Extensions.Hosting;
@@ -18,7 +19,7 @@ TemporalClientConnectOptions LoadConnectOptions()
 
 // The handler worker runs in the handler namespace and hosts the Nexus service. Because it runs as a
 // generic host, the service handler's dependencies are injected by the container.
-async Task RunHandlerWorkerAsync()
+async Task RunHandlerWorkerAsync(ParseResult parseResult, CancellationToken cancellationToken)
 {
     IHost host = Host.CreateDefaultBuilder(args)
         .ConfigureLogging(ctx =>
@@ -34,12 +35,12 @@ async Task RunHandlerWorkerAsync()
                 // AddTransientNexusService for singleton/transient lifetimes instead.
                 AddScopedNexusService<GreetingServiceHandler>())
         .Build();
-    await host.RunAsync();
+    await host.RunAsync(cancellationToken);
 }
 
 // The caller worker runs in the caller namespace and hosts the workflow that invokes the Nexus
 // operation.
-async Task RunCallerWorkerAsync()
+async Task RunCallerWorkerAsync(ParseResult parseResult, CancellationToken cancellationToken)
 {
     IHost host = Host.CreateDefaultBuilder(args)
         .ConfigureLogging(ctx =>
@@ -50,10 +51,10 @@ async Task RunCallerWorkerAsync()
                 ConfigureOptions(options => options.ClientOptions = LoadConnectOptions()).
                 AddWorkflow<GreetingCallerWorkflow>())
         .Build();
-    await host.RunAsync();
+    await host.RunAsync(cancellationToken);
 }
 
-async Task ExecuteCallerWorkflowAsync()
+async Task ExecuteCallerWorkflowAsync(ParseResult parseResult, CancellationToken cancellationToken)
 {
     var connectOptions = LoadConnectOptions();
     connectOptions.LoggerFactory = LoggerFactory.Create(builder =>
@@ -70,18 +71,15 @@ async Task ExecuteCallerWorkflowAsync()
     Console.WriteLine("Workflow result: {0}", result);
 }
 
-switch (args.ElementAtOrDefault(0))
-{
-    case "handler-worker":
-        await RunHandlerWorkerAsync();
-        break;
-    case "caller-worker":
-        await RunCallerWorkerAsync();
-        break;
-    case "caller-workflow":
-        await ExecuteCallerWorkflowAsync();
-        break;
-    default:
-        throw new ArgumentException(
-            "Must pass 'handler-worker', 'caller-worker', or 'caller-workflow' as the single argument");
-}
+// Cancellation token passed to actions is cancelled on ctrl+c
+var handlerWorkerCommand = new Command("handler-worker", "Run handler worker");
+handlerWorkerCommand.SetAction(RunHandlerWorkerAsync);
+
+var callerWorkerCommand = new Command("caller-worker", "Run caller worker");
+callerWorkerCommand.SetAction(RunCallerWorkerAsync);
+
+var callerWorkflowCommand = new Command("caller-workflow", "Execute caller workflow");
+callerWorkflowCommand.SetAction(ExecuteCallerWorkflowAsync);
+
+var rootCommand = new RootCommand("Nexus dependency injection sample") { handlerWorkerCommand, callerWorkerCommand, callerWorkflowCommand };
+return await rootCommand.Parse(args).InvokeAsync();

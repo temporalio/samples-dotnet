@@ -9,4 +9,8 @@
     <PackageReference Include="Temporalio.Extensions.WorkflowStreams" />
   </ItemGroup>
 
+  <ItemGroup>
+    <PackageReference Include="System.CommandLine" />
+  </ItemGroup>
+
 </Project>
