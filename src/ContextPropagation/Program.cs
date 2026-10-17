@@ -1,3 +1,4 @@
+using System.CommandLine;
 using Microsoft.Extensions.Logging;
 using Temporalio.Client;
 using Temporalio.Common.EnvConfig;
@@ -11,28 +12,25 @@ using var loggerFactory = LoggerFactory.Create(builder =>
             SetMinimumLevel(LogLevel.Information));
 var logger = loggerFactory.CreateLogger<Program>();
 
-// Create a client to localhost on default namespace
-var connectOptions = ClientEnvConfig.LoadClientConnectOptions();
-connectOptions.TargetHost ??= "localhost:7233";
-connectOptions.LoggerFactory = loggerFactory;
-// This is where we set the interceptor to propagate context
-connectOptions.Interceptors = new[]
+async Task<TemporalClient> ConnectClientAsync()
 {
-    new ContextPropagationInterceptor<string?>(
-        MyContext.UserIdLocal,
-        DataConverter.Default.PayloadConverter),
-};
-var client = await TemporalClient.ConnectAsync(connectOptions);
-
-async Task RunWorkerAsync()
-{
-    // Cancellation token cancelled on ctrl+c
-    using var tokenSource = new CancellationTokenSource();
-    Console.CancelKeyPress += (_, eventArgs) =>
+    // Create a client to localhost on default namespace
+    var connectOptions = ClientEnvConfig.LoadClientConnectOptions();
+    connectOptions.TargetHost ??= "localhost:7233";
+    connectOptions.LoggerFactory = loggerFactory;
+    // This is where we set the interceptor to propagate context
+    connectOptions.Interceptors = new[]
     {
-        tokenSource.Cancel();
-        eventArgs.Cancel = true;
+        new ContextPropagationInterceptor<string?>(
+            MyContext.UserIdLocal,
+            DataConverter.Default.PayloadConverter),
     };
+    return await TemporalClient.ConnectAsync(connectOptions);
+}
+
+async Task RunWorkerAsync(ParseResult parseResult, CancellationToken cancellationToken)
+{
+    var client = await ConnectClientAsync();
 
     // Run worker until cancelled
     logger.LogInformation("Running worker");
@@ -43,7 +41,7 @@ async Task RunWorkerAsync()
             AddWorkflow<SayHelloWorkflow>());
     try
     {
-        await worker.ExecuteAsync(tokenSource.Token);
+        await worker.ExecuteAsync(cancellationToken);
     }
     catch (OperationCanceledException)
     {
@@ -51,8 +49,10 @@ async Task RunWorkerAsync()
     }
 }
 
-async Task ExecuteWorkflowAsync()
+async Task ExecuteWorkflowAsync(ParseResult parseResult, CancellationToken cancellationToken)
 {
+    var client = await ConnectClientAsync();
+
     // Set our user ID that can be accessed in the workflow and activity
     MyContext.UserId = "some-user";
 
@@ -67,14 +67,12 @@ async Task ExecuteWorkflowAsync()
     logger.LogInformation("Workflow result: {Result}", result);
 }
 
-switch (args.ElementAtOrDefault(0))
-{
-    case "worker":
-        await RunWorkerAsync();
-        break;
-    case "workflow":
-        await ExecuteWorkflowAsync();
-        break;
-    default:
-        throw new ArgumentException("Must pass 'worker' or 'workflow' as the single argument");
-}
+// Cancellation token passed to actions is cancelled on ctrl+c
+var workerCommand = new Command("worker", "Run worker");
+workerCommand.SetAction(RunWorkerAsync);
+
+var workflowCommand = new Command("workflow", "Execute workflow");
+workflowCommand.SetAction(ExecuteWorkflowAsync);
+
+var rootCommand = new RootCommand("Context propagation sample") { workerCommand, workflowCommand };
+return await rootCommand.Parse(args).InvokeAsync();

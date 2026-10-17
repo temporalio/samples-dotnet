@@ -1,3 +1,4 @@
+using System.CommandLine;
 using Microsoft.Extensions.Logging;
 using Temporalio.Client;
 using Temporalio.Common.EnvConfig;
@@ -23,15 +24,8 @@ Task<TemporalClient> ConnectClientAsync()
 
 // Worker that hosts the Nexus service implementation and the Activity backing its operation. The
 // task queue must match the Nexus endpoint's target task queue (see README).
-async Task RunWorkerAsync()
+async Task RunWorkerAsync(ParseResult parseResult, CancellationToken cancellationToken)
 {
-    using var tokenSource = new CancellationTokenSource();
-    Console.CancelKeyPress += (_, eventArgs) =>
-    {
-        tokenSource.Cancel();
-        eventArgs.Cancel = true;
-    };
-
     logger.LogInformation("Running worker on task queue {TaskQueue}", taskQueue);
     using var worker = new TemporalWorker(
         await ConnectClientAsync(),
@@ -40,7 +34,7 @@ async Task RunWorkerAsync()
             AddActivity(GreetingActivities.CreateGreetingAsync));
     try
     {
-        await worker.ExecuteAsync(tokenSource.Token);
+        await worker.ExecuteAsync(cancellationToken);
     }
     catch (OperationCanceledException)
     {
@@ -50,7 +44,7 @@ async Task RunWorkerAsync()
 
 // Executes the Activity-backed Nexus Operation from client code. The operation is standalone: it is
 // started directly by this client rather than from within a caller Workflow.
-async Task RunStarterAsync()
+async Task RunStarterAsync(ParseResult parseResult, CancellationToken cancellationToken)
 {
     var client = await ConnectClientAsync();
 
@@ -70,15 +64,12 @@ async Task RunStarterAsync()
     logger.LogInformation("Greet result: {Message}", result.Message);
 }
 
-switch (args.ElementAtOrDefault(0))
-{
-    case "worker":
-        await RunWorkerAsync();
-        break;
-    case "starter":
-        await RunStarterAsync();
-        break;
-    default:
-        throw new ArgumentException(
-            "Must pass 'worker' or 'starter' as the single argument");
-}
+// Cancellation token passed to actions is cancelled on ctrl+c
+var workerCommand = new Command("worker", "Run worker");
+workerCommand.SetAction(RunWorkerAsync);
+
+var starterCommand = new Command("starter", "Run starter");
+starterCommand.SetAction(RunStarterAsync);
+
+var rootCommand = new RootCommand("Nexus standalone activity sample") { workerCommand, starterCommand };
+return await rootCommand.Parse(args).InvokeAsync();

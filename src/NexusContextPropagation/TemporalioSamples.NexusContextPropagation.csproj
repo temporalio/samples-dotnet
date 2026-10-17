@@ -9,4 +9,8 @@
     <PackageReference Include="NexusRpc" />
   </ItemGroup>
 
+  <ItemGroup>
+    <PackageReference Include="System.CommandLine" />
+  </ItemGroup>
+
 </Project>
