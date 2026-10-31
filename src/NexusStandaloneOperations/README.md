@@ -68,18 +68,6 @@ support (`ClientEnvConfig.LoadClientConnectOptions()`), which reads `TEMPORAL_NA
    If you run the starter multiple times, additional entries will appear in the `ListNexusOperations`
    output and the `CountNexusOperations` total will grow.
 
-## Use a self-hosted cluster
-
-For a self-hosted cluster, use Temporal Server v1.32.0 or later and enable SANO for the caller namespace in the
-server's [dynamic configuration](https://docs.temporal.io/references/dynamic-configuration):
-
-```yaml
-nexusoperation.enableStandalone:
-  - value: true
-    constraints:
-      namespace: my-caller-namespace
-```
-
 ## Run against Temporal Cloud
 
 1. Create two namespaces in Temporal Cloud (for example `my-caller-namespace.<account>` and
