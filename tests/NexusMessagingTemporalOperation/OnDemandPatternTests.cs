@@ -25,7 +25,7 @@ public class OnDemandPatternTests : TestBase
         {
             DevServerOptions = new()
             {
-                DownloadVersion = "v1.7.4-standalone-nexus-operations",
+                DownloadVersion = "v1.10.0",
                 ExtraArgs =
                 [
                     "--dynamic-config-value",
