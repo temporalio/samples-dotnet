@@ -6,9 +6,6 @@
 
   <ItemGroup>
     <PackageReference Include="AWSSDK.BedrockRuntime" />
-  </ItemGroup>
-
-  <ItemGroup>
     <PackageReference Include="System.CommandLine" />
   </ItemGroup>
 

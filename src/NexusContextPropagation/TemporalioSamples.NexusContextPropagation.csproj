@@ -7,9 +7,6 @@
   <ItemGroup>
     <ProjectReference Include="$(MSBuildThisFileDirectory)..\ContextPropagation\TemporalioSamples.ContextPropagation.csproj" />
     <PackageReference Include="NexusRpc" />
-  </ItemGroup>
-
-  <ItemGroup>
     <PackageReference Include="System.CommandLine" />
   </ItemGroup>
 

@@ -5,11 +5,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Temporalio.Extensions.WorkflowStreams" />
-  </ItemGroup>
-
-  <ItemGroup>
     <PackageReference Include="System.CommandLine" />
+    <PackageReference Include="Temporalio.Extensions.WorkflowStreams" />
   </ItemGroup>
 
 </Project>

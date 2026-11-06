@@ -5,6 +5,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="System.CommandLine" />
     <PackageReference Include="YamlDotNet" />
   </ItemGroup>
 
@@ -15,10 +16,6 @@
     <None Update="workflow2.yaml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-  </ItemGroup>
-
-  <ItemGroup>
-    <PackageReference Include="System.CommandLine" />
   </ItemGroup>
 
 </Project>
