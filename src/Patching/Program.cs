@@ -1,33 +1,38 @@
+using System.CommandLine;
 using Microsoft.Extensions.Logging;
 using Temporalio.Client;
 using Temporalio.Common.EnvConfig;
 using Temporalio.Worker;
 using TemporalioSamples.Patching;
 
-// Create a client to localhost on default namespace
-var connectOptions = ClientEnvConfig.LoadClientConnectOptions();
-connectOptions.TargetHost ??= "localhost:7233";
-connectOptions.LoggerFactory = LoggerFactory.Create(builder =>
-    builder.
-        AddSimpleConsole(options => options.TimestampFormat = "[HH:mm:ss] ").
-        SetMinimumLevel(LogLevel.Information));
-var client = await TemporalClient.ConnectAsync(connectOptions);
-
-async Task RunWorkerAsync()
+async Task<TemporalClient> ConnectClientAsync()
 {
-    // Cancellation token cancelled on ctrl+c
-    using var tokenSource = new CancellationTokenSource();
-    Console.CancelKeyPress += (_, eventArgs) =>
-    {
-        tokenSource.Cancel();
-        eventArgs.Cancel = true;
-    };
+    // Create a client to localhost on default namespace
+    var connectOptions = ClientEnvConfig.LoadClientConnectOptions();
+    connectOptions.TargetHost ??= "localhost:7233";
+    connectOptions.LoggerFactory = LoggerFactory.Create(builder =>
+        builder.
+            AddSimpleConsole(options => options.TimestampFormat = "[HH:mm:ss] ").
+            SetMinimumLevel(LogLevel.Information));
+    return await TemporalClient.ConnectAsync(connectOptions);
+}
+
+var workflowOption = new Option<string>("--workflow")
+{
+    Description = "Which workflow version the worker runs",
+    Required = true,
+};
+workflowOption.AcceptOnlyFromAmong("initial", "patched", "patch-deprecated", "patch-complete");
+
+async Task RunWorkerAsync(ParseResult parseResult, CancellationToken cancellationToken)
+{
+    var client = await ConnectClientAsync();
 
     var workerOptions = new TemporalWorkerOptions(taskQueue: "patching-task-queue")
         .AddActivity(Activities.PrePatchActivity)
         .AddActivity(Activities.PostPatchActivity);
 
-    switch (args.ElementAtOrDefault(2))
+    switch (parseResult.GetRequiredValue(workflowOption))
     {
         case "initial":
             workerOptions.AddWorkflow<MyWorkflow1Initial>();
@@ -41,8 +46,6 @@ async Task RunWorkerAsync()
         case "patch-complete":
             workerOptions.AddWorkflow<MyWorkflow4PatchComplete>();
             break;
-        default:
-            throw new ArgumentException("Which workflow. Can be 'initial', 'patched', 'patch-deprecated', or 'patch-complete'");
     }
 
     // Run worker until cancelled
@@ -52,7 +55,7 @@ async Task RunWorkerAsync()
 
     try
     {
-        await worker.ExecuteAsync(tokenSource.Token);
+        await worker.ExecuteAsync(cancellationToken);
     }
     catch (OperationCanceledException)
     {
@@ -60,44 +63,43 @@ async Task RunWorkerAsync()
     }
 }
 
-async Task RunStarterAsync()
-{
-    var workflowId = args.ElementAtOrDefault(2);
-    if (workflowId is null)
-    {
-        throw new ArgumentException("Workflow id is required");
-    }
+var startWorkflowOption = new Option<string>("--start-workflow") { Description = "Start a workflow with this id" };
+var queryWorkflowOption = new Option<string>("--query-workflow") { Description = "Query the workflow with this id" };
 
-    switch (args.ElementAtOrDefault(1))
+async Task RunStarterAsync(ParseResult parseResult, CancellationToken cancellationToken)
+{
+    var client = await ConnectClientAsync();
+
+    if (parseResult.GetValue(startWorkflowOption) is { } startWorkflowId)
     {
-        case "--start-workflow":
-            {
-                // Since it's just used for typing purposes, it doesn't matter which one we start
-                var handle = await client.StartWorkflowAsync((MyWorkflow1Initial wf) => wf.RunAsync(), new(id: workflowId, taskQueue: "patching-task-queue"));
-                Console.WriteLine($"Started workflow with ID {handle.Id} and run ID {handle.ResultRunId}");
-                break;
-            }
-        case "--query-workflow":
-            {
-                // Since it's just used for typing purposes, it doesn't matter which one we query
-                var handle = client.GetWorkflowHandle(workflowId);
-                var result = await handle.QueryAsync((MyWorkflow1Initial wf) => wf.Result);
-                Console.WriteLine($"Query result for ID {handle.Id}: {result}");
-                break;
-            }
-        default:
-            throw new ArgumentException("Either --start-workflow or --query-workflow is required");
+        // Since it's just used for typing purposes, it doesn't matter which one we start
+        var handle = await client.StartWorkflowAsync((MyWorkflow1Initial wf) => wf.RunAsync(), new(id: startWorkflowId, taskQueue: "patching-task-queue"));
+        Console.WriteLine($"Started workflow with ID {handle.Id} and run ID {handle.ResultRunId}");
+    }
+    else
+    {
+        // Since it's just used for typing purposes, it doesn't matter which one we query
+        var handle = client.GetWorkflowHandle(parseResult.GetRequiredValue(queryWorkflowOption));
+        var result = await handle.QueryAsync((MyWorkflow1Initial wf) => wf.Result);
+        Console.WriteLine($"Query result for ID {handle.Id}: {result}");
     }
 }
 
-switch (args.ElementAtOrDefault(0))
+// Cancellation token passed to actions is cancelled on ctrl+c
+var workerCommand = new Command("worker", "Run worker") { workflowOption };
+workerCommand.SetAction(RunWorkerAsync);
+
+var starterCommand = new Command("starter", "Start or query a workflow") { startWorkflowOption, queryWorkflowOption };
+starterCommand.Validators.Add(result =>
 {
-    case "worker":
-        await RunWorkerAsync();
-        break;
-    case "starter":
-        await RunStarterAsync();
-        break;
-    default:
-        throw new ArgumentException("Must pass 'worker' or 'starter' as the single argument");
-}
+    var hasStart = result.GetResult(startWorkflowOption) is not null;
+    var hasQuery = result.GetResult(queryWorkflowOption) is not null;
+    if (hasStart == hasQuery)
+    {
+        result.AddError("Exactly one of --start-workflow or --query-workflow is required");
+    }
+});
+starterCommand.SetAction(RunStarterAsync);
+
+var rootCommand = new RootCommand("Patching sample") { workerCommand, starterCommand };
+return await rootCommand.Parse(args).InvokeAsync();

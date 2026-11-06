@@ -1,3 +1,4 @@
+using System.CommandLine;
 using Microsoft.Extensions.Logging;
 using Temporalio.Client;
 using Temporalio.Common.EnvConfig;
@@ -21,15 +22,8 @@ Task<TemporalClient> ConnectClientAsync()
     return TemporalClient.ConnectAsync(connectOptions);
 }
 
-async Task RunWorkerAsync()
+async Task RunWorkerAsync(ParseResult parseResult, CancellationToken cancellationToken)
 {
-    using var tokenSource = new CancellationTokenSource();
-    Console.CancelKeyPress += (_, eventArgs) =>
-    {
-        tokenSource.Cancel();
-        eventArgs.Cancel = true;
-    };
-
     logger.LogInformation("Running worker on task queue {TaskQueue}", taskQueue);
     using var worker = new TemporalWorker(
         await ConnectClientAsync(),
@@ -38,7 +32,7 @@ async Task RunWorkerAsync()
             AddWorkflow<HelloHandlerWorkflow>());
     try
     {
-        await worker.ExecuteAsync(tokenSource.Token);
+        await worker.ExecuteAsync(cancellationToken);
     }
     catch (OperationCanceledException)
     {
@@ -46,7 +40,7 @@ async Task RunWorkerAsync()
     }
 }
 
-async Task RunStarterAsync()
+async Task RunStarterAsync(ParseResult parseResult, CancellationToken cancellationToken)
 {
     var client = await ConnectClientAsync();
 
@@ -96,15 +90,12 @@ async Task RunStarterAsync()
     logger.LogInformation("Total Nexus operations: {Count}", countResp.Count);
 }
 
-switch (args.ElementAtOrDefault(0))
-{
-    case "worker":
-        await RunWorkerAsync();
-        break;
-    case "starter":
-        await RunStarterAsync();
-        break;
-    default:
-        throw new ArgumentException(
-            "Must pass 'worker' or 'starter' as the single argument");
-}
+// Cancellation token passed to actions is cancelled on ctrl+c
+var workerCommand = new Command("worker", "Run worker");
+workerCommand.SetAction(RunWorkerAsync);
+
+var starterCommand = new Command("starter", "Run starter");
+starterCommand.SetAction(RunStarterAsync);
+
+var rootCommand = new RootCommand("Nexus standalone operations sample") { workerCommand, starterCommand };
+return await rootCommand.Parse(args).InvokeAsync();

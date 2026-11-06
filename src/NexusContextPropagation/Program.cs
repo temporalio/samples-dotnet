@@ -1,3 +1,4 @@
+using System.CommandLine;
 using Microsoft.Extensions.Logging;
 using Temporalio.Client;
 using Temporalio.Client.Interceptors;
@@ -14,14 +15,6 @@ using var loggerFactory = LoggerFactory.Create(builder =>
         AddSimpleConsole(options => options.TimestampFormat = "[HH:mm:ss] ").
         SetMinimumLevel(LogLevel.Information));
 var logger = loggerFactory.CreateLogger<Program>();
-
-// Cancellation token cancelled on ctrl+c
-using var tokenSource = new CancellationTokenSource();
-Console.CancelKeyPress += (_, eventArgs) =>
-{
-    tokenSource.Cancel();
-    eventArgs.Cancel = true;
-};
 
 Task<TemporalClient> ConnectClientAsync(string temporalNamespace)
 {
@@ -42,7 +35,7 @@ Task<TemporalClient> ConnectClientAsync(string temporalNamespace)
     return TemporalClient.ConnectAsync(connectOptions);
 }
 
-async Task RunHandlerWorkerAsync()
+async Task RunHandlerWorkerAsync(ParseResult parseResult, CancellationToken cancellationToken)
 {
     // Run worker until cancelled
     logger.LogInformation("Running handler worker");
@@ -53,7 +46,7 @@ async Task RunHandlerWorkerAsync()
             AddWorkflow<HelloHandlerWorkflow>());
     try
     {
-        await worker.ExecuteAsync(tokenSource.Token);
+        await worker.ExecuteAsync(cancellationToken);
     }
     catch (OperationCanceledException)
     {
@@ -61,7 +54,7 @@ async Task RunHandlerWorkerAsync()
     }
 }
 
-async Task RunCallerWorkerAsync()
+async Task RunCallerWorkerAsync(ParseResult parseResult, CancellationToken cancellationToken)
 {
     // Run worker until cancelled
     logger.LogInformation("Running caller worker");
@@ -71,7 +64,7 @@ async Task RunCallerWorkerAsync()
             AddWorkflow<HelloCallerWorkflow>());
     try
     {
-        await worker.ExecuteAsync(tokenSource.Token);
+        await worker.ExecuteAsync(cancellationToken);
     }
     catch (OperationCanceledException)
     {
@@ -79,7 +72,7 @@ async Task RunCallerWorkerAsync()
     }
 }
 
-async Task ExecuteCallerWorkflowAsync()
+async Task ExecuteCallerWorkflowAsync(ParseResult parseResult, CancellationToken cancellationToken)
 {
     // Set our user ID that can be accessed in the workflows and Nexus service
     MyContext.UserId = "some-user";
@@ -92,18 +85,15 @@ async Task ExecuteCallerWorkflowAsync()
     logger.LogInformation("Workflow result: {Result}", result);
 }
 
-switch (args.ElementAtOrDefault(0))
-{
-    case "handler-worker":
-        await RunHandlerWorkerAsync();
-        break;
-    case "caller-worker":
-        await RunCallerWorkerAsync();
-        break;
-    case "caller-workflow":
-        await ExecuteCallerWorkflowAsync();
-        break;
-    default:
-        throw new ArgumentException(
-            "Must pass 'handler-worker', 'caller-worker', or 'caller-workflow' as the single argument");
-}
+// Cancellation token passed to actions is cancelled on ctrl+c
+var handlerWorkerCommand = new Command("handler-worker", "Run handler worker");
+handlerWorkerCommand.SetAction(RunHandlerWorkerAsync);
+
+var callerWorkerCommand = new Command("caller-worker", "Run caller worker");
+callerWorkerCommand.SetAction(RunCallerWorkerAsync);
+
+var callerWorkflowCommand = new Command("caller-workflow", "Execute caller workflow");
+callerWorkflowCommand.SetAction(ExecuteCallerWorkflowAsync);
+
+var rootCommand = new RootCommand("Nexus context propagation sample") { handlerWorkerCommand, callerWorkerCommand, callerWorkflowCommand };
+return await rootCommand.Parse(args).InvokeAsync();

@@ -3,79 +3,96 @@ using Temporalio.Client;
 using Temporalio.Worker;
 using TemporalioSamples.ClientMtls;
 
-var rootCommand = new RootCommand("Client mTLS sample");
-rootCommand.AddCommand(GenClientCerts.CreateCommand());
-
-// Helper for client commands
-void AddClientCommand(
-    string name,
-    string desc,
-    Func<ITemporalClient, CancellationToken, Task> func)
+// Options shared by client commands
+var targetHostOption = new Option<string>("--target-host")
 {
-    var cmd = new Command(name, desc);
-    rootCommand!.AddCommand(cmd);
+    Description = "Host:port to connect to",
+    Required = true,
+};
+var namespaceOption = new Option<string>("--namespace")
+{
+    Description = "Namespace to connect to",
+    Required = true,
+};
+var clientCertOption = new Option<FileInfo>("--client-cert")
+{
+    Description = "Client certificate file for auth",
+    Required = true,
+};
+var clientKeyOption = new Option<FileInfo>("--client-key")
+{
+    Description = "Client key file for auth",
+    Required = true,
+};
 
-    // Add options
-    var targetHostOption = new Option<string>("--target-host", "Host:port to connect to");
-    targetHostOption.IsRequired = true;
-    var namespaceOption = new Option<string>("--namespace", "Namespace to connect to");
-    namespaceOption.IsRequired = true;
-    var clientCertOption = new Option<FileInfo>("--client-cert", "Client certificate file for auth");
-    clientCertOption.IsRequired = true;
-    var clientKeyOption = new Option<FileInfo>("--client-key", "Client key file for auth");
-    clientKeyOption.IsRequired = true;
-    cmd.AddOption(targetHostOption);
-    cmd.AddOption(namespaceOption);
-    cmd.AddOption(clientCertOption);
-    cmd.AddOption(clientKeyOption);
-
-    // Set handler
-    cmd.SetHandler(async ctx =>
-    {
-        // Create client
-        var client = await TemporalClient.ConnectAsync(
-            new(ctx.ParseResult.GetValueForOption(targetHostOption)!)
+async Task<TemporalClient> ConnectClientAsync(ParseResult parseResult)
+{
+    return await TemporalClient.ConnectAsync(
+        new(parseResult.GetRequiredValue(targetHostOption))
+        {
+            Namespace = parseResult.GetRequiredValue(namespaceOption),
+            // Set TLS options with client certs. Note, more options could
+            // be added here for server CA (i.e. "ServerRootCACert") or SNI
+            // override (i.e. "Domain") for self-hosted environments with
+            // self-signed certificates.
+            Tls = new()
             {
-                Namespace = ctx.ParseResult.GetValueForOption(namespaceOption)!,
-                // Set TLS options with client certs. Note, more options could
-                // be added here for server CA (i.e. "ServerRootCACert") or SNI
-                // override (i.e. "Domain") for self-hosted environments with
-                // self-signed certificates.
-                Tls = new()
-                {
-                    ClientCert =
-                        await File.ReadAllBytesAsync(ctx.ParseResult.GetValueForOption(clientCertOption)!.FullName),
-                    ClientPrivateKey =
-                        await File.ReadAllBytesAsync(ctx.ParseResult.GetValueForOption(clientKeyOption)!.FullName),
-                },
-            });
-        // Run
-        await func(client, ctx.GetCancellationToken());
-    });
+                ClientCert =
+                    await File.ReadAllBytesAsync(parseResult.GetRequiredValue(clientCertOption).FullName),
+                ClientPrivateKey =
+                    await File.ReadAllBytesAsync(parseResult.GetRequiredValue(clientKeyOption).FullName),
+            },
+        });
 }
 
-// Command to run worker
-AddClientCommand("run-worker", "Run worker", async (client, cancelToken) =>
+async Task RunWorkerAsync(ParseResult parseResult, CancellationToken cancellationToken)
 {
+    var client = await ConnectClientAsync(parseResult);
+
     Console.WriteLine("Running worker");
     using var worker = new TemporalWorker(
         client,
         new TemporalWorkerOptions(taskQueue: "client-mtls-sample").
             AddWorkflow<GreetingWorkflow>());
-    await worker.ExecuteAsync(cancelToken);
-});
+    await worker.ExecuteAsync(cancellationToken);
+}
 
-// Command to run workflow
-AddClientCommand("execute-workflow", "Execute workflow", async (client, cancelToken) =>
+async Task ExecuteWorkflowAsync(ParseResult parseResult, CancellationToken cancellationToken)
 {
+    var client = await ConnectClientAsync(parseResult);
+
     var result = await client.ExecuteWorkflowAsync(
         (GreetingWorkflow wf) => wf.RunAsync("Temporal"),
         new(id: "client-mtls-workflow-id", taskQueue: "client-mtls-sample")
         {
-            Rpc = new() { CancellationToken = cancelToken },
+            Rpc = new() { CancellationToken = cancellationToken },
         });
     Console.WriteLine("Workflow result: {0}", result);
-});
+}
 
-// Run
-await rootCommand.InvokeAsync(args);
+// Cancellation token passed to actions is cancelled on ctrl+c
+var runWorkerCommand = new Command("run-worker", "Run worker")
+{
+    targetHostOption,
+    namespaceOption,
+    clientCertOption,
+    clientKeyOption,
+};
+runWorkerCommand.SetAction(RunWorkerAsync);
+
+var executeWorkflowCommand = new Command("execute-workflow", "Execute workflow")
+{
+    targetHostOption,
+    namespaceOption,
+    clientCertOption,
+    clientKeyOption,
+};
+executeWorkflowCommand.SetAction(ExecuteWorkflowAsync);
+
+var rootCommand = new RootCommand("Client mTLS sample")
+{
+    GenClientCerts.CreateCommand(),
+    runWorkerCommand,
+    executeWorkflowCommand,
+};
+return await rootCommand.Parse(args).InvokeAsync();

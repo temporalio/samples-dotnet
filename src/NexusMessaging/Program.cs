@@ -1,3 +1,4 @@
+using System.CommandLine;
 using Microsoft.Extensions.Logging;
 using Temporalio.Client;
 using Temporalio.Common.EnvConfig;
@@ -16,14 +17,6 @@ using var loggerFactory = LoggerFactory.Create(builder =>
         SetMinimumLevel(LogLevel.Information));
 var logger = loggerFactory.CreateLogger<Program>();
 
-// Cancellation token cancelled on ctrl+c
-using var tokenSource = new CancellationTokenSource();
-Console.CancelKeyPress += (_, eventArgs) =>
-{
-    tokenSource.Cancel();
-    eventArgs.Cancel = true;
-};
-
 const string HandlerNamespace = "nexus-messaging-handler-namespace";
 const string CallerNamespace = "nexus-messaging-caller-namespace";
 const string HandlerTaskQueue = "nexus-messaging-handler-sample";
@@ -38,7 +31,7 @@ Task<TemporalClient> ConnectClientAsync(string temporalNamespace)
     return TemporalClient.ConnectAsync(connectOptions);
 }
 
-async Task RunHandlerWorkerAsync()
+async Task RunHandlerWorkerAsync(ParseResult parseResult, CancellationToken cancellationToken)
 {
     logger.LogInformation("Running handler worker");
     var client = await ConnectClientAsync(HandlerNamespace);
@@ -68,7 +61,7 @@ async Task RunHandlerWorkerAsync()
             AddAllActivities(new GreetingActivities()));
     try
     {
-        await worker.ExecuteAsync(tokenSource.Token);
+        await worker.ExecuteAsync(cancellationToken);
     }
     catch (OperationCanceledException)
     {
@@ -76,7 +69,7 @@ async Task RunHandlerWorkerAsync()
     }
 }
 
-async Task RunCallerWorkerAsync()
+async Task RunCallerWorkerAsync(ParseResult parseResult, CancellationToken cancellationToken)
 {
     logger.LogInformation("Running caller worker");
     using var worker = new TemporalWorker(
@@ -85,7 +78,7 @@ async Task RunCallerWorkerAsync()
             AddWorkflow<CallerWorkflow>());
     try
     {
-        await worker.ExecuteAsync(tokenSource.Token);
+        await worker.ExecuteAsync(cancellationToken);
     }
     catch (OperationCanceledException)
     {
@@ -93,7 +86,7 @@ async Task RunCallerWorkerAsync()
     }
 }
 
-async Task ExecuteCallerWorkflowAsync()
+async Task ExecuteCallerWorkflowAsync(ParseResult parseResult, CancellationToken cancellationToken)
 {
     logger.LogInformation("Executing caller workflow");
     var client = await ConnectClientAsync(CallerNamespace);
@@ -107,7 +100,7 @@ async Task ExecuteCallerWorkflowAsync()
     }
 }
 
-async Task RunRemoteHandlerWorkerAsync()
+async Task RunRemoteHandlerWorkerAsync(ParseResult parseResult, CancellationToken cancellationToken)
 {
     logger.LogInformation("Running remote handler worker (on-demand pattern)");
     using var worker = new TemporalWorker(
@@ -118,7 +111,7 @@ async Task RunRemoteHandlerWorkerAsync()
             AddAllActivities(new GreetingActivities()));
     try
     {
-        await worker.ExecuteAsync(tokenSource.Token);
+        await worker.ExecuteAsync(cancellationToken);
     }
     catch (OperationCanceledException)
     {
@@ -126,7 +119,7 @@ async Task RunRemoteHandlerWorkerAsync()
     }
 }
 
-async Task RunRemoteCallerWorkerAsync()
+async Task RunRemoteCallerWorkerAsync(ParseResult parseResult, CancellationToken cancellationToken)
 {
     logger.LogInformation("Running remote caller worker (on-demand pattern)");
     using var worker = new TemporalWorker(
@@ -135,7 +128,7 @@ async Task RunRemoteCallerWorkerAsync()
             AddWorkflow<CallerRemoteWorkflow>());
     try
     {
-        await worker.ExecuteAsync(tokenSource.Token);
+        await worker.ExecuteAsync(cancellationToken);
     }
     catch (OperationCanceledException)
     {
@@ -143,7 +136,7 @@ async Task RunRemoteCallerWorkerAsync()
     }
 }
 
-async Task ExecuteRemoteCallerWorkflowAsync()
+async Task ExecuteRemoteCallerWorkflowAsync(ParseResult parseResult, CancellationToken cancellationToken)
 {
     logger.LogInformation("Executing remote caller workflow (on-demand pattern)");
     var client = await ConnectClientAsync(CallerNamespace);
@@ -157,28 +150,32 @@ async Task ExecuteRemoteCallerWorkflowAsync()
     }
 }
 
-switch (args.ElementAtOrDefault(0))
+// Cancellation token passed to actions is cancelled on ctrl+c
+var handlerWorkerCommand = new Command("handler-worker", "Run handler worker (caller pattern)");
+handlerWorkerCommand.SetAction(RunHandlerWorkerAsync);
+
+var callerWorkerCommand = new Command("caller-worker", "Run caller worker (caller pattern)");
+callerWorkerCommand.SetAction(RunCallerWorkerAsync);
+
+var callerWorkflowCommand = new Command("caller-workflow", "Execute caller workflow (caller pattern)");
+callerWorkflowCommand.SetAction(ExecuteCallerWorkflowAsync);
+
+var remoteHandlerWorkerCommand = new Command("remote-handler-worker", "Run remote handler worker (on-demand pattern)");
+remoteHandlerWorkerCommand.SetAction(RunRemoteHandlerWorkerAsync);
+
+var remoteCallerWorkerCommand = new Command("remote-caller-worker", "Run remote caller worker (on-demand pattern)");
+remoteCallerWorkerCommand.SetAction(RunRemoteCallerWorkerAsync);
+
+var remoteCallerWorkflowCommand = new Command("remote-caller-workflow", "Execute remote caller workflow (on-demand pattern)");
+remoteCallerWorkflowCommand.SetAction(ExecuteRemoteCallerWorkflowAsync);
+
+var rootCommand = new RootCommand("Nexus messaging sample")
 {
-    case "handler-worker":
-        await RunHandlerWorkerAsync();
-        break;
-    case "caller-worker":
-        await RunCallerWorkerAsync();
-        break;
-    case "caller-workflow":
-        await ExecuteCallerWorkflowAsync();
-        break;
-    case "remote-handler-worker":
-        await RunRemoteHandlerWorkerAsync();
-        break;
-    case "remote-caller-worker":
-        await RunRemoteCallerWorkerAsync();
-        break;
-    case "remote-caller-workflow":
-        await ExecuteRemoteCallerWorkflowAsync();
-        break;
-    default:
-        throw new ArgumentException(
-            "Must pass 'handler-worker', 'caller-worker', 'caller-workflow', " +
-            "'remote-handler-worker', 'remote-caller-worker', or 'remote-caller-workflow' as the single argument");
-}
+    handlerWorkerCommand,
+    callerWorkerCommand,
+    callerWorkflowCommand,
+    remoteHandlerWorkerCommand,
+    remoteCallerWorkerCommand,
+    remoteCallerWorkflowCommand,
+};
+return await rootCommand.Parse(args).InvokeAsync();

@@ -1,3 +1,4 @@
+using System.CommandLine;
 using System.Globalization;
 using Microsoft.Extensions.Logging;
 using Temporalio.Client;
@@ -6,26 +7,23 @@ using Temporalio.Exceptions;
 using Temporalio.Worker;
 using TemporalioSamples.UpdateWithStartLazyInit;
 
-// Create a client to localhost on default namespace
-var connectOptions = ClientEnvConfig.LoadClientConnectOptions();
-connectOptions.TargetHost ??= "localhost:7233";
-connectOptions.LoggerFactory = LoggerFactory.Create(builder =>
-    builder.
-        AddSimpleConsole(options => options.TimestampFormat = "[HH:mm:ss] ").
-        SetMinimumLevel(LogLevel.Information));
-var client = await TemporalClient.ConnectAsync(connectOptions);
+async Task<TemporalClient> ConnectClientAsync()
+{
+    // Create a client to localhost on default namespace
+    var connectOptions = ClientEnvConfig.LoadClientConnectOptions();
+    connectOptions.TargetHost ??= "localhost:7233";
+    connectOptions.LoggerFactory = LoggerFactory.Create(builder =>
+        builder.
+            AddSimpleConsole(options => options.TimestampFormat = "[HH:mm:ss] ").
+            SetMinimumLevel(LogLevel.Information));
+    return await TemporalClient.ConnectAsync(connectOptions);
+}
 
 const string TaskQueue = "update-with-start-lazy-init";
 
-async Task RunWorkerAsync()
+async Task RunWorkerAsync(ParseResult parseResult, CancellationToken cancellationToken)
 {
-    // Cancellation token cancelled on ctrl+c
-    using var tokenSource = new CancellationTokenSource();
-    Console.CancelKeyPress += (_, eventArgs) =>
-    {
-        tokenSource.Cancel();
-        eventArgs.Cancel = true;
-    };
+    var client = await ConnectClientAsync();
 
     // Run worker until cancelled
     Console.WriteLine("Running worker");
@@ -36,7 +34,7 @@ async Task RunWorkerAsync()
             AddWorkflow<ShoppingCartWorkflow>());
     try
     {
-        await worker.ExecuteAsync(tokenSource.Token);
+        await worker.ExecuteAsync(cancellationToken);
     }
     catch (OperationCanceledException)
     {
@@ -44,16 +42,18 @@ async Task RunWorkerAsync()
     }
 }
 
-async Task ExecuteWorkflowAsync()
+async Task ExecuteWorkflowAsync(ParseResult parseResult, CancellationToken cancellationToken)
 {
+    var client = await ConnectClientAsync();
+
     Console.WriteLine("Starting to shop...");
 
     // Add 3 of an item
-    var addResult = await AddCartItemAsync("session-777", new(Sku: "sku-123", 3));
+    var addResult = await AddCartItemAsync(client, "session-777", new(Sku: "sku-123", 3));
     Console.WriteLine($"Subtotal after item 1: {addResult.SubtotalString}");
 
     // Add 2 of another (that is not found)
-    addResult = await AddCartItemAsync("session-777", new(Sku: "sku-456", 2));
+    addResult = await AddCartItemAsync(client, "session-777", new(Sku: "sku-456", 2));
     Console.WriteLine($"Subtotal after item 2: {addResult.SubtotalString}");
 
     // Checkout and display final order
@@ -62,7 +62,7 @@ async Task ExecuteWorkflowAsync()
     Console.WriteLine($"Final order: {finalOrder}");
 }
 
-async Task<AddCartItemResult> AddCartItemAsync(string sessionId, ShoppingCartItem item)
+async Task<AddCartItemResult> AddCartItemAsync(TemporalClient client, string sessionId, ShoppingCartItem item)
 {
     // Issue an update-with-start that will create the workflow if it does not
     // exist before attempting the update
@@ -93,17 +93,15 @@ async Task<AddCartItemResult> AddCartItemAsync(string sessionId, ShoppingCartIte
     return new(await startOperation.GetHandleAsync(), subtotal);
 }
 
-switch (args.ElementAtOrDefault(0))
-{
-    case "worker":
-        await RunWorkerAsync();
-        break;
-    case "workflow":
-        await ExecuteWorkflowAsync();
-        break;
-    default:
-        throw new ArgumentException("Must pass 'worker' or 'workflow' as the single argument");
-}
+// Cancellation token passed to actions is cancelled on ctrl+c
+var workerCommand = new Command("worker", "Run worker");
+workerCommand.SetAction(RunWorkerAsync);
+
+var workflowCommand = new Command("workflow", "Execute workflow");
+workflowCommand.SetAction(ExecuteWorkflowAsync);
+
+var rootCommand = new RootCommand("Update with start lazy init sample") { workerCommand, workflowCommand };
+return await rootCommand.Parse(args).InvokeAsync();
 
 public record AddCartItemResult(
     WorkflowHandle<ShoppingCartWorkflow, ShoppingCartWorkflow.FinalizedOrder> WorkflowHandle,

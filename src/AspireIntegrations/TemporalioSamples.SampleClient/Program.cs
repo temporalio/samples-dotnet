@@ -1,24 +1,32 @@
-﻿using Temporalio.Client;
+﻿using System.CommandLine;
+using Temporalio.Client;
 using Temporalio.Common.EnvConfig;
 using TemporalioSamples.SampleWorkflow;
 
-try
+async Task RunAsync(ParseResult parseResult, CancellationToken cancellationToken)
 {
-    var connectOptions = ClientEnvConfig.LoadClientConnectOptions();
-    Console.WriteLine("\nAttempting to connect client to temporal server...");
+    try
+    {
+        var connectOptions = ClientEnvConfig.LoadClientConnectOptions();
+        Console.WriteLine("\nAttempting to connect client to temporal server...");
 
-    var client = await TemporalClient.ConnectAsync(connectOptions);
-    Console.WriteLine("✅ Client connected successfully!");
+        var client = await TemporalClient.ConnectAsync(connectOptions);
+        Console.WriteLine("✅ Client connected successfully!");
 
-    await client.StartWorkflowAsync(
-        (SimpleWorkflow wf) => wf.RunAsync(),
-        new(id: "simple-workflow-id", taskQueue: "simple-task-queue"));
+        await client.StartWorkflowAsync(
+            (SimpleWorkflow wf) => wf.RunAsync(),
+            new(id: "simple-workflow-id", taskQueue: "simple-task-queue"));
 
-    Console.WriteLine("✅ Workflow invoked successfully!");
-}
+        Console.WriteLine("✅ Workflow invoked successfully!");
+    }
 #pragma warning disable CA1031
-catch (Exception ex)
+    catch (Exception ex)
 #pragma warning restore CA1031
-{
-    Console.WriteLine($"❌ Failed to start workflow: {ex.Message}");
+    {
+        Console.WriteLine($"❌ Failed to start workflow: {ex.Message}");
+    }
 }
+
+var rootCommand = new RootCommand("Aspire integration sample client");
+rootCommand.SetAction(RunAsync);
+return await rootCommand.Parse(args).InvokeAsync();

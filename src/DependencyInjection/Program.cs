@@ -1,10 +1,11 @@
+using System.CommandLine;
 using Temporalio.Client;
 using Temporalio.Common.EnvConfig;
 using Temporalio.Extensions.Hosting;
 using Temporalio.Runtime;
 using TemporalioSamples.DependencyInjection;
 
-async Task RunWorkerAsync()
+async Task RunWorkerAsync(ParseResult parseResult, CancellationToken cancellationToken)
 {
     IHost host = Host.CreateDefaultBuilder(args)
         .ConfigureLogging(ctx =>
@@ -40,10 +41,10 @@ async Task RunWorkerAsync()
                 AddWorkflow<MyWorkflow>();
         })
         .Build();
-    await host.RunAsync();
+    await host.RunAsync(cancellationToken);
 }
 
-async Task ExecuteWorkflowAsync()
+async Task ExecuteWorkflowAsync(ParseResult parseResult, CancellationToken cancellationToken)
 {
     var connectOptions = ClientEnvConfig.LoadClientConnectOptions();
     connectOptions.TargetHost ??= "localhost:7233";
@@ -61,14 +62,12 @@ async Task ExecuteWorkflowAsync()
     Console.WriteLine("Workflow result: {0}", result);
 }
 
-switch (args.ElementAtOrDefault(0))
-{
-    case "worker":
-        await RunWorkerAsync();
-        break;
-    case "workflow":
-        await ExecuteWorkflowAsync();
-        break;
-    default:
-        throw new ArgumentException("Must pass 'worker' or 'workflow' as the single argument");
-}
+// Cancellation token passed to actions is cancelled on ctrl+c
+var workerCommand = new Command("worker", "Run worker");
+workerCommand.SetAction(RunWorkerAsync);
+
+var workflowCommand = new Command("workflow", "Execute workflow");
+workflowCommand.SetAction(ExecuteWorkflowAsync);
+
+var rootCommand = new RootCommand("Dependency injection sample") { workerCommand, workflowCommand };
+return await rootCommand.Parse(args).InvokeAsync();

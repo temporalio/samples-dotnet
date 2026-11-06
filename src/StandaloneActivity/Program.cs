@@ -1,27 +1,26 @@
+using System.CommandLine;
 using Microsoft.Extensions.Logging;
 using Temporalio.Client;
 using Temporalio.Common.EnvConfig;
 using Temporalio.Worker;
 using TemporalioSamples.StandaloneActivity;
 
-var connectOptions = ClientEnvConfig.LoadClientConnectOptions();
-connectOptions.TargetHost ??= "localhost:7233";
-connectOptions.LoggerFactory = LoggerFactory.Create(builder =>
-    builder.
-        AddSimpleConsole(options => options.TimestampFormat = "[HH:mm:ss] ").
-        SetMinimumLevel(LogLevel.Information));
-var client = await TemporalClient.ConnectAsync(connectOptions);
+async Task<TemporalClient> ConnectClientAsync()
+{
+    var connectOptions = ClientEnvConfig.LoadClientConnectOptions();
+    connectOptions.TargetHost ??= "localhost:7233";
+    connectOptions.LoggerFactory = LoggerFactory.Create(builder =>
+        builder.
+            AddSimpleConsole(options => options.TimestampFormat = "[HH:mm:ss] ").
+            SetMinimumLevel(LogLevel.Information));
+    return await TemporalClient.ConnectAsync(connectOptions);
+}
 
 const string taskQueue = "standalone-activity-sample";
 
-async Task RunWorkerAsync()
+async Task RunWorkerAsync(ParseResult parseResult, CancellationToken cancellationToken)
 {
-    using var tokenSource = new CancellationTokenSource();
-    Console.CancelKeyPress += (_, eventArgs) =>
-    {
-        tokenSource.Cancel();
-        eventArgs.Cancel = true;
-    };
+    var client = await ConnectClientAsync();
 
     Console.WriteLine("Running worker");
     using var worker = new TemporalWorker(
@@ -30,7 +29,7 @@ async Task RunWorkerAsync()
             AddActivity(MyActivities.ComposeGreetingAsync));
     try
     {
-        await worker.ExecuteAsync(tokenSource.Token);
+        await worker.ExecuteAsync(cancellationToken);
     }
     catch (OperationCanceledException)
     {
@@ -38,8 +37,10 @@ async Task RunWorkerAsync()
     }
 }
 
-async Task ExecuteActivityAsync()
+async Task ExecuteActivityAsync(ParseResult parseResult, CancellationToken cancellationToken)
 {
+    var client = await ConnectClientAsync();
+
     var result = await client.ExecuteActivityAsync(
         () => MyActivities.ComposeGreetingAsync(new ComposeGreetingInput("Hello", "World")),
         new("standalone-activity-id", taskQueue)
@@ -49,8 +50,10 @@ async Task ExecuteActivityAsync()
     Console.WriteLine($"Activity result: {result}");
 }
 
-async Task StartActivityAsync()
+async Task StartActivityAsync(ParseResult parseResult, CancellationToken cancellationToken)
 {
+    var client = await ConnectClientAsync();
+
     var handle = await client.StartActivityAsync(
         () => MyActivities.ComposeGreetingAsync(new ComposeGreetingInput("Hello", "World")),
         new("standalone-activity-id", taskQueue)
@@ -63,8 +66,10 @@ async Task StartActivityAsync()
     Console.WriteLine($"Activity result: {result}");
 }
 
-async Task ListActivitiesAsync()
+async Task ListActivitiesAsync(ParseResult parseResult, CancellationToken cancellationToken)
 {
+    var client = await ConnectClientAsync();
+
     await foreach (var info in client.ListActivitiesAsync(
         $"TaskQueue = '{taskQueue}'"))
     {
@@ -72,31 +77,37 @@ async Task ListActivitiesAsync()
     }
 }
 
-async Task CountActivitiesAsync()
+async Task CountActivitiesAsync(ParseResult parseResult, CancellationToken cancellationToken)
 {
+    var client = await ConnectClientAsync();
+
     var resp = await client.CountActivitiesAsync(
         $"TaskQueue = '{taskQueue}'");
     Console.WriteLine($"Total activities: {resp.Count}");
 }
 
-switch (args.ElementAtOrDefault(0))
+// Cancellation token passed to actions is cancelled on ctrl+c
+var workerCommand = new Command("worker", "Run worker");
+workerCommand.SetAction(RunWorkerAsync);
+
+var executeActivityCommand = new Command("execute-activity", "Execute activity and wait for result");
+executeActivityCommand.SetAction(ExecuteActivityAsync);
+
+var startActivityCommand = new Command("start-activity", "Start activity and then wait for result");
+startActivityCommand.SetAction(StartActivityAsync);
+
+var listActivitiesCommand = new Command("list-activities", "List activities");
+listActivitiesCommand.SetAction(ListActivitiesAsync);
+
+var countActivitiesCommand = new Command("count-activities", "Count activities");
+countActivitiesCommand.SetAction(CountActivitiesAsync);
+
+var rootCommand = new RootCommand("Standalone activity sample")
 {
-    case "worker":
-        await RunWorkerAsync();
-        break;
-    case "execute-activity":
-        await ExecuteActivityAsync();
-        break;
-    case "start-activity":
-        await StartActivityAsync();
-        break;
-    case "list-activities":
-        await ListActivitiesAsync();
-        break;
-    case "count-activities":
-        await CountActivitiesAsync();
-        break;
-    default:
-        throw new ArgumentException(
-            "Must pass 'worker', 'execute-activity', 'start-activity', 'list-activities', or 'count-activities' as the single argument");
-}
+    workerCommand,
+    executeActivityCommand,
+    startActivityCommand,
+    listActivitiesCommand,
+    countActivitiesCommand,
+};
+return await rootCommand.Parse(args).InvokeAsync();

@@ -13,6 +13,7 @@
     <PackageReference Include="Microsoft.AspNetCore.Mvc.Testing" />
     <PackageReference Include="Microsoft.Extensions.Hosting" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" />
+    <PackageReference Include="System.CommandLine" />
     <PackageReference Include="xunit" />
     <PackageReference Include="xunit.console" />
     <PackageReference Include="xunit.runner.visualstudio" />

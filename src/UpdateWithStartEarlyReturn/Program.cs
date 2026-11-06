@@ -1,29 +1,27 @@
+using System.CommandLine;
 using Microsoft.Extensions.Logging;
 using Temporalio.Client;
 using Temporalio.Common.EnvConfig;
 using Temporalio.Worker;
 using TemporalioSamples.UpdateWithStartEarlyReturn;
 
-// Create a client to localhost on default namespace
-var connectOptions = ClientEnvConfig.LoadClientConnectOptions();
-connectOptions.TargetHost ??= "localhost:7233";
-connectOptions.LoggerFactory = LoggerFactory.Create(builder =>
-    builder.
-        AddSimpleConsole(options => options.TimestampFormat = "[HH:mm:ss] ").
-        SetMinimumLevel(LogLevel.Information));
-var client = await TemporalClient.ConnectAsync(connectOptions);
+async Task<TemporalClient> ConnectClientAsync()
+{
+    // Create a client to localhost on default namespace
+    var connectOptions = ClientEnvConfig.LoadClientConnectOptions();
+    connectOptions.TargetHost ??= "localhost:7233";
+    connectOptions.LoggerFactory = LoggerFactory.Create(builder =>
+        builder.
+            AddSimpleConsole(options => options.TimestampFormat = "[HH:mm:ss] ").
+            SetMinimumLevel(LogLevel.Information));
+    return await TemporalClient.ConnectAsync(connectOptions);
+}
 
 const string TaskQueue = "update-with-start-early-return";
 
-async Task RunWorkerAsync()
+async Task RunWorkerAsync(ParseResult parseResult, CancellationToken cancellationToken)
 {
-    // Cancellation token cancelled on ctrl+c
-    using var tokenSource = new CancellationTokenSource();
-    Console.CancelKeyPress += (_, eventArgs) =>
-    {
-        tokenSource.Cancel();
-        eventArgs.Cancel = true;
-    };
+    var client = await ConnectClientAsync();
 
     // Run worker until cancelled
     Console.WriteLine("Running worker");
@@ -34,7 +32,7 @@ async Task RunWorkerAsync()
             AddWorkflow<PaymentWorkflow>());
     try
     {
-        await worker.ExecuteAsync(tokenSource.Token);
+        await worker.ExecuteAsync(cancellationToken);
     }
     catch (OperationCanceledException)
     {
@@ -42,8 +40,10 @@ async Task RunWorkerAsync()
     }
 }
 
-async Task ExecuteWorkflowAsync()
+async Task ExecuteWorkflowAsync(ParseResult parseResult, CancellationToken cancellationToken)
 {
+    var client = await ConnectClientAsync();
+
     const string paymentId = "my-early-return-payment-123";
     Console.WriteLine("Starting payment processing and waiting for authorize");
 
@@ -71,14 +71,12 @@ async Task ExecuteWorkflowAsync()
     Console.WriteLine("Payment processing complete");
 }
 
-switch (args.ElementAtOrDefault(0))
-{
-    case "worker":
-        await RunWorkerAsync();
-        break;
-    case "workflow":
-        await ExecuteWorkflowAsync();
-        break;
-    default:
-        throw new ArgumentException("Must pass 'worker' or 'workflow' as the single argument");
-}
+// Cancellation token passed to actions is cancelled on ctrl+c
+var workerCommand = new Command("worker", "Run worker");
+workerCommand.SetAction(RunWorkerAsync);
+
+var workflowCommand = new Command("workflow", "Execute workflow");
+workflowCommand.SetAction(ExecuteWorkflowAsync);
+
+var rootCommand = new RootCommand("Update with start early return sample") { workerCommand, workflowCommand };
+return await rootCommand.Parse(args).InvokeAsync();
