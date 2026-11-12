@@ -14,7 +14,7 @@ public static class S3Mock
 {
     private static readonly Owner MockOwner = new("test", "test");
 
-    public static async Task RunAsync(CancellationToken cancellationToken, int port = Storage.S3Port)
+    public static async Task RunAsync(CancellationToken cancellationToken, int port = Storage.MockPort)
     {
         var objects = new ConcurrentDictionary<string, byte[]>();
         var settings = new S3ServerSettings
@@ -25,12 +25,12 @@ public static class S3Mock
         settings.Telemetry.Enable = false;
         using var server = new S3Server(settings);
 
-        server.Service.GetSecretKey = ctx => ctx.Request.AccessKey == Storage.S3AccessKey ?
-            Storage.S3SecretKey : throw new S3Exception(new Error(ErrorCode.InvalidAccessKeyId));
+        server.Service.GetSecretKey = ctx => ctx.Request.AccessKey == Storage.MockAccessKey ?
+            Storage.MockSecretKey : throw new S3Exception(new Error(ErrorCode.InvalidAccessKeyId));
 
         byte[] Get(S3Context ctx)
         {
-            if (ctx.Request.Bucket != Storage.S3Bucket)
+            if (ctx.Request.Bucket != Storage.MockBucket)
             {
                 throw new S3Exception(new Error(ErrorCode.NoSuchBucket));
             }
@@ -57,7 +57,7 @@ public static class S3Mock
         };
 
         server.Start();
-        Console.WriteLine($"Mock S3 listening on http://localhost:{port}, bucket {Storage.S3Bucket}");
+        Console.WriteLine($"Mock S3 listening on http://localhost:{port}, bucket {Storage.MockBucket}");
         try
         {
             await Task.Delay(Timeout.Infinite, cancellationToken);

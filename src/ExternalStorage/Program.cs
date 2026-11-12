@@ -14,7 +14,7 @@ async Task<TemporalClient> ConnectClientAsync(IAmazonS3 s3Client)
     connectOptions.TargetHost ??= "localhost:7233";
     // The worker uses its client's data converter, so this is all it takes to offload the large
     // activity inputs and results it sends.
-    connectOptions.DataConverter = Storage.CreateDataConverter(s3Client);
+    connectOptions.DataConverter = Storage.CreateDataConverter(s3Client, Storage.Bucket);
     connectOptions.LoggerFactory = LoggerFactory.Create(builder =>
         builder.
             AddSimpleConsole(options => options.TimestampFormat = "[HH:mm:ss] ").

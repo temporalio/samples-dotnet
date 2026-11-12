@@ -18,15 +18,14 @@ public class ProcessOrderBatchWorkflowTests : WorkflowEnvironmentTestBase
     [Fact]
     public async Task RunAsync_LargeOrderList_OffloadsToS3()
     {
-        // Port 5000 is often taken on macOS by AirPlay Receiver.
         var port = GetFreePort();
         using var mockCancel = new CancellationTokenSource();
         var mock = S3Mock.RunAsync(mockCancel.Token, port);
         try
         {
-            using var s3Client = Storage.CreateS3Client(port);
+            using var s3Client = Storage.CreateMockS3Client(port);
             var options = (TemporalClientOptions)Client.Options.Clone();
-            options.DataConverter = Storage.CreateDataConverter(s3Client);
+            options.DataConverter = Storage.CreateDataConverter(s3Client, Storage.MockBucket);
             var client = new TemporalClient(Client.Connection, options);
 
             using var worker = new TemporalWorker(

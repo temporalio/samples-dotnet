@@ -17,12 +17,12 @@ The codec compresses each payload, and the SDK then compares the compressed size
 reference. The workflow's own input and result are a few bytes and stay inline.
 
 A mock S3 server ([S3Mock.cs](S3Mock.cs)) is included, so the sample runs locally without an AWS
-account or Docker.
+account or Docker. To use real S3 instead, see [Using real S3](#using-real-s3).
 
 ### Running this sample
 
 To run, first see [README.md](../../README.md) for prerequisites. Then, run the following from this
-directory in a separate terminal to start the mock S3 server. It listens on `localhost:5000`, serves
+directory in a separate terminal to start the mock S3 server. It listens on `localhost:9100`, serves
 the `temporal-payloads` bucket, and keeps objects in memory until it stops.
 
     dotnet run s3-mock
@@ -80,7 +80,7 @@ client. The worker uses its client's data converter, so it needs no other config
 
 ```csharp
 var driver = new S3StorageDriver(
-    new AwsSdkS3StorageDriverClient(s3Client), "temporal-payloads");
+    new AwsSdkS3StorageDriverClient(s3Client), bucket);
 var dataConverter = DataConverter.Default with
 {
     PayloadCodec = new ZlibCodec(),
@@ -102,8 +102,17 @@ Decoding reverses these steps, retrieving from S3 and then decompressing.
 Every process that reads or writes this workflow's payloads must use the same codec and external
 storage configuration, so each can read what the others wrote.
 
-To use real S3, drop the endpoint override, credentials, and path-style setting from `Storage.cs`
-and let the AWS SDK load its configuration from the environment instead. See the
+#### Using real S3
+
+Set `EXTERNAL_STORAGE_S3_BUCKET` to your bucket's name in the worker's and the workflow's terminals,
+and skip the mock S3 server:
+
+    export EXTERNAL_STORAGE_S3_BUCKET=<your-bucket>
+
+The S3 client then takes its region and credentials from the usual AWS configuration, such as the
+`AWS_REGION` and `AWS_PROFILE` environment variables or `~/.aws`. Set the variable in both
+terminals: a worker and a starter that disagree would write payloads where the other can't read
+them. See the
 [S3 driver README](https://github.com/temporalio/sdk-dotnet/tree/main/src/Temporalio.Extensions.Aws.S3Driver)
 for the IAM permissions the driver needs.
 
