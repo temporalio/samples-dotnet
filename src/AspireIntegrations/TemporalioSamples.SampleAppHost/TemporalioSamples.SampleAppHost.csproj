@@ -5,6 +5,8 @@
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
         <UserSecretsId>4a9378ba-a2ca-4863-9c5c-98903998bef0</UserSecretsId>
+        <!-- The CLI bundle would make building the solution require the Aspire CLI -->
+        <NoWarn>$(NoWarn);ASPIRE010</NoWarn>
     </PropertyGroup>
     
     <ItemGroup>
