@@ -4,7 +4,7 @@ The smallest Agent Framework + Temporal sample: one `TemporalAgent`, invoked onc
 
 ## What this sample demonstrates
 
-- `MicrosoftAgentFrameworkPlugin` on `TemporalClientConnectOptions.Plugins`, with the OpenAI chat client built on the worker from `OPENAI_API_KEY` and its own retries off. The worker checks for the key at start and exits with a one-line message when it is missing; if a factory throws anyway, the plugin fails the model Activity with a non-retryable `MicrosoftAgentFrameworkConfigurationError`, so the run fails in one attempt instead of retrying.
+- `MicrosoftAgentFrameworkPlugin` on `TemporalClientConnectOptions.Plugins`, with the OpenAI chat client built on the worker from `OPENAI_API_KEY` and its own retries off. The worker checks for the key at start and exits with a one-line message when it is missing; if a factory throws anyway, the plugin fails that attempt with `MicrosoftAgentFrameworkConfigurationError`, logs the exception on the worker and retries the model Activity under its retry policy, so a worker fixed in place picks the run up.
 - `new TemporalAgent("gpt-4o-mini", options)` in a `[Workflow]` class; the Workflow carries the model name and nothing else
 - `await agent.RunAsync(prompt)` and `response.Text`, unchanged from Agent Framework
 

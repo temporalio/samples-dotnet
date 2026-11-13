@@ -37,8 +37,8 @@ var plugin = new MicrosoftAgentFrameworkPlugin(new MicrosoftAgentFrameworkPlugin
             var apiKey = Environment.GetEnvironmentVariable("OPENAI_API_KEY");
             if (string.IsNullOrWhiteSpace(apiKey))
             {
-                // The plugin fails a throwing factory with a non-retryable
-                // MicrosoftAgentFrameworkConfigurationError, so the run fails in one attempt.
+                // The worker checked the key before it started, so this is a last resort: the
+                // plugin logs a throwing factory and retries the model Activity under its retry policy.
                 throw new InvalidOperationException("OPENAI_API_KEY is not set");
             }
 
