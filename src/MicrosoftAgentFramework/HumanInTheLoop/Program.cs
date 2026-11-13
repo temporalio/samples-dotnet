@@ -94,17 +94,14 @@ async Task ExecuteWorkflowAsync(bool approve)
         (HumanInTheLoopWorkflow wf) => wf.RunAsync("Please delete /tmp/report.txt"),
         new(id: "microsoft-agent-framework-human-in-the-loop", taskQueue: TaskQueue));
 
-    // Poll the Query until the agent asks for approval.
+    // Poll the Query until the agent asks for approval. Stop as soon as the Workflow closes: the
+    // agent may answer without calling the tool, and a failed run throws from the result below.
+    var result = handle.GetResultAsync();
     IReadOnlyList<ApprovalRequest> requests = Array.Empty<ApprovalRequest>();
-    for (var attempt = 0; attempt < 120 && requests.Count == 0; attempt++)
+    while (requests.Count == 0 && !result.IsCompleted)
     {
         await Task.Delay(TimeSpan.FromMilliseconds(500));
         requests = await handle.QueryAsync(wf => wf.PendingApprovals());
-    }
-
-    if (requests.Count == 0)
-    {
-        throw new InvalidOperationException("The agent never asked for approval");
     }
 
     foreach (var request in requests)
@@ -115,7 +112,7 @@ async Task ExecuteWorkflowAsync(bool approve)
         Console.WriteLine($"Decision: {outcome}");
     }
 
-    Console.WriteLine($"Result: {await handle.GetResultAsync()}");
+    Console.WriteLine($"Result: {await result}");
 }
 // @@@SNIPEND
 if (verb == "worker")
