@@ -6,6 +6,7 @@ using OpenAI;
 using Temporalio.Api.Enums.V1;
 using Temporalio.Client;
 using Temporalio.Common.EnvConfig;
+using Temporalio.Exceptions;
 using Temporalio.MicrosoftAgentFramework;
 using Temporalio.Worker;
 using TemporalioSamples.MicrosoftAgentFramework.ContinueAsNew;
@@ -90,12 +91,12 @@ async Task RunWorkerAsync()
 }
 
 // @@@SNIPSTART dotnet-microsoft-agent-framework-continue-as-new-client
-async Task SendMessageAsync(string? prompt)
+async Task<int> SendMessageAsync(string? prompt)
 {
     if (prompt is null)
     {
-        Console.WriteLine("Usage: dotnet run send-message '<prompt>'");
-        return;
+        await Console.Error.WriteLineAsync("Usage: dotnet run send-message '<prompt>'");
+        return 1;
     }
 
     // Update-With-Start: one request starts the chat if it is not running and sends the turn.
@@ -111,34 +112,40 @@ async Task SendMessageAsync(string? prompt)
         new(startOperation));
     Console.WriteLine($"user: {prompt}");
     Console.WriteLine($"assistant: {reply}");
+    return 0;
 }
 
-async Task EndChatAsync()
+async Task<int> EndChatAsync()
 {
     var handle = client.GetWorkflowHandle<ChatWorkflow>(WorkflowId);
-    var transcript = await handle.QueryAsync(wf => wf.Transcript());
-    Console.WriteLine($"{transcript.Count} messages in the session:");
-    foreach (var line in transcript)
+    try
     {
-        Console.WriteLine(line);
+        var transcript = await handle.QueryAsync(wf => wf.Transcript());
+        Console.WriteLine($"{transcript.Count} messages in the session:");
+        foreach (var line in transcript)
+        {
+            Console.WriteLine(line);
+        }
+
+        await handle.SignalAsync(wf => wf.EndChatAsync());
+    }
+    catch (RpcException e) when (e.Code == RpcException.StatusCode.NotFound)
+    {
+        await Console.Error.WriteLineAsync("No chat is running. Start one with: dotnet run send-message '<prompt>'");
+        return 1;
     }
 
-    await handle.SignalAsync(wf => wf.EndChatAsync());
     await handle.GetResultAsync();
     Console.WriteLine("Chat ended");
+    return 0;
 }
 // @@@SNIPEND
-switch (verb)
+if (verb == "worker")
 {
-    case "worker":
-        await RunWorkerAsync();
-        break;
-    case "send-message":
-        await SendMessageAsync(args.ElementAtOrDefault(1));
-        break;
-    default:
-        await EndChatAsync();
-        break;
+    await RunWorkerAsync();
+    return 0;
 }
 
-return 0;
+return verb == "send-message"
+    ? await SendMessageAsync(args.ElementAtOrDefault(1))
+    : await EndChatAsync();

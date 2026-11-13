@@ -23,7 +23,7 @@ dotnet run send-message 'Give me a one-sentence summary.'
 dotnet run end-chat
 ```
 
-Each `send-message` prints the prompt and the reply. `end-chat` prints the transcript from the Query, signals the Workflow and waits for it to complete. Two turns do not reach the default history threshold, so the Workflow completes in one run; the test lowers `limit.historyCount.suggestContinueAsNew` to 5 to see the handoff. In a chat application a UI would drive the Updates and the Workflow would run on, continuing as new whenever history gets large.
+Each `send-message` prints the prompt and the reply. `end-chat` prints the transcript from the Query, signals the Workflow and waits for it to complete. Without a running chat, `end-chat` prints `No chat is running.` and exits with code 1; `send-message` without a prompt prints the usage line and exits with code 1. Two turns do not reach the default history threshold, so the Workflow completes in one run; the test lowers `limit.historyCount.suggestContinueAsNew` to 5 to see the handoff. In a chat application a UI would drive the Updates and the Workflow would run on, continuing as new whenever history gets large.
 
 ## Files
 
