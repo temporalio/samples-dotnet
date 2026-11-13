@@ -2,7 +2,7 @@
 
 A chat that runs as long as you like. Each user turn is an Update, so the caller gets the reply from the same call. History grows with every turn, and `Workflow.ContinueAsNewSuggested` turns true once the Temporal Service decides it is large enough. The Workflow waits on that or on the `EndChat` Signal, lets in-flight Updates finish with `Workflow.AllHandlersFinished`, and hands `agent.SerializeSessionAsync(session)` to a fresh run, which restores it with `agent.DeserializeSessionAsync`.
 
-What crosses the boundary: the serialized session, which holds the transcript and Agent Framework's own session state. What does not: the `TemporalAgent` object, MCP connections and an approval you have not answered yet; the new run builds the agent again.
+What crosses the boundary: the serialized session, which holds the transcript and Agent Framework's own session state, including an approval request you have not answered yet. What does not: the `TemporalAgent` object, which the new run builds again, MCP connections, and the Workflow's own record of a pending approval. Answer an open approval before continuing, or carry the pending request in your own input; otherwise the first turn of the new run fails with `MicrosoftAgentFrameworkWorkflowError` because the session holds a request with no response.
 
 ## What this sample demonstrates
 
