@@ -7,7 +7,7 @@ Give the agent the tools of an MCP server. `MicrosoftAgentFrameworkPluginOptions
 | `MicrosoftAgentFramework.McpListTools` | Once per `ListToolsAsync`, before the agent runs |
 | `MicrosoftAgentFramework.McpCallTool` | Each time the model calls a tool of the server |
 
-The included `EchoMcpServer` is a one-tool server built on the MCP C# SDK. `dotnet run mcp-server` serves it over stdio, and the worker starts that process itself (`dotnet <this assembly> mcp-server`) on the first MCP Activity, keeps the connection for 5 minutes of idleness, and closes it when the worker stops. Swap in any MCP server by changing the factory in `Program.cs`.
+The included `EchoMcpServer` is a one-tool server built on the MCP C# SDK. `dotnet run mcp-server` serves it over stdio, and the worker starts this same program with the `mcp-server` verb on the first MCP Activity: the app host under `dotnet run` or a publish (single-file included), or the `dotnet` muxer plus the DLL from `AppContext.BaseDirectory` when the worker itself was started as `dotnet <dll>`. It keeps the connection for 5 minutes of idleness and closes it when the worker stops. Swap in any MCP server by changing the factory in `Program.cs`.
 
 ## What this sample demonstrates
 

@@ -38,14 +38,21 @@ if (verb == "worker" && string.IsNullOrWhiteSpace(Environment.GetEnvironmentVari
 // @@@SNIPSTART dotnet-microsoft-agent-framework-mcp-worker
 // MCP transports are registered on the worker by name; the Workflow carries only the name. The
 // worker connects on the first MCP Activity, keeps the connection for 5 minutes of idleness, and
-// closes it when the worker stops. Swap in any MCP server here.
+// closes it when the worker stops. Swap in any MCP server here. This one is the same program with
+// the mcp-server verb: under `dotnet run`, a publish or a single-file publish the process is the
+// app host, which takes the verb directly; under `dotnet <dll>` it is the dotnet muxer, which
+// needs the DLL from AppContext.BaseDirectory.
+var host = Environment.ProcessPath ?? "dotnet";
+var hostIsMuxer = string.Equals(Path.GetFileNameWithoutExtension(host), "dotnet", StringComparison.OrdinalIgnoreCase);
 var mcpServers = new Dictionary<string, Func<IClientTransport>>
 {
     ["echo"] = () => new StdioClientTransport(new StdioClientTransportOptions
     {
         Name = "echo",
-        Command = "dotnet",
-        Arguments = new List<string> { typeof(EchoMcpServer).Assembly.Location, "mcp-server" },
+        Command = host,
+        Arguments = hostIsMuxer
+            ? new List<string> { Path.Combine(AppContext.BaseDirectory, "TemporalioSamples.MicrosoftAgentFramework.Mcp.dll"), "mcp-server" }
+            : new List<string> { "mcp-server" },
     }),
 };
 // @@@SNIPEND
