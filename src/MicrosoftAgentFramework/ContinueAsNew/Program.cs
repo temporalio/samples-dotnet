@@ -15,7 +15,7 @@ const string TaskQueue = "microsoft-agent-framework-chat";
 const string WorkflowId = "microsoft-agent-framework-chat";
 
 var verb = args.ElementAtOrDefault(0);
-if (verb is not ("worker" or "send-message" or "end-chat"))
+if (verb is not ("worker" or "send-message" or "end-chat") || (verb == "send-message" && args.Length < 2))
 {
     await Console.Error.WriteLineAsync("Usage: dotnet run worker | dotnet run send-message '<prompt>' | dotnet run end-chat");
     return 1;
@@ -91,14 +91,8 @@ async Task RunWorkerAsync()
 }
 
 // @@@SNIPSTART dotnet-microsoft-agent-framework-continue-as-new-client
-async Task<int> SendMessageAsync(string? prompt)
+async Task SendMessageAsync(string prompt)
 {
-    if (prompt is null)
-    {
-        await Console.Error.WriteLineAsync("Usage: dotnet run send-message '<prompt>'");
-        return 1;
-    }
-
     // Update-With-Start: one request starts the chat if it is not running and sends the turn.
     // The reply comes back from the same call.
     var startOperation = WithStartWorkflowOperation.Create(
@@ -112,7 +106,6 @@ async Task<int> SendMessageAsync(string? prompt)
         new(startOperation));
     Console.WriteLine($"user: {prompt}");
     Console.WriteLine($"assistant: {reply}");
-    return 0;
 }
 
 async Task<int> EndChatAsync()
@@ -140,12 +133,14 @@ async Task<int> EndChatAsync()
     return 0;
 }
 // @@@SNIPEND
-if (verb == "worker")
+switch (verb)
 {
-    await RunWorkerAsync();
-    return 0;
+    case "worker":
+        await RunWorkerAsync();
+        return 0;
+    case "send-message":
+        await SendMessageAsync(args[1]);
+        return 0;
+    default:
+        return await EndChatAsync();
 }
-
-return verb == "send-message"
-    ? await SendMessageAsync(args.ElementAtOrDefault(1))
-    : await EndChatAsync();
