@@ -38,8 +38,14 @@ internal static class TestSupport
     }
 
     // The plugin goes on the worker options here and nowhere else, so env.Client stays untouched.
+    // MaxCachedWorkflows = 0 evicts the Workflow after every Workflow Task, so each task replays
+    // the sample's Workflow Definition from history and a non-deterministic sample fails here.
     public static TemporalWorkerOptions WorkerOptions(string scenario, MicrosoftAgentFrameworkPlugin plugin) =>
-        new($"microsoft-agent-framework-{scenario}-{Guid.NewGuid()}") { Plugins = new ITemporalWorkerPlugin[] { plugin } };
+        new($"microsoft-agent-framework-{scenario}-{Guid.NewGuid()}")
+        {
+            Plugins = new ITemporalWorkerPlugin[] { plugin },
+            MaxCachedWorkflows = 0,
+        };
 
     public static WorkflowOptions WorkflowOptions(TemporalWorker worker, string scenario) =>
         new(id: $"microsoft-agent-framework-{scenario}-{Guid.NewGuid()}", taskQueue: worker.Options.TaskQueue!)
