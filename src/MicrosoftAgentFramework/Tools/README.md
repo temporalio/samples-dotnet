@@ -26,7 +26,7 @@ dotnet run worker
 dotnet run workflow
 ```
 
-The starter prints the agent's answer with the letter count and the weather. The Workflow `microsoft-agent-framework-tools` shows two or three model Activities, depending on whether the model requests both tools in one turn, and one `GetWeather` Activity with the summary `microsoft-agent-framework tool call: GetWeather`.
+The starter prints the agent's answer with the letter count and the weather. The Workflow `microsoft-agent-framework-tools` shows two or three model Activities, depending on whether the model requests both tools in one turn, and one `GetWeather` Activity with the summary `GetWeather`.
 
 ## Files
 

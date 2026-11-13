@@ -20,7 +20,7 @@ dotnet run worker
 dotnet run workflow
 ```
 
-The starter prints `Result:` and the haiku. In the Temporal UI the Workflow `microsoft-agent-framework-hello-world` shows one `MicrosoftAgentFramework.InvokeModel` Activity with the summary `microsoft-agent-framework model call: gpt-4o-mini`.
+The starter prints `Result:` and the haiku. In the Temporal UI the Workflow `microsoft-agent-framework-hello-world` shows one `MicrosoftAgentFramework.InvokeModel` Activity with the summary `gpt-4o-mini`.
 
 ## Files
 
