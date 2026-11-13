@@ -33,4 +33,4 @@ The worker spawns the server itself. The starter prints the agent's answer, and 
 |------|-------------|
 | `EchoMcpServer.cs` | The `echo` tool, served over stdio by the `mcp-server` verb and in memory by the test |
 | `McpWorkflow.workflow.cs` | `McpWorkflow` with `TemporalMcpServer.ListToolsAsync("echo", ...)` |
-| `Program.cs` | Registers the chat client and MCP transport factories, then runs the worker, the starter or the server |
+| `Program.cs` | Registers the MCP transport and chat client factories, then runs the worker, the starter or the server |

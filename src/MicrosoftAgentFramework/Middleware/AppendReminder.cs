@@ -1,4 +1,4 @@
-// @@@SNIPSTART dotnet-microsoft-agent-framework-middleware-middleware
+// @@@SNIPSTART dotnet-microsoft-agent-framework-middleware-provider
 namespace TemporalioSamples.MicrosoftAgentFramework.Middleware;
 
 using Microsoft.Agents.AI;

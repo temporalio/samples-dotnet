@@ -1,4 +1,3 @@
-// @@@SNIPSTART dotnet-microsoft-agent-framework-mcp-worker
 using System.ClientModel;
 using System.ClientModel.Primitives;
 using Microsoft.Extensions.AI;
@@ -30,8 +29,22 @@ if (args.ElementAtOrDefault(0) == "mcp-server")
     return 0;
 }
 
-// Both factories run on the worker on first use. OPENAI_API_KEY and the server process never
-// reach the Workflow, which carries only the model and server names.
+// @@@SNIPSTART dotnet-microsoft-agent-framework-mcp-worker
+// MCP transports are registered on the worker by name; the Workflow carries only the name. The
+// worker connects on the first MCP Activity, keeps the connection for 5 minutes of idleness, and
+// closes it when the worker stops. Swap in any MCP server here.
+var mcpServers = new Dictionary<string, Func<IClientTransport>>
+{
+    ["echo"] = () => new StdioClientTransport(new StdioClientTransportOptions
+    {
+        Name = "echo",
+        Command = "dotnet",
+        Arguments = new List<string> { typeof(EchoMcpServer).Assembly.Location, "mcp-server" },
+    }),
+};
+// @@@SNIPEND
+// The chat client factory runs on the worker on first use. OPENAI_API_KEY never reaches the
+// Workflow, which carries only the model name.
 var plugin = new MicrosoftAgentFrameworkPlugin(new MicrosoftAgentFrameworkPluginOptions
 {
     ChatClients = new Dictionary<string, Func<IChatClient>>
@@ -55,17 +68,7 @@ var plugin = new MicrosoftAgentFrameworkPlugin(new MicrosoftAgentFrameworkPlugin
                 AsIChatClient();
         },
     },
-    McpServers = new Dictionary<string, Func<IClientTransport>>
-    {
-        // The worker connects on the first MCP Activity, keeps the connection for 5 minutes of
-        // idleness, and closes it when the worker stops. Swap in any MCP server here.
-        ["echo"] = () => new StdioClientTransport(new StdioClientTransportOptions
-        {
-            Name = "echo",
-            Command = "dotnet",
-            Arguments = new List<string> { typeof(EchoMcpServer).Assembly.Location, "mcp-server" },
-        }),
-    },
+    McpServers = mcpServers,
 });
 
 // Create a client to localhost on default namespace. The plugin goes on the client; the worker
@@ -103,7 +106,7 @@ async Task RunWorkerAsync()
         Console.WriteLine("Worker cancelled");
     }
 }
-// @@@SNIPEND
+
 async Task ExecuteWorkflowAsync()
 {
     var result = await client.ExecuteWorkflowAsync(

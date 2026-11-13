@@ -1,4 +1,3 @@
-// @@@SNIPSTART dotnet-microsoft-agent-framework-tools-worker
 using System.ClientModel;
 using System.ClientModel.Primitives;
 using Microsoft.Extensions.AI;
@@ -69,13 +68,15 @@ async Task RunWorkerAsync()
         eventArgs.Cancel = true;
     };
 
-    // The Activity behind ActivityAsTool is registered like any other Activity.
     Console.WriteLine("Running worker");
+    // @@@SNIPSTART dotnet-microsoft-agent-framework-tools-worker
+    // The Activity behind ActivityAsTool is registered like any other Activity.
     using var worker = new TemporalWorker(
         client,
         new TemporalWorkerOptions(TaskQueue).
             AddActivity(WeatherActivities.GetWeatherAsync).
             AddWorkflow<ToolsWorkflow>());
+    // @@@SNIPEND
     try
     {
         await worker.ExecuteAsync(tokenSource.Token);
@@ -85,7 +86,7 @@ async Task RunWorkerAsync()
         Console.WriteLine("Worker cancelled");
     }
 }
-// @@@SNIPEND
+
 async Task ExecuteWorkflowAsync()
 {
     var result = await client.ExecuteWorkflowAsync(
