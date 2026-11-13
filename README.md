@@ -25,6 +25,7 @@ Prerequisites:
 * [EagerWorkflowStart](src/EagerWorkflowStart) - Demonstrates usage of Eager Workflow Start to reduce latency for workflows that start with a local activity.
 * [Encryption](src/Encryption) - End-to-end encryption with Temporal payload codecs.
 * [EnvConfig](src/EnvConfig) - Load client configuration from TOML files with programmatic overrides
+* [ExternalStorage](src/ExternalStorage) - Offload large payloads to S3 with a compression codec and a mock S3 server.
 * [Gcp/CloudRun](src/Gcp/CloudRun) - Run a Temporal Worker on a Google Cloud Run worker pool using the Cloud Run Id and OpenTelemetry plugins.
 * [LambdaWorker](src/LambdaWorker) - Run a Temporal Worker inside an AWS Lambda function.
 * [Mutex](src/Mutex) - How to implement a mutex as a workflow. Demonstrates how to avoid race conditions or parallel mutually exclusive operations on the same resource.
