@@ -14,8 +14,17 @@ public static class S3Mock
 {
     private static readonly Owner MockOwner = new("test", "test");
 
-    public static async Task RunAsync(CancellationToken cancellationToken, int port = Storage.MockPort)
+    /// <summary>
+    /// Serves requests until cancelled.
+    /// </summary>
+    /// <param name="cancellationToken">Stops the server.</param>
+    /// <param name="port">Port to listen on.</param>
+    /// <param name="log">Receives one line per request. Defaults to the console.</param>
+    /// <returns>Task that completes when the server stops.</returns>
+    public static async Task RunAsync(
+        CancellationToken cancellationToken, int port = Storage.MockPort, Action<string>? log = null)
     {
+        log ??= Console.WriteLine;
         var objects = new ConcurrentDictionary<string, byte[]>();
         var settings = new S3ServerSettings
         {
@@ -27,7 +36,7 @@ public static class S3Mock
             {
                 if (!message.Contains("S3 exception:", StringComparison.Ordinal))
                 {
-                    Console.WriteLine(message);
+                    log(message);
                 }
             },
         };
@@ -49,24 +58,40 @@ public static class S3Mock
 
         server.Object.Exists = async ctx =>
         {
-            var data = Log(ctx, () => Get(ctx));
+            var data = LogRequest(ctx, () => Get(ctx));
             return new ObjectMetadata(
                 ctx.Request.Key, DateTime.UtcNow, ETag(data), data.Length, MockOwner, StorageClassEnum.STANDARD);
         };
         server.Object.Read = async ctx =>
         {
-            var data = Log(ctx, () => Get(ctx));
+            var data = LogRequest(ctx, () => Get(ctx));
             return new S3Object(
                 ctx.Request.Key, "1", true, DateTime.UtcNow, ETag(data), data.Length, MockOwner, data, "application/octet-stream", StorageClassEnum.STANDARD);
         };
         server.Object.Write = async ctx =>
         {
             var data = await ReadBodyAsync(ctx);
-            Log(ctx, () => objects[ctx.Request.Key] = data);
+            LogRequest(ctx, () => objects[ctx.Request.Key] = data);
         };
 
+        T LogRequest<T>(S3Context ctx, Func<T> handle)
+        {
+            var line = $"{ctx.Http.Request.Method} /{ctx.Request.Bucket}/{ctx.Request.Key}";
+            try
+            {
+                var result = handle();
+                log($"{line} status=200");
+                return result;
+            }
+            catch (S3Exception e)
+            {
+                log($"{line} status={e.Error.Code}");
+                throw;
+            }
+        }
+
         server.Start();
-        Console.WriteLine($"Mock S3 listening on http://localhost:{port}, bucket {Storage.MockBucket}");
+        log($"Mock S3 listening on http://localhost:{port}, bucket {Storage.MockBucket}");
         try
         {
             await Task.Delay(Timeout.Infinite, cancellationToken);
@@ -75,22 +100,6 @@ public static class S3Mock
         {
         }
         server.Stop();
-    }
-
-    private static T Log<T>(S3Context ctx, Func<T> handle)
-    {
-        var line = $"{ctx.Http.Request.Method} /{ctx.Request.Bucket}/{ctx.Request.Key}";
-        try
-        {
-            var result = handle();
-            Console.WriteLine($"{line} status=200");
-            return result;
-        }
-        catch (S3Exception e)
-        {
-            Console.WriteLine($"{line} status={e.Error.Code}");
-            throw;
-        }
     }
 
     // The AWS SDK uploads with aws-chunked encoding, which must be reassembled.

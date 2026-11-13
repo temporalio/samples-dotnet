@@ -10,17 +10,17 @@ using Xunit.Abstractions;
 
 public class ProcessOrderBatchWorkflowTests : WorkflowEnvironmentTestBase
 {
+    private readonly ITestOutputHelper output;
+
     public ProcessOrderBatchWorkflowTests(ITestOutputHelper output, WorkflowEnvironment env)
-        : base(output, env)
-    {
-    }
+        : base(output, env) => this.output = output;
 
     [Fact]
     public async Task RunAsync_LargeOrderList_OffloadsToS3()
     {
         var port = GetFreePort();
         using var mockCancel = new CancellationTokenSource();
-        var mock = S3Mock.RunAsync(mockCancel.Token, port);
+        var mock = S3Mock.RunAsync(mockCancel.Token, port, output.WriteLine);
         try
         {
             using var s3Client = Storage.CreateMockS3Client(port);
