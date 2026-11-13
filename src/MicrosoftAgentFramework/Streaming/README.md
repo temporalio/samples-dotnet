@@ -16,15 +16,17 @@ Model output streamed to a subscriber outside the Workflow. `TemporalAgentOption
 dotnet run worker
 
 # Terminal 2
-dotnet run
+dotnet run workflow
 dotnet run -- "Explain durable execution in one paragraph."
 ```
 
-The default verb starts the Workflow and subscribes; any arguments are the prompt. The starter prints the text as it arrives, then `Final result:` with the whole text. The Workflow `microsoft-agent-framework-streaming` shows one `MicrosoftAgentFramework.InvokeModel` Activity and one Signal per published batch. `Temporalio.Extensions.WorkflowStreams` is experimental and its wire format may change.
+`dotnet run workflow` (or `dotnet run` with no arguments) starts the Workflow with the default prompt and subscribes; any other arguments are the prompt. The starter prints the text as it arrives, then `Final result:` with the whole text. The Workflow `microsoft-agent-framework-streaming` shows one `MicrosoftAgentFramework.InvokeModel` Activity and one Signal per published batch.
+
+If the model Activity retries, for example on a provider 5xx, the new attempt publishes from the start again under a new `ResponseId`, so the starter prints a blank line and `(the model Activity retried; starting over)` before the new text. The [LlmTokenStreaming](../../WorkflowStreams/LlmTokenStreaming) sample shows the same handling with a dedicated retry topic. `Temporalio.Extensions.WorkflowStreams` is experimental and its wire format may change.
 
 ## Files
 
 | File | Description |
 |------|-------------|
 | `StreamingWorkflow.workflow.cs` | `StreamingInput` and `StreamingWorkflow`, which hosts the stream and sets the topic |
-| `Program.cs` | Registers the plugin, then runs the worker or starts the Workflow and subscribes to `deltas` |
+| `Program.cs` | Registers the plugin, then runs the worker or starts the Workflow and subscribes to `deltas`, starting the line over when a retry republishes |

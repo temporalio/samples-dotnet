@@ -85,8 +85,11 @@ if (args.ElementAtOrDefault(0) == "worker")
 }
 else
 {
-    // Any other arguments are the prompt.
-    await SubscribeAsync(args.Length > 0 ? string.Join(' ', args) : "Count from 1 to 5, one number per sentence.");
+    // `dotnet run` and `dotnet run workflow` use the default prompt; any other arguments are the prompt.
+    var prompt = args.Length == 0 || (args.Length == 1 && args[0] == "workflow")
+        ? "Count from 1 to 5, one number per sentence."
+        : string.Join(' ', args);
+    await SubscribeAsync(prompt);
 }
 
 return 0;
@@ -104,8 +107,17 @@ async Task SubscribeAsync(string prompt)
     await using var streams = new WorkflowStreamClient(client, workflowId);
     var subscription = streams.SubscribeAsync<ChatResponseUpdate>(
         new WorkflowStreamSubscribeOptions { Topics = new List<string> { StreamingWorkflow.Topic } });
+    string? responseId = null;
     await foreach (var item in subscription)
     {
+        // A retried model Activity publishes its attempt from the start under a new ResponseId.
+        if (responseId is not null && item.Value.ResponseId is { } id && id != responseId)
+        {
+            Console.WriteLine();
+            Console.WriteLine("(the model Activity retried; starting over)");
+        }
+
+        responseId = item.Value.ResponseId ?? responseId;
         Console.Write(item.Value.Text);
     }
 
