@@ -21,6 +21,15 @@ public static class S3Mock
         {
             EnableSignatures = true,
             Webserver = new WebserverSettings("localhost", port, false),
+            // Unexpected failures, which S3Server answers with a 500, are reported only here. S3
+            // errors such as NoSuchKey are skipped because the handlers below log them.
+            Logger = message =>
+            {
+                if (!message.Contains("S3 exception:", StringComparison.Ordinal))
+                {
+                    Console.WriteLine(message);
+                }
+            },
         };
         settings.Telemetry.Enable = false;
         using var server = new S3Server(settings);
