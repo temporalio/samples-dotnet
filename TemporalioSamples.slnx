@@ -10,6 +10,7 @@
     <Project Path="src/Dsl/TemporalioSamples.Dsl.csproj" />
     <Project Path="src/EagerWorkflowStart/TemporalioSamples.EagerWorkflowStart.csproj" />
     <Project Path="src/EnvConfig/TemporalioSamples.EnvConfig.csproj" />
+    <Project Path="src/ExternalStorage/TemporalioSamples.ExternalStorage.csproj" />
     <Project Path="src/Mutex/TemporalioSamples.Mutex.csproj" />
     <Project Path="src/Patching/TemporalioSamples.Patching.csproj" />
     <Project Path="src/SafeMessageHandlers/TemporalioSamples.SafeMessageHandlers.csproj" />

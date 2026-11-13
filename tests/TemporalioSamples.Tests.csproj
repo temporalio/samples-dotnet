@@ -13,6 +13,9 @@
     <PackageReference Include="Microsoft.AspNetCore.Mvc.Testing" />
     <PackageReference Include="Microsoft.Extensions.Hosting" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" />
+    <!-- Matches the ExternalStorage sample's override, which transitive pinning would otherwise
+         downgrade. Remove both once the central version is 2.0.12 or later. -->
+    <PackageReference Include="System.CommandLine" VersionOverride="2.0.12" />
     <PackageReference Include="xunit" />
     <PackageReference Include="xunit.console" />
     <PackageReference Include="xunit.runner.visualstudio" />
@@ -25,6 +28,7 @@
     <ProjectReference Include="..\src\ContextPropagation\TemporalioSamples.ContextPropagation.csproj" />
     <ProjectReference Include="..\src\CounterInterceptor\TemporalioSamples.CounterInterceptor.csproj" />
     <ProjectReference Include="..\src\EagerWorkflowStart\TemporalioSamples.EagerWorkflowStart.csproj" />
+    <ProjectReference Include="..\src\ExternalStorage\TemporalioSamples.ExternalStorage.csproj" />
     <ProjectReference Include="..\src\Gcp\CloudRun\TemporalioSamples.Gcp.CloudRun.csproj" />
     <ProjectReference Include="..\src\LambdaWorker\Worker\TemporalioSamples.LambdaWorker.Worker.csproj" />
     <ProjectReference Include="..\src\Encryption\Codec\TemporalioSamples.Encryption.Codec.csproj" />
