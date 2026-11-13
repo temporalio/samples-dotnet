@@ -5,7 +5,6 @@ using Microsoft.Extensions.Logging;
 using OpenAI;
 using Temporalio.Client;
 using Temporalio.Common.EnvConfig;
-using Temporalio.Exceptions;
 using Temporalio.MicrosoftAgentFramework;
 using Temporalio.Worker;
 using TemporalioSamples.MicrosoftAgentFramework.HumanInTheLoop;
@@ -31,11 +30,9 @@ var plugin = new MicrosoftAgentFrameworkPlugin(new MicrosoftAgentFrameworkPlugin
             var apiKey = Environment.GetEnvironmentVariable("OPENAI_API_KEY");
             if (string.IsNullOrWhiteSpace(apiKey))
             {
-                // Non-retryable: retrying the model Activity cannot supply the key.
-                throw new ApplicationFailureException(
-                    "OPENAI_API_KEY is not set",
-                    errorType: MicrosoftAgentFrameworkErrorTypes.ConfigurationError,
-                    nonRetryable: true);
+                // The plugin fails a throwing factory with a non-retryable
+                // MicrosoftAgentFrameworkConfigurationError, so the run fails in one attempt.
+                throw new InvalidOperationException("OPENAI_API_KEY is not set");
             }
 
             // Temporal retries the model Activity, so the OpenAI client's own retries are off.

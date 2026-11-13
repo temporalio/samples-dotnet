@@ -53,7 +53,7 @@ dotnet run workflow
 
 ## Key features
 
-- One Activity per model call, `MicrosoftAgentFramework.InvokeModel`, with a 60-second start-to-close timeout in these samples and the plugin's default 10-second heartbeat timeout. Temporal owns retries, so the workers build the OpenAI client with `ClientRetryPolicy(maxRetries: 0)`; a missing key fails the factory with a non-retryable `MicrosoftAgentFrameworkConfigurationError`.
+- One Activity per model call, `MicrosoftAgentFramework.InvokeModel`, with a 60-second start-to-close timeout in these samples and the plugin's default 10-second heartbeat timeout. Temporal owns retries, so the workers build the OpenAI client with `ClientRetryPolicy(maxRetries: 0)`; the plugin fails a throwing factory with a non-retryable `MicrosoftAgentFrameworkConfigurationError`.
 - Tools run where you put them: a plain `AIFunction` runs in the Workflow, `ActivityAsTool.Create` runs an Activity with its own `StartToCloseTimeout`.
 - MCP servers are registered on the worker. `TemporalMcpServer.ListToolsAsync` lists their tools through the `MicrosoftAgentFramework.McpListTools` Activity and each call runs as `MicrosoftAgentFramework.McpCallTool`.
 - Approvals are Agent Framework's own `ApprovalRequiredAIFunction`; the wait is a Workflow Update with a validator, and no Activity is open while the Workflow waits.
