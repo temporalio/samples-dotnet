@@ -44,10 +44,11 @@ public class ContinueAsNewWorkflowTests(ITestOutputHelper output) : TestBase(out
             options.IdConflictPolicy = WorkflowIdConflictPolicy.UseExisting;
             var handle = await TurnAsync("first", options, "echo[1]: first");
 
-            await AssertMore.EventuallyAsync(async () =>
+            var secondRunId = await AssertMore.EventuallyAsync(async () =>
             {
                 var firstRun = await (handle with { RunId = handle.ResultRunId }).FetchHistoryAsync();
-                Assert.Contains(firstRun.Events, evt => evt.WorkflowExecutionContinuedAsNewEventAttributes is not null);
+                var continued = Assert.Single(firstRun.Events, evt => evt.WorkflowExecutionContinuedAsNewEventAttributes is not null);
+                return continued.WorkflowExecutionContinuedAsNewEventAttributes.NewExecutionRunId;
             });
 
             // The second turn lands on the new run, which restored the session: the model sees both turns.
@@ -58,6 +59,16 @@ public class ContinueAsNewWorkflowTests(ITestOutputHelper output) : TestBase(out
 
             await handle.SignalAsync(wf => wf.EndChatAsync());
             await handle.GetResultAsync();
+
+            // One model Activity in each run that took a turn, none in the run that closed the chat.
+            foreach (var runId in new[] { handle.ResultRunId, secondRunId })
+            {
+                var counts = await TestSupport.ActivityCountsAsync(handle with { RunId = runId });
+                Assert.Equal(1, counts[TestSupport.InvokeModel]);
+                Assert.Single(counts);
+            }
+
+            Assert.Empty(await TestSupport.ActivityCountsAsync(handle));
         });
 
         async Task<WorkflowHandle<ChatWorkflow>> TurnAsync(string prompt, WorkflowOptions options, string expectedReply)

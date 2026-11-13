@@ -27,6 +27,7 @@ public class StructuredOutputWorkflowTests(ITestOutputHelper output) : TestBase(
 
             var counts = await TestSupport.ActivityCountsAsync(handle);
             Assert.Equal(1, counts[TestSupport.InvokeModel]);
+            Assert.Single(counts);
             var format = Assert.IsType<ChatResponseFormatJson>(Assert.Single(fake.Calls).Options?.ResponseFormat);
             Assert.Contains("occupation", format.Schema?.GetRawText(), StringComparison.Ordinal);
         });
