@@ -22,7 +22,7 @@ dotnet run -- "Explain durable execution in one paragraph."
 
 `dotnet run workflow` (or `dotnet run` with no arguments) starts the Workflow with the default prompt and subscribes; any other arguments are the prompt. The starter prints the text as it arrives, then `Final result:` with the whole text. The Workflow `microsoft-agent-framework-streaming` shows one `MicrosoftAgentFramework.InvokeModel` Activity and one Signal per published batch.
 
-If the model Activity retries, for example on a provider 5xx, the new attempt publishes from the start again under a new `ResponseId`, so the starter prints a blank line and `(the model Activity retried; starting over)` before the new text. The [LlmTokenStreaming](../../WorkflowStreams/LlmTokenStreaming) sample shows the same handling with a dedicated retry topic. `Temporalio.Extensions.WorkflowStreams` is experimental and its wire format may change.
+If the model Activity retries, for example on a provider 5xx, the new attempt publishes from the start again under a new `ResponseId`, so the starter prints a blank line and `(the model Activity retried; starting over)` before the new text. This sample makes one model call, so a new `ResponseId` can only be a retry; an agent with tools gets a new `ResponseId` on every model round, and a subscriber for that agent should key its display on the round as well. The [LlmTokenStreaming](../../WorkflowStreams/LlmTokenStreaming) sample shows the same handling with a dedicated retry topic. `Temporalio.Extensions.WorkflowStreams` is experimental and its wire format may change.
 
 ## Files
 
