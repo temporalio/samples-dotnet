@@ -54,6 +54,14 @@
     <ProjectReference Include="..\src\NexusMessaging\TemporalioSamples.NexusMessaging.csproj" />
     <ProjectReference Include="..\src\SearchAttributes\TemporalioSamples.SearchAttributes.csproj" />
     <ProjectReference Include="..\src\NexusMessagingTemporalOperation\TemporalioSamples.NexusMessagingTemporalOperation.csproj" />
+    <ProjectReference Include="..\src\MicrosoftAgentFramework\ContinueAsNew\TemporalioSamples.MicrosoftAgentFramework.ContinueAsNew.csproj" />
+    <ProjectReference Include="..\src\MicrosoftAgentFramework\HelloWorld\TemporalioSamples.MicrosoftAgentFramework.HelloWorld.csproj" />
+    <ProjectReference Include="..\src\MicrosoftAgentFramework\HumanInTheLoop\TemporalioSamples.MicrosoftAgentFramework.HumanInTheLoop.csproj" />
+    <ProjectReference Include="..\src\MicrosoftAgentFramework\Mcp\TemporalioSamples.MicrosoftAgentFramework.Mcp.csproj" />
+    <ProjectReference Include="..\src\MicrosoftAgentFramework\Middleware\TemporalioSamples.MicrosoftAgentFramework.Middleware.csproj" />
+    <ProjectReference Include="..\src\MicrosoftAgentFramework\Streaming\TemporalioSamples.MicrosoftAgentFramework.Streaming.csproj" />
+    <ProjectReference Include="..\src\MicrosoftAgentFramework\StructuredOutput\TemporalioSamples.MicrosoftAgentFramework.StructuredOutput.csproj" />
+    <ProjectReference Include="..\src\MicrosoftAgentFramework\Tools\TemporalioSamples.MicrosoftAgentFramework.Tools.csproj" />
   </ItemGroup>
 
 </Project>
