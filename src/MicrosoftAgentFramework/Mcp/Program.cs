@@ -12,20 +12,27 @@ using TemporalioSamples.MicrosoftAgentFramework.Mcp;
 
 const string TaskQueue = "microsoft-agent-framework-mcp";
 
-// The factory below runs inside the first model Activity, so check the key before the worker
-// starts; otherwise that Activity would fail on every attempt while the starter waits.
-if (args.ElementAtOrDefault(0) == "worker" && string.IsNullOrWhiteSpace(Environment.GetEnvironmentVariable("OPENAI_API_KEY")))
+var verb = args.ElementAtOrDefault(0);
+if (verb is not ("worker" or "workflow" or "mcp-server"))
 {
-    await Console.Error.WriteLineAsync("Set OPENAI_API_KEY before starting the worker.");
+    await Console.Error.WriteLineAsync("Usage: dotnet run worker | dotnet run workflow | dotnet run mcp-server");
     return 1;
 }
 
 // `dotnet run mcp-server` serves the echo tool over stdio. The worker starts this same program as
 // a subprocess, so this branch runs before anything else can write to stdout.
-if (args.ElementAtOrDefault(0) == "mcp-server")
+if (verb == "mcp-server")
 {
     await EchoMcpServer.RunAsync();
     return 0;
+}
+
+// The factory below runs inside the first model Activity, so check the key before the worker
+// starts; otherwise that Activity would fail on every attempt while the starter waits.
+if (verb == "worker" && string.IsNullOrWhiteSpace(Environment.GetEnvironmentVariable("OPENAI_API_KEY")))
+{
+    await Console.Error.WriteLineAsync("Set OPENAI_API_KEY before starting the worker.");
+    return 1;
 }
 
 // @@@SNIPSTART dotnet-microsoft-agent-framework-mcp-worker
@@ -112,16 +119,13 @@ async Task ExecuteWorkflowAsync()
     Console.WriteLine($"Result: {result}");
 }
 
-switch (args.ElementAtOrDefault(0))
+if (verb == "worker")
 {
-    case "worker":
-        await RunWorkerAsync();
-        break;
-    case "workflow":
-        await ExecuteWorkflowAsync();
-        break;
-    default:
-        throw new ArgumentException("Must pass 'worker', 'workflow' or 'mcp-server' as the single argument");
+    await RunWorkerAsync();
+}
+else
+{
+    await ExecuteWorkflowAsync();
 }
 
 return 0;

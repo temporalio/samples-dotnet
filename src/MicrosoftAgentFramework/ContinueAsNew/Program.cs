@@ -13,9 +13,16 @@ using TemporalioSamples.MicrosoftAgentFramework.ContinueAsNew;
 const string TaskQueue = "microsoft-agent-framework-chat";
 const string WorkflowId = "microsoft-agent-framework-chat";
 
+var verb = args.ElementAtOrDefault(0);
+if (verb is not ("worker" or "send-message" or "end-chat"))
+{
+    await Console.Error.WriteLineAsync("Usage: dotnet run worker | dotnet run send-message '<prompt>' | dotnet run end-chat");
+    return 1;
+}
+
 // The factory below runs inside the first model Activity, so check the key before the worker
 // starts; otherwise that Activity would fail on every attempt while the starter waits.
-if (args.ElementAtOrDefault(0) == "worker" && string.IsNullOrWhiteSpace(Environment.GetEnvironmentVariable("OPENAI_API_KEY")))
+if (verb == "worker" && string.IsNullOrWhiteSpace(Environment.GetEnvironmentVariable("OPENAI_API_KEY")))
 {
     await Console.Error.WriteLineAsync("Set OPENAI_API_KEY before starting the worker.");
     return 1;
@@ -121,7 +128,7 @@ async Task EndChatAsync()
     Console.WriteLine("Chat ended");
 }
 // @@@SNIPEND
-switch (args.ElementAtOrDefault(0))
+switch (verb)
 {
     case "worker":
         await RunWorkerAsync();
@@ -129,11 +136,9 @@ switch (args.ElementAtOrDefault(0))
     case "send-message":
         await SendMessageAsync(args.ElementAtOrDefault(1));
         break;
-    case "end-chat":
+    default:
         await EndChatAsync();
         break;
-    default:
-        throw new ArgumentException("Must pass 'worker', 'send-message' or 'end-chat' as the first argument");
 }
 
 return 0;

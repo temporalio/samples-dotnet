@@ -11,9 +11,16 @@ using TemporalioSamples.MicrosoftAgentFramework.HumanInTheLoop;
 
 const string TaskQueue = "microsoft-agent-framework-human-in-the-loop";
 
+var verb = args.ElementAtOrDefault(0);
+if (verb is not ("worker" or "workflow"))
+{
+    await Console.Error.WriteLineAsync("Usage: dotnet run worker | dotnet run workflow [reject]");
+    return 1;
+}
+
 // The factory below runs inside the first model Activity, so check the key before the worker
 // starts; otherwise that Activity would fail on every attempt while the starter waits.
-if (args.ElementAtOrDefault(0) == "worker" && string.IsNullOrWhiteSpace(Environment.GetEnvironmentVariable("OPENAI_API_KEY")))
+if (verb == "worker" && string.IsNullOrWhiteSpace(Environment.GetEnvironmentVariable("OPENAI_API_KEY")))
 {
     await Console.Error.WriteLineAsync("Set OPENAI_API_KEY before starting the worker.");
     return 1;
@@ -111,17 +118,14 @@ async Task ExecuteWorkflowAsync(bool approve)
     Console.WriteLine($"Result: {await handle.GetResultAsync()}");
 }
 // @@@SNIPEND
-switch (args.ElementAtOrDefault(0))
+if (verb == "worker")
 {
-    case "worker":
-        await RunWorkerAsync();
-        break;
-    case "workflow":
-        // `dotnet run workflow reject` shows the rejection path.
-        await ExecuteWorkflowAsync(approve: args.ElementAtOrDefault(1) != "reject");
-        break;
-    default:
-        throw new ArgumentException("Must pass 'worker' or 'workflow' as the first argument");
+    await RunWorkerAsync();
+}
+else
+{
+    // `dotnet run workflow reject` shows the rejection path.
+    await ExecuteWorkflowAsync(approve: args.ElementAtOrDefault(1) != "reject");
 }
 
 return 0;
