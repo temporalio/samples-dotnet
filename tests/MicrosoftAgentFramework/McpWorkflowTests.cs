@@ -12,7 +12,8 @@ public class McpWorkflowTests(ITestOutputHelper output) : TestBase(output)
     [Fact]
     public async Task RunAsync_ListsAndCallsTheEchoTool_AsActivities()
     {
-        // The sample's tools are served in memory instead of over the stdio subprocess the worker spawns.
+        // The sample's tools are served in memory. The stdio `mcp-server` verb the worker spawns is not
+        // covered here; run `dotnet run worker` plus `dotnet run workflow` by hand to exercise it.
         await using var mcp = new InMemoryMcpServer(EchoMcpServer.CreateTools());
         using var fake = new FakeChatClient(
             ScriptedResponse.ToolCalls(("echo", new Dictionary<string, object?> { ["message"] = "hello from MCP" })),

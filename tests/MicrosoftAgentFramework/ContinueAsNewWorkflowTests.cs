@@ -1,6 +1,8 @@
 namespace TemporalioSamples.Tests.MicrosoftAgentFramework;
 
 using Microsoft.Extensions.AI;
+using Temporalio.Api.Enums.V1;
+using Temporalio.Client;
 using Temporalio.MicrosoftAgentFramework.Testing;
 using Temporalio.Testing;
 using Temporalio.Worker;
@@ -36,10 +38,11 @@ public class ContinueAsNewWorkflowTests(ITestOutputHelper output) : TestBase(out
             TestSupport.WorkerOptions("chat", TestSupport.PluginFor(fake)).AddWorkflow<ChatWorkflow>());
         await worker.ExecuteAsync(async () =>
         {
-            var handle = await env.Client.StartWorkflowAsync(
-                (ChatWorkflow wf) => wf.RunAsync(new ChatInput(null)),
-                TestSupport.WorkflowOptions(worker, "chat"));
-            Assert.Equal("echo[1]: first", await handle.ExecuteUpdateAsync(wf => wf.TurnAsync("first")));
+            // Each turn is an Update-With-Start on a fixed id, the shape the sample's send-message verb uses:
+            // the first one starts the chat, later ones join the running Workflow.
+            var options = TestSupport.WorkflowOptions(worker, "chat");
+            options.IdConflictPolicy = WorkflowIdConflictPolicy.UseExisting;
+            var handle = await TurnAsync("first", options, "echo[1]: first");
 
             await AssertMore.EventuallyAsync(async () =>
             {
@@ -48,7 +51,7 @@ public class ContinueAsNewWorkflowTests(ITestOutputHelper output) : TestBase(out
             });
 
             // The second turn lands on the new run, which restored the session: the model sees both turns.
-            Assert.Equal("echo[2]: second", await handle.ExecuteUpdateAsync(wf => wf.TurnAsync("second")));
+            await TurnAsync("second", options, "echo[2]: second");
             Assert.Equal(3, fake.Calls[1].Messages.Count);
             await AssertMore.EventuallyAsync(async () =>
                 Assert.Equal(4, (await handle.QueryAsync(wf => wf.Transcript())).Count));
@@ -56,5 +59,13 @@ public class ContinueAsNewWorkflowTests(ITestOutputHelper output) : TestBase(out
             await handle.SignalAsync(wf => wf.EndChatAsync());
             await handle.GetResultAsync();
         });
+
+        async Task<WorkflowHandle<ChatWorkflow>> TurnAsync(string prompt, WorkflowOptions options, string expectedReply)
+        {
+            var startOperation = WithStartWorkflowOperation.Create((ChatWorkflow wf) => wf.RunAsync(new ChatInput(null)), options);
+            var reply = await env.Client.ExecuteUpdateWithStartWorkflowAsync((ChatWorkflow wf) => wf.TurnAsync(prompt), new(startOperation));
+            Assert.Equal(expectedReply, reply);
+            return await startOperation.GetHandleAsync();
+        }
     }
 }

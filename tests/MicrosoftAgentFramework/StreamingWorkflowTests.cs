@@ -31,13 +31,11 @@ public class StreamingWorkflowTests(ITestOutputHelper output) : TestBase(output)
             using var timeout = new CancellationTokenSource(TimeSpan.FromSeconds(30));
             var subscription = streams.SubscribeAsync<ChatResponseUpdate>(
                 new WorkflowStreamSubscribeOptions { Topics = new List<string> { StreamingWorkflow.Topic } });
+            // Read to the end: the subscription ends on its own when the Workflow closes, which is
+            // what the starter relies on.
             await foreach (var item in subscription.WithCancellation(timeout.Token))
             {
                 received.Add(item.Value);
-                if (string.Concat(received.Select(update => update.Text)) == text)
-                {
-                    break;
-                }
             }
 
             Assert.Equal(text, await handle.GetResultAsync());

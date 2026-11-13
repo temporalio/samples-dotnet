@@ -36,7 +36,10 @@ public class MiddlewareWorkflowTests(ITestOutputHelper output) : TestBase(output
             Assert.Equal("Refused: /etc/passwd is outside /tmp/", refused.Result?.ToString());
             var deleted = TestSupport.ToolResults(fake.Calls[2])[^1];
             Assert.Equal("deleted /tmp/scratch.txt", deleted.Result?.ToString());
-            Assert.All(fake.Calls, call => Assert.EndsWith(AppendReminder.Reminder, call.Options?.Instructions, StringComparison.Ordinal));
+            // The provider's sentence is appended to the agent's own instructions, not substituted for them.
+            Assert.All(fake.Calls, call => Assert.Equal(
+                $"You manage files. Use delete_file when asked to delete one.\n{AppendReminder.Reminder}",
+                call.Options?.Instructions));
         });
     }
 }
