@@ -14,10 +14,8 @@ public class StreamingWorkflow
     public const string Topic = "deltas";
 
     // Constructing the stream registers its publish Signal, poll Update and offset Query before
-    // the model Activity publishes to it.
-#pragma warning disable IDE0052 // The stream is used through its registered handlers.
+    // the model Activity publishes to it; the field is used through those handlers.
     private readonly WorkflowStream stream;
-#pragma warning restore IDE0052
 
     [WorkflowInit]
     public StreamingWorkflow(StreamingInput input) => stream = new(input.StreamState);
