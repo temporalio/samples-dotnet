@@ -38,7 +38,12 @@ public class ProcessOrderBatchWorkflowTests : WorkflowEnvironmentTestBase
             {
                 var handle = await client.StartWorkflowAsync(
                     (ProcessOrderBatchWorkflow wf) => wf.RunAsync(200),
-                    new(id: $"wf-{Guid.NewGuid()}", taskQueue: worker.Options.TaskQueue!));
+                    new(id: $"wf-{Guid.NewGuid()}", taskQueue: worker.Options.TaskQueue!)
+                    {
+                        // If the mock is unreachable, activities retry forever, so the test would
+                        // hang instead of failing.
+                        RunTimeout = TimeSpan.FromMinutes(1),
+                    });
                 var summary = await handle.GetResultAsync();
                 Assert.Equal(200, summary.OrderCount);
                 Assert.Equal(5000, summary.TotalWeightKg);
