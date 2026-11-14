@@ -69,7 +69,8 @@ public class HumanInTheLoopWorkflowTests(ITestOutputHelper output) : TestBase(ou
             Assert.Equal("Deleted /tmp/report.txt.", await handle.GetResultAsync());
 
             var result = Assert.Single(TestSupport.ToolResults(fake.Calls[1]));
-            Assert.StartsWith("Tool call invocation was rejected by the approver", result.Result?.ToString(), StringComparison.Ordinal);
+            // The plugin gives the model the text FunctionInvokingChatClient uses, plus the reason when one is given.
+            Assert.StartsWith("Tool call invocation rejected.", result.Result?.ToString(), StringComparison.Ordinal);
         });
     }
 

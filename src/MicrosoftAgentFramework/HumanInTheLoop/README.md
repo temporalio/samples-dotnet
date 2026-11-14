@@ -7,7 +7,7 @@ A tool that runs only after a person approves. `delete_file` is wrapped in `Appr
 - `new ApprovalRequiredAIFunction(deleteFile)` in `ChatOptions.Tools` and the `while (requests.Count > 0)` loop over `ToolApprovalRequestContent`
 - A Query for what is pending and an Update keyed by request id. The validator checks only the input (a non-empty `RequestId`), so bad input never enters history. The handler fails the Update with an `ApplicationFailureException` for an id that is already decided or not pending, so a double submit or a typo cannot answer a later request.
 - Why the handler waits for the model's reply to be read first: a decision can land in the same Workflow Task as the reply that raised the request, and handlers run before the loop in `RunAsync` has read that reply.
-- The approved tool runs in the Workflow; a rejected one never runs, and the model is told the call was rejected
+- The approved tool runs in the Workflow; a rejected one never runs, and the model reads `Tool call invocation rejected.` plus the reason, the text `FunctionInvokingChatClient` uses
 
 ## Running the sample
 
