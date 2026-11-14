@@ -54,6 +54,16 @@
     <Project Path="src/LambdaWorker/Starter/TemporalioSamples.LambdaWorker.Starter.csproj" />
     <Project Path="src/LambdaWorker/Worker/TemporalioSamples.LambdaWorker.Worker.csproj" />
   </Folder>
+  <Folder Name="/src/MicrosoftAgentFramework/">
+    <Project Path="src/MicrosoftAgentFramework/ContinueAsNew/TemporalioSamples.MicrosoftAgentFramework.ContinueAsNew.csproj" />
+    <Project Path="src/MicrosoftAgentFramework/HelloWorld/TemporalioSamples.MicrosoftAgentFramework.HelloWorld.csproj" />
+    <Project Path="src/MicrosoftAgentFramework/HumanInTheLoop/TemporalioSamples.MicrosoftAgentFramework.HumanInTheLoop.csproj" />
+    <Project Path="src/MicrosoftAgentFramework/Mcp/TemporalioSamples.MicrosoftAgentFramework.Mcp.csproj" />
+    <Project Path="src/MicrosoftAgentFramework/Middleware/TemporalioSamples.MicrosoftAgentFramework.Middleware.csproj" />
+    <Project Path="src/MicrosoftAgentFramework/Streaming/TemporalioSamples.MicrosoftAgentFramework.Streaming.csproj" />
+    <Project Path="src/MicrosoftAgentFramework/StructuredOutput/TemporalioSamples.MicrosoftAgentFramework.StructuredOutput.csproj" />
+    <Project Path="src/MicrosoftAgentFramework/Tools/TemporalioSamples.MicrosoftAgentFramework.Tools.csproj" />
+  </Folder>
   <Folder Name="/src/NexusCancellation/">
     <Project Path="src/NexusCancellation/TemporalioSamples.NexusCancellation.csproj" />
   </Folder>

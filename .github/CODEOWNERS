@@ -16,3 +16,7 @@
 # SDK & AI SDK teams share ownership of Workflow Streams samples
 /src/WorkflowStreams/   @temporalio/sdk @temporalio/ai-sdk
 /tests/WorkflowStreams/ @temporalio/sdk @temporalio/ai-sdk
+
+# SDK & AI SDK teams share ownership of Microsoft Agent Framework samples
+/src/MicrosoftAgentFramework/   @temporalio/sdk @temporalio/ai-sdk
+/tests/MicrosoftAgentFramework/ @temporalio/sdk @temporalio/ai-sdk
