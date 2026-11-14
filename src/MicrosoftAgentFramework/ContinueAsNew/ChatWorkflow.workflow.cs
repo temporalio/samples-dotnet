@@ -4,7 +4,7 @@ namespace TemporalioSamples.MicrosoftAgentFramework.ContinueAsNew;
 using System.Text.Json;
 using Microsoft.Agents.AI;
 using Microsoft.Extensions.AI;
-using Temporalio.MicrosoftAgentFramework;
+using Temporalio.Extensions.MicrosoftAgentFramework;
 using Temporalio.Workflows;
 
 public record ChatInput(JsonElement? Session = null);

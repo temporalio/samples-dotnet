@@ -7,7 +7,7 @@ using Temporalio.Api.Enums.V1;
 using Temporalio.Client;
 using Temporalio.Common.EnvConfig;
 using Temporalio.Exceptions;
-using Temporalio.MicrosoftAgentFramework;
+using Temporalio.Extensions.MicrosoftAgentFramework;
 using Temporalio.Worker;
 using TemporalioSamples.MicrosoftAgentFramework.ContinueAsNew;
 

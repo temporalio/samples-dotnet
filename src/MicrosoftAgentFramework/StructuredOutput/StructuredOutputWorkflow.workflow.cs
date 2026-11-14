@@ -3,7 +3,7 @@ namespace TemporalioSamples.MicrosoftAgentFramework.StructuredOutput;
 
 using System.ComponentModel;
 using Microsoft.Extensions.AI;
-using Temporalio.MicrosoftAgentFramework;
+using Temporalio.Extensions.MicrosoftAgentFramework;
 using Temporalio.Workflows;
 
 public record PersonInfo(

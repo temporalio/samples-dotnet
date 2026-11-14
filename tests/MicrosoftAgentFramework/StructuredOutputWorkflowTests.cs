@@ -1,7 +1,7 @@
 namespace TemporalioSamples.Tests.MicrosoftAgentFramework;
 
 using Microsoft.Extensions.AI;
-using Temporalio.MicrosoftAgentFramework.Testing;
+using Temporalio.Extensions.MicrosoftAgentFramework.Testing;
 using Temporalio.Testing;
 using Temporalio.Worker;
 using TemporalioSamples.MicrosoftAgentFramework.StructuredOutput;

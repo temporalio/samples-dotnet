@@ -2,7 +2,7 @@
 namespace TemporalioSamples.MicrosoftAgentFramework.HelloWorld;
 
 using Microsoft.Extensions.AI;
-using Temporalio.MicrosoftAgentFramework;
+using Temporalio.Extensions.MicrosoftAgentFramework;
 using Temporalio.Workflows;
 
 [Workflow]

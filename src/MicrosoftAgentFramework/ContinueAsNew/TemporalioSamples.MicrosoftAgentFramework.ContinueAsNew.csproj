@@ -7,7 +7,7 @@
   <ItemGroup>
     <PackageReference Include="Microsoft.Agents.AI" />
     <PackageReference Include="Microsoft.Extensions.AI.OpenAI" />
-    <PackageReference Include="Temporalio.MicrosoftAgentFramework" />
+    <PackageReference Include="Temporalio.Extensions.MicrosoftAgentFramework" />
   </ItemGroup>
 
 </Project>

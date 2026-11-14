@@ -6,7 +6,7 @@ using Microsoft.Extensions.Logging;
 using OpenAI;
 using Temporalio.Client;
 using Temporalio.Common.EnvConfig;
-using Temporalio.MicrosoftAgentFramework;
+using Temporalio.Extensions.MicrosoftAgentFramework;
 using Temporalio.Worker;
 using TemporalioSamples.MicrosoftAgentFramework.HelloWorld;
 

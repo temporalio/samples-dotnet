@@ -2,8 +2,8 @@
 namespace TemporalioSamples.MicrosoftAgentFramework.Mcp;
 
 using Microsoft.Extensions.AI;
-using Temporalio.MicrosoftAgentFramework;
-using Temporalio.MicrosoftAgentFramework.Mcp;
+using Temporalio.Extensions.MicrosoftAgentFramework;
+using Temporalio.Extensions.MicrosoftAgentFramework.Mcp;
 using Temporalio.Workflows;
 
 [Workflow]

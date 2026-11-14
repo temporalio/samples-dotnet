@@ -28,9 +28,9 @@
     <PackageVersion Include="Temporalio.Extensions.Gcp.CloudRun.Id" Version="1.22.0" />
     <PackageVersion Include="Temporalio.Extensions.Gcp.CloudRun.OpenTelemetry" Version="1.22.0" />
     <PackageVersion Include="Temporalio.Extensions.Hosting" Version="1.22.0" />
+    <PackageVersion Include="Temporalio.Extensions.MicrosoftAgentFramework" Version="0.0.1-local.7" />
     <PackageVersion Include="Temporalio.Extensions.OpenTelemetry" Version="1.22.0" />
     <PackageVersion Include="Temporalio.Extensions.WorkflowStreams" Version="1.22.0" />
-    <PackageVersion Include="Temporalio.MicrosoftAgentFramework" Version="0.0.1-local.6" />
     <PackageVersion Include="TemporalCommunity.Aspire.Hosting" Version="0.1.0" />
     <PackageVersion Include="xunit" Version="2.9.3" />
     <PackageVersion Include="xunit.console" Version="2.9.3" />

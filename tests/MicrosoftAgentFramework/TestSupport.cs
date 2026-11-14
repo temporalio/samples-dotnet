@@ -3,8 +3,8 @@ namespace TemporalioSamples.Tests.MicrosoftAgentFramework;
 using Microsoft.Extensions.AI;
 using ModelContextProtocol.Client;
 using Temporalio.Client;
-using Temporalio.MicrosoftAgentFramework;
-using Temporalio.MicrosoftAgentFramework.Testing;
+using Temporalio.Extensions.MicrosoftAgentFramework;
+using Temporalio.Extensions.MicrosoftAgentFramework.Testing;
 using Temporalio.Worker;
 
 internal static class TestSupport

@@ -4,7 +4,7 @@ namespace TemporalioSamples.MicrosoftAgentFramework.HumanInTheLoop;
 using Microsoft.Agents.AI;
 using Microsoft.Extensions.AI;
 using Temporalio.Exceptions;
-using Temporalio.MicrosoftAgentFramework;
+using Temporalio.Extensions.MicrosoftAgentFramework;
 using Temporalio.Workflows;
 
 public record ApprovalRequest(string RequestId, string ToolName, IReadOnlyDictionary<string, object?> Arguments);

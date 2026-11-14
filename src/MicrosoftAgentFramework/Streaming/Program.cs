@@ -5,8 +5,8 @@ using Microsoft.Extensions.Logging;
 using OpenAI;
 using Temporalio.Client;
 using Temporalio.Common.EnvConfig;
+using Temporalio.Extensions.MicrosoftAgentFramework;
 using Temporalio.Extensions.WorkflowStreams;
-using Temporalio.MicrosoftAgentFramework;
 using Temporalio.Worker;
 using TemporalioSamples.MicrosoftAgentFramework.Streaming;
 

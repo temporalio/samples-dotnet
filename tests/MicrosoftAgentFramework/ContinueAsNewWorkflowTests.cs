@@ -3,7 +3,7 @@ namespace TemporalioSamples.Tests.MicrosoftAgentFramework;
 using Microsoft.Extensions.AI;
 using Temporalio.Api.Enums.V1;
 using Temporalio.Client;
-using Temporalio.MicrosoftAgentFramework.Testing;
+using Temporalio.Extensions.MicrosoftAgentFramework.Testing;
 using Temporalio.Testing;
 using Temporalio.Worker;
 using TemporalioSamples.MicrosoftAgentFramework.ContinueAsNew;

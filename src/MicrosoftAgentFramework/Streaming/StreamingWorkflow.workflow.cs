@@ -2,8 +2,8 @@
 namespace TemporalioSamples.MicrosoftAgentFramework.Streaming;
 
 using Microsoft.Extensions.AI;
+using Temporalio.Extensions.MicrosoftAgentFramework;
 using Temporalio.Extensions.WorkflowStreams;
-using Temporalio.MicrosoftAgentFramework;
 using Temporalio.Workflows;
 
 public record StreamingInput(string Prompt, WorkflowStreamState? StreamState = null);

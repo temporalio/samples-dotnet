@@ -6,8 +6,8 @@
 
   <ItemGroup>
     <PackageReference Include="Microsoft.Extensions.AI.OpenAI" />
+    <PackageReference Include="Temporalio.Extensions.MicrosoftAgentFramework" />
     <PackageReference Include="Temporalio.Extensions.WorkflowStreams" />
-    <PackageReference Include="Temporalio.MicrosoftAgentFramework" />
   </ItemGroup>
 
 </Project>
