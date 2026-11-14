@@ -2,5 +2,6 @@
   <ItemGroup>
     <PackageReference Include="Microsoft.Extensions.Hosting" />
     <PackageReference Include="NexusRpc" />
+    <PackageReference Include="System.CommandLine" />
   </ItemGroup>
 </Project>

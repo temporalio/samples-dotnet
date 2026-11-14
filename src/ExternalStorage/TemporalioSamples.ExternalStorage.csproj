@@ -7,8 +7,7 @@
   <ItemGroup>
     <PackageReference Include="AWSSDK.S3" />
     <PackageReference Include="S3Server" />
-    <!-- Remove the override once the central version is 2.0.12 or later. -->
-    <PackageReference Include="System.CommandLine" VersionOverride="2.0.12" />
+    <PackageReference Include="System.CommandLine" />
     <PackageReference Include="Temporalio.Extensions.Aws.S3Driver.AwsSdk" />
   </ItemGroup>
 

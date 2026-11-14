@@ -10,6 +10,7 @@
 
   <ItemGroup>
     <PackageReference Include="OpenTelemetry.Exporter.OpenTelemetryProtocol" />
+    <PackageReference Include="System.CommandLine" />
   </ItemGroup>
 
 </Project>

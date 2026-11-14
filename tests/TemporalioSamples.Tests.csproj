@@ -13,9 +13,7 @@
     <PackageReference Include="Microsoft.AspNetCore.Mvc.Testing" />
     <PackageReference Include="Microsoft.Extensions.Hosting" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" />
-    <!-- Matches the ExternalStorage sample's override, which transitive pinning would otherwise
-         downgrade. Remove both once the central version is 2.0.12 or later. -->
-    <PackageReference Include="System.CommandLine" VersionOverride="2.0.12" />
+    <PackageReference Include="System.CommandLine" />
     <PackageReference Include="xunit" />
     <PackageReference Include="xunit.console" />
     <PackageReference Include="xunit.runner.visualstudio" />

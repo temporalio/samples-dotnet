@@ -1,31 +1,42 @@
+using System.CommandLine;
 using Microsoft.Extensions.Logging;
 using Temporalio.Client;
 using Temporalio.Common.EnvConfig;
 using TemporalioSamples.LambdaWorker.Worker;
 
-if (args.Length > 0 && args[0] != "workflow")
+async Task<TemporalClient> ConnectClientAsync()
 {
-    Console.WriteLine("Usage: dotnet run [workflow]");
-    return;
+    var connectOptions = ClientEnvConfig.LoadClientConnectOptions();
+    connectOptions.LoggerFactory = LoggerFactory.Create(builder =>
+        builder.
+            AddSimpleConsole(options => options.TimestampFormat = "[HH:mm:ss] ").
+            SetMinimumLevel(LogLevel.Information));
+    return await TemporalClient.ConnectAsync(connectOptions);
 }
 
-var connectOptions = ClientEnvConfig.LoadClientConnectOptions();
-connectOptions.LoggerFactory = LoggerFactory.Create(builder =>
-    builder.
-        AddSimpleConsole(options => options.TimestampFormat = "[HH:mm:ss] ").
-        SetMinimumLevel(LogLevel.Information));
-var client = await TemporalClient.ConnectAsync(connectOptions);
-Console.WriteLine("Connected to Temporal Service");
+async Task ExecuteWorkflowAsync(ParseResult parseResult, CancellationToken cancellationToken)
+{
+    var client = await ConnectClientAsync();
+    Console.WriteLine("Connected to Temporal Service");
 
-var workflowId = $"{LambdaWorkerSample.WorkflowId}-{Guid.NewGuid()}";
-var handle = await client.StartWorkflowAsync(
-    (SampleWorkflow wf) => wf.RunAsync("Serverless Lambda Worker!"),
-    new(
-        id: workflowId,
-        taskQueue: LambdaWorkerSample.TaskQueue));
+    var workflowId = $"{LambdaWorkerSample.WorkflowId}-{Guid.NewGuid()}";
+    var handle = await client.StartWorkflowAsync(
+        (SampleWorkflow wf) => wf.RunAsync("Serverless Lambda Worker!"),
+        new(
+            id: workflowId,
+            taskQueue: LambdaWorkerSample.TaskQueue));
 
-Console.WriteLine($"Started Workflow ID: {handle.Id}");
-Console.WriteLine($"Started Run ID: {handle.ResultRunId}");
+    Console.WriteLine($"Started Workflow ID: {handle.Id}");
+    Console.WriteLine($"Started Run ID: {handle.ResultRunId}");
 
-var result = await handle.GetResultAsync();
-Console.WriteLine($"Workflow result: {result}");
+    var result = await handle.GetResultAsync();
+    Console.WriteLine($"Workflow result: {result}");
+}
+
+// Cancellation token passed to actions is cancelled on ctrl+c
+var workflowCommand = new Command("workflow", "Execute workflow");
+workflowCommand.SetAction(ExecuteWorkflowAsync);
+
+var rootCommand = new RootCommand("Lambda worker starter sample") { workflowCommand };
+rootCommand.SetAction(ExecuteWorkflowAsync);
+return await rootCommand.Parse(args).InvokeAsync();
