@@ -4,7 +4,7 @@ Model output streamed to a subscriber outside the Workflow. `TemporalAgentOption
 
 ## What this sample demonstrates
 
-- A `WorkflowStream` field constructed in `[WorkflowInit]`, so its publish Signal, poll Update and offset Query exist before the Activity publishes
+- A `WorkflowStream` field constructed in `[WorkflowInit]`, so its publish Signal, poll Update and offset Query exist before the Activity publishes; a topic on an agent whose Workflow hosts no stream fails the run with `MicrosoftAgentFrameworkWorkflowError` before the first model call
 - `StreamingTopic` on `TemporalAgentOptions`; a plain `agent.RunAsync(prompt)` streams once the topic is set
 - `WorkflowStreamClient.SubscribeAsync<ChatResponseUpdate>` in the starter, which prints `item.Value.Text` as each update arrives
 - A 500-millisecond delay before the Workflow returns, because a closed Workflow cannot be polled and subscribers need time to read the last batch
