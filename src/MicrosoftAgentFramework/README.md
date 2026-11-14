@@ -1,6 +1,6 @@
 # Microsoft Agent Framework samples
 
-> Pre-release. The `Temporalio.MicrosoftAgentFramework` package and its interfaces may change before General Availability.
+> Pre-release. The `Temporalio.Extensions.MicrosoftAgentFramework` package and its interfaces may change before General Availability.
 
 These samples show the [Temporal plugin for Microsoft Agent Framework](https://github.com/temporalio/ai-integrations/tree/main/dotnet/microsoft-agent-framework), which runs an Agent Framework agent inside a Temporal Workflow. You build the agent in Workflow code with `TemporalAgent` and Microsoft.Extensions.AI's `ChatOptions` and tools, and call `RunAsync`. Each model call runs as the `MicrosoftAgentFramework.InvokeModel` Activity with its own timeout and retries. The agent's loop, in-Workflow tools, context providers and approvals run in the Workflow, where Temporal records every step and replays it after a crash or a worker restart. The docs page is [Microsoft Agent Framework](https://docs.temporal.io/develop/dotnet/integrations/microsoft-agent-framework).
 
@@ -21,7 +21,7 @@ These samples show the [Temporal plugin for Microsoft Agent Framework](https://g
 
 ## Prerequisites
 
-1. The .NET 10 SDK.
+1. The .NET 10 SDK, which this samples repository builds with (`global.json`); the plugin itself targets net8.0.
 
 2. A local Temporal Service from the [Temporal CLI](https://docs.temporal.io/cli):
 
