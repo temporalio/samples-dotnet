@@ -14,6 +14,7 @@ The included `EchoMcpServer` is a one-tool server built on the MCP C# SDK. `dotn
 - `McpServers = { ["echo"] = () => new StdioClientTransport(...) }` on the plugin options
 - `TemporalMcpServer.ListToolsAsync` with `McpToolOptions`, a 30-second start-to-close timeout on both the list and the call Activities, and the result passed as `ChatOptions.Tools`
 - The server's connection never leaves the worker; the Workflow carries the server name
+- Results reach the model the way the MCP C# SDK's `McpClientTool` delivers them: the echo tool's text arrives as a `TextContent`, and a result with `isError` goes back whole so the model reads the server's message; neither fails the Activity
 - The model sees the tool as `echo`: the plugin applies Agent Framework's MCP name rule (characters outside `A-Za-z0-9_.-` become `-`), which leaves this name unchanged
 
 ## Running the sample
