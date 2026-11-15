@@ -1,3 +1,4 @@
+using System.CommandLine;
 using Temporalio.Api.WorkflowService.V1;
 using Temporalio.Client;
 using Temporalio.Common;
@@ -14,42 +15,29 @@ public static class Program
     private static readonly string[] SomeSignal = { "some-signal" };
     private static readonly string[] ConcludeSignal = { "conclude" };
 
-    public static async Task Main(string[] args)
+    public static async Task<int> Main(string[] args)
     {
-        if (args.Length == 0)
-        {
-            Console.WriteLine("Usage: WorkerVersioning <command> [options]");
-            Console.WriteLine();
-            Console.WriteLine("Commands:");
-            Console.WriteLine("  worker-v1    - Start worker with version 1.0");
-            Console.WriteLine("  worker-v1.1  - Start worker with version 1.1");
-            Console.WriteLine("  worker-v2    - Start worker with version 2.0");
-            Console.WriteLine("  demo         - Run the complete versioning demonstration");
-            return;
-        }
+        // Cancellation token passed to actions is cancelled on ctrl+c
+        var workerV1Command = new Command("worker-v1", "Start worker with version 1.0");
+        workerV1Command.SetAction(RunWorkerV1Async);
 
-        var connectOptions = ClientEnvConfig.LoadClientConnectOptions();
-        connectOptions.TargetHost ??= "localhost:7233";
-        var client = await TemporalClient.ConnectAsync(connectOptions);
+        var workerV1Dot1Command = new Command("worker-v1.1", "Start worker with version 1.1");
+        workerV1Dot1Command.SetAction(RunWorkerV1Dot1Async);
 
-        switch (args[0].ToLower())
+        var workerV2Command = new Command("worker-v2", "Start worker with version 2.0");
+        workerV2Command.SetAction(RunWorkerV2Async);
+
+        var demoCommand = new Command("demo", "Run the complete versioning demonstration");
+        demoCommand.SetAction(RunDemoCommandAsync);
+
+        var rootCommand = new RootCommand("Worker versioning sample")
         {
-            case "worker-v1":
-                await WorkerV1.RunAsync(client);
-                break;
-            case "worker-v1.1":
-                await WorkerV1Dot1.RunAsync(client);
-                break;
-            case "worker-v2":
-                await WorkerV2.RunAsync(client);
-                break;
-            case "demo":
-                await RunDemoAsync(client);
-                break;
-            default:
-                Console.WriteLine($"Unknown command: {args[0]}");
-                break;
-        }
+            workerV1Command,
+            workerV1Dot1Command,
+            workerV2Command,
+            demoCommand,
+        };
+        return await rootCommand.Parse(args).InvokeAsync();
     }
 
     public static async Task RunDemoAsync(TemporalClient client)
@@ -116,6 +104,37 @@ public static class Program
         }
 
         Console.WriteLine("All workflows completed");
+    }
+
+    private static async Task<TemporalClient> ConnectClientAsync()
+    {
+        var connectOptions = ClientEnvConfig.LoadClientConnectOptions();
+        connectOptions.TargetHost ??= "localhost:7233";
+        return await TemporalClient.ConnectAsync(connectOptions);
+    }
+
+    private static async Task RunWorkerV1Async(ParseResult parseResult, CancellationToken cancellationToken)
+    {
+        var client = await ConnectClientAsync();
+        await WorkerV1.RunAsync(client, cancellationToken);
+    }
+
+    private static async Task RunWorkerV1Dot1Async(ParseResult parseResult, CancellationToken cancellationToken)
+    {
+        var client = await ConnectClientAsync();
+        await WorkerV1Dot1.RunAsync(client, cancellationToken);
+    }
+
+    private static async Task RunWorkerV2Async(ParseResult parseResult, CancellationToken cancellationToken)
+    {
+        var client = await ConnectClientAsync();
+        await WorkerV2.RunAsync(client, cancellationToken);
+    }
+
+    private static async Task RunDemoCommandAsync(ParseResult parseResult, CancellationToken cancellationToken)
+    {
+        var client = await ConnectClientAsync();
+        await RunDemoAsync(client);
     }
 
     /// <summary>Signal both workflows a few times to drive them.</summary>

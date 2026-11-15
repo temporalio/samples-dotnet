@@ -1,25 +1,23 @@
-﻿using System.Diagnostics;
+﻿using System.CommandLine;
+using System.Diagnostics;
 using Temporalio.Client;
 using Temporalio.Common.EnvConfig;
 using Temporalio.Worker;
 using TemporalioSamples.Mutex;
 using TemporalioSamples.Mutex.Impl;
 
-var connectOptions = ClientEnvConfig.LoadClientConnectOptions();
-connectOptions.TargetHost ??= "localhost:7233";
-connectOptions.LoggerFactory = LoggerFactory.Create(builder =>
-    builder.AddSimpleConsole(options => options.TimestampFormat = "[HH:mm:ss] ").SetMinimumLevel(LogLevel.Information));
-var client = await TemporalClient.ConnectAsync(connectOptions);
-
-async Task RunWorkerAsync()
+async Task<TemporalClient> ConnectClientAsync()
 {
-    // Cancellation token cancelled on ctrl+c
-    using var tokenSource = new CancellationTokenSource();
-    Console.CancelKeyPress += (_, eventArgs) =>
-    {
-        tokenSource.Cancel();
-        eventArgs.Cancel = true;
-    };
+    var connectOptions = ClientEnvConfig.LoadClientConnectOptions();
+    connectOptions.TargetHost ??= "localhost:7233";
+    connectOptions.LoggerFactory = LoggerFactory.Create(builder =>
+        builder.AddSimpleConsole(options => options.TimestampFormat = "[HH:mm:ss] ").SetMinimumLevel(LogLevel.Information));
+    return await TemporalClient.ConnectAsync(connectOptions);
+}
+
+async Task RunWorkerAsync(ParseResult parseResult, CancellationToken cancellationToken)
+{
+    var client = await ConnectClientAsync();
 
     // Run worker until cancelled
     Console.WriteLine("Running worker");
@@ -32,7 +30,7 @@ async Task RunWorkerAsync()
             .AddWorkflow<WorkflowWithMutex>());
     try
     {
-        await worker.ExecuteAsync(tokenSource.Token);
+        await worker.ExecuteAsync(cancellationToken);
     }
     catch (OperationCanceledException)
     {
@@ -40,8 +38,17 @@ async Task RunWorkerAsync()
     }
 }
 
-async Task ExecuteWorkflowsWithMutexAsync(string resourceId)
+var resourceIdArgument = new Argument<string>("resource-id")
 {
+    Description = "Resource id to lock",
+    DefaultValueFactory = _ => "locked-resource-id",
+};
+
+async Task ExecuteWorkflowsWithMutexAsync(ParseResult parseResult, CancellationToken cancellationToken)
+{
+    var client = await ConnectClientAsync();
+    var resourceId = parseResult.GetRequiredValue(resourceIdArgument);
+
     await Task.WhenAll(ExecuteAsync(), ExecuteAsync());
 
     return;
@@ -63,14 +70,12 @@ async Task ExecuteWorkflowsWithMutexAsync(string resourceId)
     }
 }
 
-switch (args.ElementAtOrDefault(0))
-{
-    case "worker":
-        await RunWorkerAsync();
-        break;
-    case "workflow":
-        await ExecuteWorkflowsWithMutexAsync(args.ElementAtOrDefault(1) ?? "locked-resource-id");
-        break;
-    default:
-        throw new ArgumentException("Must pass 'worker' or 'workflow' as the first argument");
-}
+// Cancellation token passed to actions is cancelled on ctrl+c
+var workerCommand = new Command("worker", "Run worker");
+workerCommand.SetAction(RunWorkerAsync);
+
+var workflowCommand = new Command("workflow", "Execute two workflows that contend for the same lock") { resourceIdArgument };
+workflowCommand.SetAction(ExecuteWorkflowsWithMutexAsync);
+
+var rootCommand = new RootCommand("Mutex sample") { workerCommand, workflowCommand };
+return await rootCommand.Parse(args).InvokeAsync();

@@ -1,1 +1,7 @@
-<Project Sdk="Microsoft.NET.Sdk.Worker" />
+<Project Sdk="Microsoft.NET.Sdk.Worker">
+
+  <ItemGroup>
+    <PackageReference Include="System.CommandLine" />
+  </ItemGroup>
+
+</Project>

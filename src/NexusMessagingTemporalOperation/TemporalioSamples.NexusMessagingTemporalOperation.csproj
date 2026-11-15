@@ -6,6 +6,7 @@
 
   <ItemGroup>
     <PackageReference Include="NexusRpc" />
+    <PackageReference Include="System.CommandLine" />
   </ItemGroup>
 
 </Project>

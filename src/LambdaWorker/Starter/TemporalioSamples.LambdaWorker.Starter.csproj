@@ -8,4 +8,8 @@
     <ProjectReference Include="..\Worker\TemporalioSamples.LambdaWorker.Worker.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <PackageReference Include="System.CommandLine" />
+  </ItemGroup>
+
 </Project>

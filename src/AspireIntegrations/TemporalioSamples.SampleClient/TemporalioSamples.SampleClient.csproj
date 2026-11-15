@@ -10,4 +10,8 @@
       <ProjectReference Include="..\TemporalioSamples.SampleWorkflow\TemporalioSamples.SampleWorkflow.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+        <PackageReference Include="System.CommandLine" />
+    </ItemGroup>
+
 </Project>

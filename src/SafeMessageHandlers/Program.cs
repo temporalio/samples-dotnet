@@ -1,3 +1,4 @@
+using System.CommandLine;
 using Microsoft.Extensions.Logging;
 using Temporalio.Api.Enums.V1;
 using Temporalio.Client;
@@ -5,26 +6,24 @@ using Temporalio.Common.EnvConfig;
 using Temporalio.Worker;
 using TemporalioSamples.SafeMessageHandlers;
 
-// Create a client to localhost on default namespace
 using var loggerFactory = LoggerFactory.Create(builder =>
     builder.
         AddSimpleConsole(options => options.TimestampFormat = "[HH:mm:ss] ").
         SetMinimumLevel(LogLevel.Information));
-var connectOptions = ClientEnvConfig.LoadClientConnectOptions();
-connectOptions.TargetHost ??= "localhost:7233";
-connectOptions.LoggerFactory = loggerFactory;
-var client = await TemporalClient.ConnectAsync(connectOptions);
 var logger = loggerFactory.CreateLogger<Program>();
 
-async Task RunWorkerAsync()
+async Task<TemporalClient> ConnectClientAsync()
 {
-    // Cancellation token cancelled on ctrl+c
-    using var tokenSource = new CancellationTokenSource();
-    Console.CancelKeyPress += (_, eventArgs) =>
-    {
-        tokenSource.Cancel();
-        eventArgs.Cancel = true;
-    };
+    // Create a client to localhost on default namespace
+    var connectOptions = ClientEnvConfig.LoadClientConnectOptions();
+    connectOptions.TargetHost ??= "localhost:7233";
+    connectOptions.LoggerFactory = loggerFactory;
+    return await TemporalClient.ConnectAsync(connectOptions);
+}
+
+async Task RunWorkerAsync(ParseResult parseResult, CancellationToken cancellationToken)
+{
+    var client = await ConnectClientAsync();
 
     // Run worker until cancelled
     logger.LogInformation("Running worker");
@@ -35,7 +34,7 @@ async Task RunWorkerAsync()
             AddWorkflow<ClusterManagerWorkflow>());
     try
     {
-        await worker.ExecuteAsync(tokenSource.Token);
+        await worker.ExecuteAsync(cancellationToken);
     }
     catch (OperationCanceledException)
     {
@@ -43,8 +42,16 @@ async Task RunWorkerAsync()
     }
 }
 
-async Task ExecuteWorkflowAsync(bool testContinueAsNew)
+var testContinueAsNewOption = new Option<bool>("--test-continue-as-new")
 {
+    Description = "Use a low history threshold to demonstrate continue-as-new",
+};
+
+async Task ExecuteWorkflowAsync(ParseResult parseResult, CancellationToken cancellationToken)
+{
+    var testContinueAsNew = parseResult.GetValue(testContinueAsNewOption);
+    var client = await ConnectClientAsync();
+
     // Start workflow
     var workflowOptions = new WorkflowOptions(
             id: "atomic-message-handlers-workflow-id",
@@ -63,7 +70,7 @@ async Task ExecuteWorkflowAsync(bool testContinueAsNew)
             new(2, $"job-{i}")))));
 
     // Wait a bit
-    await Task.Delay(testContinueAsNew ? 10000 : 1000);
+    await Task.Delay(testContinueAsNew ? 10000 : 1000, cancellationToken);
 
     // Delete the jobs
     await Task.WhenAll(Enumerable.Range(0, 6).Select(i =>
@@ -81,22 +88,12 @@ async Task ExecuteWorkflowAsync(bool testContinueAsNew)
         result.NumAssignedNodes);
 }
 
-switch (args.ElementAtOrDefault(0))
-{
-    case "worker":
-        if (args.Length > 1)
-        {
-            throw new ArgumentException("No extra options allowed for 'worker'");
-        }
-        await RunWorkerAsync();
-        break;
-    case "workflow":
-        if (args.Length > 2 || (args.Length == 2 && args[1] != "--test-continue-as-new"))
-        {
-            throw new ArgumentException("Only '--test-continue-as-new' option allowed for 'worker'");
-        }
-        await ExecuteWorkflowAsync(args.ElementAtOrDefault(1) == "--test-continue-as-new");
-        break;
-    default:
-        throw new ArgumentException("Must pass 'worker' or 'workflow' as the single argument");
-}
+// Cancellation token passed to actions is cancelled on ctrl+c
+var workerCommand = new Command("worker", "Run worker");
+workerCommand.SetAction(RunWorkerAsync);
+
+var workflowCommand = new Command("workflow", "Execute workflow") { testContinueAsNewOption };
+workflowCommand.SetAction(ExecuteWorkflowAsync);
+
+var rootCommand = new RootCommand("Safe message handlers sample") { workerCommand, workflowCommand };
+return await rootCommand.Parse(args).InvokeAsync();

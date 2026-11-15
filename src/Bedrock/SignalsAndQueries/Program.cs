@@ -1,3 +1,4 @@
+using System.CommandLine;
 using Amazon.BedrockRuntime;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -7,7 +8,7 @@ using Temporalio.Common.EnvConfig;
 using Temporalio.Extensions.Hosting;
 using TemporalioSamples.Bedrock.SignalsAndQueries;
 
-async Task RunWorkerAsync()
+async Task RunWorkerAsync(ParseResult parseResult, CancellationToken cancellationToken)
 {
     var builder = Host.CreateApplicationBuilder(args);
 
@@ -23,18 +24,14 @@ async Task RunWorkerAsync()
         AddWorkflow<BedrockWorkflow>();
 
     var app = builder.Build();
-    await app.RunAsync();
+    await app.RunAsync(cancellationToken);
 }
 
-async Task SendMessageAsync()
+var promptArgument = new Argument<string>("prompt") { Description = "Prompt to send to the model" };
+
+async Task SendMessageAsync(ParseResult parseResult, CancellationToken cancellationToken)
 {
-    var prompt = args.ElementAtOrDefault(1);
-    if (prompt is null)
-    {
-        Console.WriteLine("Usage: dotnet run send-message '<prompt>'");
-        Console.WriteLine("Example: dotnet run send-message 'What animals are marsupials?'");
-        return;
-    }
+    var prompt = parseResult.GetRequiredValue(promptArgument);
 
     var client = await CreateClientAsync();
     var workflowId = "bedrock-workflow-with-signals";
@@ -46,7 +43,7 @@ async Task SendMessageAsync()
     await client.StartWorkflowAsync((BedrockWorkflow workflow) => workflow.RunAsync(new(inactivityTimeoutMinutes)), workflowOptions);
 }
 
-async Task GetHistoryAsync()
+async Task GetHistoryAsync(ParseResult parseResult, CancellationToken cancellationToken)
 {
     var client = await CreateClientAsync();
     var workflowId = "bedrock-workflow-with-signals";
@@ -81,17 +78,15 @@ async Task<ITemporalClient> CreateClientAsync()
     return await TemporalClient.ConnectAsync(connectOptions);
 }
 
-switch (args.ElementAtOrDefault(0))
-{
-    case "worker":
-        await RunWorkerAsync();
-        break;
-    case "send-message":
-        await SendMessageAsync();
-        break;
-    case "get-history":
-        await GetHistoryAsync();
-        break;
-    default:
-        throw new ArgumentException("Must pass 'worker' or 'send-message' as the single argument");
-}
+// Cancellation token passed to actions is cancelled on ctrl+c
+var workerCommand = new Command("worker", "Run worker");
+workerCommand.SetAction(RunWorkerAsync);
+
+var sendMessageCommand = new Command("send-message", "Send a message") { promptArgument };
+sendMessageCommand.SetAction(SendMessageAsync);
+
+var getHistoryCommand = new Command("get-history", "Get conversation history");
+getHistoryCommand.SetAction(GetHistoryAsync);
+
+var rootCommand = new RootCommand("Bedrock signals and queries sample") { workerCommand, sendMessageCommand, getHistoryCommand };
+return await rootCommand.Parse(args).InvokeAsync();

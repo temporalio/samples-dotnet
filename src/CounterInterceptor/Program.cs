@@ -1,12 +1,20 @@
 ﻿namespace TemporalioSamples.CounterInterceptor;
 
+using System.CommandLine;
 using Temporalio.Client;
 using Temporalio.Common.EnvConfig;
 using Temporalio.Worker;
 
 internal class Program
 {
-    private static async Task Main(string[] args)
+    private static Task<int> Main(string[] args)
+    {
+        var rootCommand = new RootCommand("Counter interceptor sample");
+        rootCommand.SetAction(RunAsync);
+        return rootCommand.Parse(args).InvokeAsync();
+    }
+
+    private static async Task RunAsync(ParseResult parseResult, CancellationToken cancellationToken)
     {
         var counterInterceptor = new MyCounterInterceptor();
         var connectOptions = ClientEnvConfig.LoadClientConnectOptions();
@@ -35,39 +43,41 @@ internal class Program
         Console.WriteLine("Running worker...");
 
         // Start the workers
-        await worker.ExecuteAsync(async () =>
-        {
-            // Start the workflow
-            var handle = await client.StartWorkflowAsync(
-                (MyWorkflow wf) => wf.RunAsync(),
-                new(id: Guid.NewGuid().ToString(), taskQueue: taskQueue));
+        await worker.ExecuteAsync(
+            async () =>
+            {
+                // Start the workflow
+                var handle = await client.StartWorkflowAsync(
+                    (MyWorkflow wf) => wf.RunAsync(),
+                    new(id: Guid.NewGuid().ToString(), taskQueue: taskQueue));
 
-            Console.WriteLine("Sending name and title to workflow");
-            await handle.SignalAsync(wf => wf.SignalNameAndTitleAsync("John", "Customer"));
+                Console.WriteLine("Sending name and title to workflow");
+                await handle.SignalAsync(wf => wf.SignalNameAndTitleAsync("John", "Customer"));
 
-            var name = await handle.QueryAsync(wf => wf.Name);
-            var title = await handle.QueryAsync(wf => wf.Title);
+                var name = await handle.QueryAsync(wf => wf.Name);
+                var title = await handle.QueryAsync(wf => wf.Title);
 
-            // Send exit signal to workflow
-            await handle.SignalAsync(wf => wf.ExitAsync());
+                // Send exit signal to workflow
+                await handle.SignalAsync(wf => wf.ExitAsync());
 
-            var result = await handle.GetResultAsync();
+                var result = await handle.GetResultAsync();
 
-            Console.WriteLine($"Workflow result is {result}");
+                Console.WriteLine($"Workflow result is {result}");
 
-            Console.WriteLine("Query results: ");
-            Console.WriteLine($"\tName: {name}");
-            Console.WriteLine($"\tTitle: {title}");
+                Console.WriteLine("Query results: ");
+                Console.WriteLine($"\tName: {name}");
+                Console.WriteLine($"\tTitle: {title}");
 
-            // Print worker counter info
-            Console.WriteLine("\nCollected Worker Counter Info:\n");
-            Console.WriteLine(counterInterceptor.WorkerInfo());
-            Console.WriteLine($"Number of unique workflows: {counterInterceptor.Counts.Count}");
+                // Print worker counter info
+                Console.WriteLine("\nCollected Worker Counter Info:\n");
+                Console.WriteLine(counterInterceptor.WorkerInfo());
+                Console.WriteLine($"Number of unique workflows: {counterInterceptor.Counts.Count}");
 
-            // Print client counter info
-            Console.WriteLine();
-            Console.WriteLine("Collected Client Counter Info:\n");
-            Console.WriteLine(counterInterceptor.ClientInfo());
-        });
+                // Print client counter info
+                Console.WriteLine();
+                Console.WriteLine("Collected Client Counter Info:\n");
+                Console.WriteLine(counterInterceptor.ClientInfo());
+            },
+            cancellationToken);
     }
 }

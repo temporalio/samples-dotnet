@@ -25,6 +25,7 @@ Prerequisites:
 * [EagerWorkflowStart](src/EagerWorkflowStart) - Demonstrates usage of Eager Workflow Start to reduce latency for workflows that start with a local activity.
 * [Encryption](src/Encryption) - End-to-end encryption with Temporal payload codecs.
 * [EnvConfig](src/EnvConfig) - Load client configuration from TOML files with programmatic overrides
+* [ExternalStorage](src/ExternalStorage) - Offload large payloads to S3 with a compression codec and a mock S3 server.
 * [Gcp/CloudRun](src/Gcp/CloudRun) - Run a Temporal Worker on a Google Cloud Run worker pool using the Cloud Run Id and OpenTelemetry plugins.
 * [LambdaWorker](src/LambdaWorker) - Run a Temporal Worker inside an AWS Lambda function.
 * [MicrosoftAgentFramework](src/MicrosoftAgentFramework) - Run Microsoft Agent Framework agents inside Workflows: model, tool and MCP calls as Activities, with approvals, structured output, streaming and Continue-As-New.

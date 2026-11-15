@@ -9,25 +9,40 @@ public static class GenClientCerts
     private static readonly Oid ServerAuthOid = new Oid("1.3.6.1.5.5.7.3.1");
     private static readonly Oid ClientAuthOid = new Oid("1.3.6.1.5.5.7.3.2");
 
+    private static readonly Option<string> FilePrefixOption = new("--file-prefix")
+    {
+        Description = "Path and file prefix that generated cert filenames will start with",
+        DefaultValueFactory = _ => string.Empty,
+    };
+
+    private static readonly Option<FileInfo?> CACertFileOption = new("--ca-cert-file")
+    {
+        Description = "CA cert to use. If not set, a CA cert/key is generated.",
+    };
+
+    private static readonly Option<FileInfo?> CAKeyFileOption = new("--ca-key-file")
+    {
+        Description = "CA key to use. Must be set if --ca-cert-file is, ignored otherwise.",
+    };
+
     public static Command CreateCommand()
     {
-        var cmd = new Command("gen-client-certs", "Generate certificates");
-        var filePrefixOption = new Option<string>(
-            name: "--file-prefix",
-            getDefaultValue: () => string.Empty,
-            description: "Path and file prefix that generated cert filenames will start with");
-        var caCertFileOption = new Option<FileInfo?>(
-            name: "--ca-cert-file",
-            description: "CA cert to use. If not set, a CA cert/key is generated.");
-        var caKeyFileOption = new Option<FileInfo?>(
-            name: "--ca-key-file",
-            description: "CA key to use. Must be set if --ca-cert-file is, ignored otherwise.");
-        cmd.SetHandler(Run, filePrefixOption, caCertFileOption, caKeyFileOption);
+        var cmd = new Command("gen-client-certs", "Generate certificates")
+        {
+            FilePrefixOption,
+            CACertFileOption,
+            CAKeyFileOption,
+        };
+        cmd.SetAction(Run);
         return cmd;
     }
 
-    private static void Run(string filePrefix, FileInfo? caCertFile, FileInfo? caKeyFile)
+    private static void Run(ParseResult parseResult)
     {
+        var filePrefix = parseResult.GetRequiredValue(FilePrefixOption);
+        var caCertFile = parseResult.GetValue(CACertFileOption);
+        var caKeyFile = parseResult.GetValue(CAKeyFileOption);
+
         // Get CA
         using var caCert = LoadOrGenerateCACert(filePrefix, caCertFile, caKeyFile);
 

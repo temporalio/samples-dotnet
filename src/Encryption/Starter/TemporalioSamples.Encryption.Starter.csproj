@@ -9,4 +9,8 @@
     <ProjectReference Include="..\Worker\TemporalioSamples.Encryption.Worker.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <PackageReference Include="System.CommandLine" />
+  </ItemGroup>
+
 </Project>

@@ -1,33 +1,44 @@
+using System.CommandLine;
 using Microsoft.Extensions.Logging;
 using Temporalio.Client;
 using Temporalio.Common.EnvConfig;
 using Temporalio.Worker;
 using TemporalioSamples.WorkflowStreams.ConcurrentSubscriptions;
 
-var connectOptions = ClientEnvConfig.LoadClientConnectOptions();
-connectOptions.TargetHost ??= "localhost:7233";
-connectOptions.LoggerFactory = LoggerFactory.Create(builder =>
-    builder.
-        AddSimpleConsole(options => options.TimestampFormat = "[HH:mm:ss] ").
-        SetMinimumLevel(LogLevel.Information));
-var client = await TemporalClient.ConnectAsync(connectOptions);
-
-if (args.ElementAtOrDefault(0) == "worker")
+async Task<TemporalClient> ConnectClientAsync()
 {
-    using var tokenSource = new CancellationTokenSource();
-    Console.CancelKeyPress += (_, eventArgs) =>
-    {
-        tokenSource.Cancel();
-        eventArgs.Cancel = true;
-    };
+    var connectOptions = ClientEnvConfig.LoadClientConnectOptions();
+    connectOptions.TargetHost ??= "localhost:7233";
+    connectOptions.LoggerFactory = LoggerFactory.Create(builder =>
+        builder.
+            AddSimpleConsole(options => options.TimestampFormat = "[HH:mm:ss] ").
+            SetMinimumLevel(LogLevel.Information));
+    return await TemporalClient.ConnectAsync(connectOptions);
+}
+
+async Task RunWorkerAsync(ParseResult parseResult, CancellationToken cancellationToken)
+{
+    var client = await ConnectClientAsync();
+
     using var worker = new TemporalWorker(
         client,
         new TemporalWorkerOptions(Constants.TaskQueue).
             AddActivity(PaymentActivities.ChargeCardAsync).
             AddWorkflow<OrderWorkflow>());
-    await worker.ExecuteAsync(tokenSource.Token);
+    await worker.ExecuteAsync(cancellationToken);
 }
-else
+
+async Task RunScenarioAsync(ParseResult parseResult, CancellationToken cancellationToken)
 {
+    var client = await ConnectClientAsync();
+
     await Scenario.RunSubscriptionsAsync(client);
 }
+
+// Cancellation token passed to actions is cancelled on ctrl+c
+var workerCommand = new Command("worker", "Run worker");
+workerCommand.SetAction(RunWorkerAsync);
+
+var rootCommand = new RootCommand("Workflow streams concurrent subscriptions sample") { workerCommand };
+rootCommand.SetAction(RunScenarioAsync);
+return await rootCommand.Parse(args).InvokeAsync();

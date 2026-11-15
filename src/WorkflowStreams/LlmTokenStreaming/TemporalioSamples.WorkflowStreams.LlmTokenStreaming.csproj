@@ -6,6 +6,7 @@
 
   <ItemGroup>
     <PackageReference Include="OpenAI" />
+    <PackageReference Include="System.CommandLine" />
     <PackageReference Include="Temporalio.Extensions.WorkflowStreams" />
   </ItemGroup>
 
