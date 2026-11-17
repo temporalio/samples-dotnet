@@ -52,13 +52,22 @@ public class WorkflowTests
                 Namespace = caller.Options.Namespace,
                 Execution = new() { WorkflowId = handle.Id },
             });
-            Assert.Equal(8, callerHistory.History.Events.Count(e => e.NexusOperationScheduledEventAttributes != null));
+            var scheduled = callerHistory.History.Events.
+                Select(e => e.NexusOperationScheduledEventAttributes).
+                Where(e => e != null).ToArray();
+            Assert.Equal(8, scheduled.Length);
+            foreach (var endpoint in SampleConfig.Endpoints)
+            {
+                Assert.Single(scheduled, operation => operation.Endpoint == endpoint &&
+                    operation.Service == "SyncEchoService" && operation.Operation == "echo");
+                Assert.Single(scheduled, operation => operation.Endpoint == endpoint &&
+                    operation.Service == "AsyncEchoService" && operation.Operation == "echoAsync");
+            }
             Assert.Equal(8, callerHistory.History.Events.
                 TakeWhile(e => e.NexusOperationCompletedEventAttributes == null).
                 Count(e => e.NexusOperationScheduledEventAttributes != null));
-            var asyncRequests = callerHistory.History.Events.
-                Select(e => e.NexusOperationScheduledEventAttributes).
-                Where(e => e?.Service == "AsyncEchoService").
+            var asyncRequests = scheduled.
+                Where(e => e.Service == "AsyncEchoService").
                 ToDictionary(e => e.Endpoint, e => e.RequestId);
             var input = callerHistory.History.Events[0].WorkflowExecutionStartedEventAttributes.Input.Payloads_[0];
             Assert.Equal("caller-workflow", input.Metadata["encryption-key-id"].ToStringUtf8());
