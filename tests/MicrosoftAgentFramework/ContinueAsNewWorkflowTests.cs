@@ -3,6 +3,7 @@ namespace TemporalioSamples.Tests.MicrosoftAgentFramework;
 using Microsoft.Extensions.AI;
 using Temporalio.Api.Enums.V1;
 using Temporalio.Client;
+using Temporalio.Exceptions;
 using Temporalio.Extensions.MicrosoftAgentFramework.Testing;
 using Temporalio.Testing;
 using Temporalio.Worker;
@@ -50,6 +51,9 @@ public class ContinueAsNewWorkflowTests(ITestOutputHelper output) : TestBase(out
                 var continued = Assert.Single(firstRun.Events, evt => evt.WorkflowExecutionContinuedAsNewEventAttributes is not null);
                 return continued.WorkflowExecutionContinuedAsNewEventAttributes.NewExecutionRunId;
             });
+
+            // A blank prompt is rejected by the validator, so it never enters Event History.
+            await Assert.ThrowsAsync<WorkflowUpdateFailedException>(() => handle.ExecuteUpdateAsync(wf => wf.TurnAsync("   ")));
 
             // The second turn lands on the new run, which restored the session: the model sees both turns.
             await TurnAsync("second", options, "echo[2]: second");

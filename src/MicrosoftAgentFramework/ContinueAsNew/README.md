@@ -6,7 +6,7 @@ What crosses the boundary: the serialized session, which holds the transcript an
 
 ## What this sample demonstrates
 
-- The `Turn` Update, the `EndChat` Signal and the `Transcript` Query
+- The `Turn` Update with a validator that rejects a blank prompt or a turn after the chat ended, the `EndChat` Signal and the `Transcript` Query
 - A Workflow `Semaphore` so turns take the session one at a time
 - Update-With-Start from the starter on the fixed Workflow id `microsoft-agent-framework-chat`, so the first `send-message` starts the chat and later ones join it
 - `Workflow.CreateContinueAsNewException` with the serialized session as the next run's input

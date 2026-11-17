@@ -4,6 +4,7 @@ namespace TemporalioSamples.MicrosoftAgentFramework.ContinueAsNew;
 using System.Text.Json;
 using Microsoft.Agents.AI;
 using Microsoft.Extensions.AI;
+using Temporalio.Exceptions;
 using Temporalio.Extensions.MicrosoftAgentFramework;
 using Temporalio.Workflows;
 
@@ -16,6 +17,21 @@ public class ChatWorkflow
     private TemporalAgent? agent;
     private AgentSession? session;
     private bool done;
+
+    [WorkflowUpdateValidator(nameof(TurnAsync))]
+    public void ValidateTurn(string prompt)
+    {
+        // Validators run before the handler and reject the Update without touching Event History.
+        if (string.IsNullOrWhiteSpace(prompt))
+        {
+            throw new ApplicationFailureException("The prompt is empty");
+        }
+
+        if (done)
+        {
+            throw new ApplicationFailureException("The chat has ended");
+        }
+    }
 
     [WorkflowUpdate]
     public async Task<string> TurnAsync(string prompt)
