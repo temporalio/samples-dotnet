@@ -25,7 +25,7 @@ public class McpWorkflow
             ChatOptions = new ChatOptions
             {
                 Instructions = "Use the echo tool when asked to echo something.",
-                Tools = tools.Cast<AITool>().ToList(),
+                Tools = new List<AITool>(tools),
             },
             ModelActivityOptions = new ActivityOptions { StartToCloseTimeout = TimeSpan.FromSeconds(60) },
         });
