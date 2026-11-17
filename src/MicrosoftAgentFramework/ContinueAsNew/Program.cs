@@ -121,13 +121,6 @@ async Task<int> EndChatAsync(ParseResult parseResult, CancellationToken cancella
     var handle = client.GetWorkflowHandle<ChatWorkflow>(WorkflowId);
     try
     {
-        var transcript = await handle.QueryAsync(wf => wf.Transcript());
-        Console.WriteLine($"{transcript.Count} messages in the session:");
-        foreach (var line in transcript)
-        {
-            Console.WriteLine(line);
-        }
-
         await handle.SignalAsync(wf => wf.EndChatAsync());
     }
     catch (RpcException e) when (e.Code == RpcException.StatusCode.NotFound)
@@ -136,8 +129,16 @@ async Task<int> EndChatAsync(ParseResult parseResult, CancellationToken cancella
         return 1;
     }
 
+    // The Workflow lets a turn in flight finish before it closes, so the transcript read after
+    // the result holds every turn. A Query works on a closed Workflow while a worker runs.
     await handle.GetResultAsync();
-    Console.WriteLine("Chat ended");
+    var transcript = await handle.QueryAsync(wf => wf.Transcript());
+    Console.WriteLine($"Chat ended with {transcript.Count} messages in the session:");
+    foreach (var line in transcript)
+    {
+        Console.WriteLine(line);
+    }
+
     return 0;
 }
 // @@@SNIPEND
