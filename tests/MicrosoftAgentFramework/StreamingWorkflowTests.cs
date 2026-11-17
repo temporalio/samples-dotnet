@@ -3,31 +3,29 @@ namespace TemporalioSamples.Tests.MicrosoftAgentFramework;
 using Microsoft.Extensions.AI;
 using Temporalio.Extensions.MicrosoftAgentFramework.Testing;
 using Temporalio.Extensions.WorkflowStreams;
-using Temporalio.Testing;
 using Temporalio.Worker;
 using TemporalioSamples.MicrosoftAgentFramework.Streaming;
 using Xunit;
 using Xunit.Abstractions;
 
-public class StreamingWorkflowTests(ITestOutputHelper output) : TestBase(output)
+public class StreamingWorkflowTests(ITestOutputHelper output, WorkflowEnvironment env) : WorkflowEnvironmentTestBase(output, env)
 {
     [Fact]
     public async Task RunAsync_PublishesUpdatesToTheTopic_OneModelActivity()
     {
         const string text = "One. Two. Three. Four. Five.";
         using var fake = new FakeChatClient(ScriptedResponse.Text(text));
-        await using var env = await WorkflowEnvironment.StartLocalAsync(new() { LoggerFactory = LoggerFactory, });
         using var worker = new TemporalWorker(
-            env.Client,
+            Client,
             TestSupport.WorkerOptions("streaming", TestSupport.PluginFor(fake)).AddWorkflow<StreamingWorkflow>());
         await worker.ExecuteAsync(async () =>
         {
-            var handle = await env.Client.StartWorkflowAsync(
+            var handle = await Client.StartWorkflowAsync(
                 (StreamingWorkflow wf) => wf.RunAsync(new StreamingInput("Count from 1 to 5.", null)),
                 TestSupport.WorkflowOptions(worker, "streaming"));
 
             var received = new List<ChatResponseUpdate>();
-            await using var streams = new WorkflowStreamClient(env.Client, handle.Id);
+            await using var streams = new WorkflowStreamClient(Client, handle.Id);
             using var timeout = new CancellationTokenSource(TimeSpan.FromSeconds(30));
             var subscription = streams.SubscribeAsync<ChatResponseUpdate>(
                 new WorkflowStreamSubscribeOptions { Topics = new List<string> { StreamingWorkflow.Topic } });

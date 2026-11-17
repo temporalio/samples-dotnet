@@ -2,25 +2,23 @@ namespace TemporalioSamples.Tests.MicrosoftAgentFramework;
 
 using Temporalio.Exceptions;
 using Temporalio.Extensions.MicrosoftAgentFramework.Testing;
-using Temporalio.Testing;
 using Temporalio.Worker;
 using TemporalioSamples.MicrosoftAgentFramework.HumanInTheLoop;
 using Xunit;
 using Xunit.Abstractions;
 
-public class HumanInTheLoopWorkflowTests(ITestOutputHelper output) : TestBase(output)
+public class HumanInTheLoopWorkflowTests(ITestOutputHelper output, WorkflowEnvironment env) : WorkflowEnvironmentTestBase(output, env)
 {
     [Fact]
     public async Task RunAsync_ApprovedThroughUpdate_ToolRunsOnce()
     {
         using var fake = DeleteFake();
-        await using var env = await WorkflowEnvironment.StartLocalAsync(new() { LoggerFactory = LoggerFactory, });
         using var worker = new TemporalWorker(
-            env.Client,
+            Client,
             TestSupport.WorkerOptions("human-in-the-loop", TestSupport.PluginFor(fake)).AddWorkflow<HumanInTheLoopWorkflow>());
         await worker.ExecuteAsync(async () =>
         {
-            var handle = await env.Client.StartWorkflowAsync(
+            var handle = await Client.StartWorkflowAsync(
                 (HumanInTheLoopWorkflow wf) => wf.RunAsync("Please delete /tmp/report.txt"),
                 TestSupport.WorkflowOptions(worker, "human-in-the-loop"));
 
@@ -52,13 +50,12 @@ public class HumanInTheLoopWorkflowTests(ITestOutputHelper output) : TestBase(ou
     public async Task RunAsync_RejectedThroughUpdate_ToolNeverRuns()
     {
         using var fake = DeleteFake();
-        await using var env = await WorkflowEnvironment.StartLocalAsync(new() { LoggerFactory = LoggerFactory, });
         using var worker = new TemporalWorker(
-            env.Client,
+            Client,
             TestSupport.WorkerOptions("human-in-the-loop", TestSupport.PluginFor(fake)).AddWorkflow<HumanInTheLoopWorkflow>());
         await worker.ExecuteAsync(async () =>
         {
-            var handle = await env.Client.StartWorkflowAsync(
+            var handle = await Client.StartWorkflowAsync(
                 (HumanInTheLoopWorkflow wf) => wf.RunAsync("Please delete /tmp/report.txt"),
                 TestSupport.WorkflowOptions(worker, "human-in-the-loop"));
             var request = await AssertMore.EventuallyAsync(

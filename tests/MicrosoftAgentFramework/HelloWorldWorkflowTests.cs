@@ -1,25 +1,23 @@
 namespace TemporalioSamples.Tests.MicrosoftAgentFramework;
 
 using Temporalio.Extensions.MicrosoftAgentFramework.Testing;
-using Temporalio.Testing;
 using Temporalio.Worker;
 using TemporalioSamples.MicrosoftAgentFramework.HelloWorld;
 using Xunit;
 using Xunit.Abstractions;
 
-public class HelloWorldWorkflowTests(ITestOutputHelper output) : TestBase(output)
+public class HelloWorldWorkflowTests(ITestOutputHelper output, WorkflowEnvironment env) : WorkflowEnvironmentTestBase(output, env)
 {
     [Fact]
     public async Task RunAsync_OneModelActivity_ReturnsText()
     {
         using var fake = new FakeChatClient(ScriptedResponse.Text("Workers fall and rise / history remembers all / the run carries on"));
-        await using var env = await WorkflowEnvironment.StartLocalAsync(new() { LoggerFactory = LoggerFactory, });
         using var worker = new TemporalWorker(
-            env.Client,
+            Client,
             TestSupport.WorkerOptions("hello-world", TestSupport.PluginFor(fake)).AddWorkflow<HelloWorldWorkflow>());
         await worker.ExecuteAsync(async () =>
         {
-            var handle = await env.Client.StartWorkflowAsync(
+            var handle = await Client.StartWorkflowAsync(
                 (HelloWorldWorkflow wf) => wf.RunAsync("Write a haiku about durable execution."),
                 TestSupport.WorkflowOptions(worker, "hello-world"));
             Assert.Equal("Workers fall and rise / history remembers all / the run carries on", await handle.GetResultAsync());

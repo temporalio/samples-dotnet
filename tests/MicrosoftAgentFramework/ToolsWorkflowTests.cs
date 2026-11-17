@@ -1,13 +1,12 @@
 namespace TemporalioSamples.Tests.MicrosoftAgentFramework;
 
 using Temporalio.Extensions.MicrosoftAgentFramework.Testing;
-using Temporalio.Testing;
 using Temporalio.Worker;
 using TemporalioSamples.MicrosoftAgentFramework.Tools;
 using Xunit;
 using Xunit.Abstractions;
 
-public class ToolsWorkflowTests(ITestOutputHelper output) : TestBase(output)
+public class ToolsWorkflowTests(ITestOutputHelper output, WorkflowEnvironment env) : WorkflowEnvironmentTestBase(output, env)
 {
     [Fact]
     public async Task RunAsync_WorkflowToolAndActivityTool_OneActivityForTheActivityTool()
@@ -17,15 +16,14 @@ public class ToolsWorkflowTests(ITestOutputHelper output) : TestBase(output)
                 ("CountLetters", new Dictionary<string, object?> { ["word"] = "strawberry", ["letter"] = "r" }),
                 ("GetWeather", new Dictionary<string, object?> { ["city"] = "San Francisco" })),
             ScriptedResponse.Text("Three R's. San Francisco is 72F and sunny."));
-        await using var env = await WorkflowEnvironment.StartLocalAsync(new() { LoggerFactory = LoggerFactory, });
         using var worker = new TemporalWorker(
-            env.Client,
+            Client,
             TestSupport.WorkerOptions("tools", TestSupport.PluginFor(fake)).
                 AddActivity(WeatherActivities.GetWeatherAsync).
                 AddWorkflow<ToolsWorkflow>());
         await worker.ExecuteAsync(async () =>
         {
-            var handle = await env.Client.StartWorkflowAsync(
+            var handle = await Client.StartWorkflowAsync(
                 (ToolsWorkflow wf) => wf.RunAsync("Count the R's in strawberry and look up the weather in San Francisco."),
                 TestSupport.WorkflowOptions(worker, "tools"));
             Assert.Equal("Three R's. San Francisco is 72F and sunny.", await handle.GetResultAsync());

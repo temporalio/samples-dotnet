@@ -1,13 +1,12 @@
 namespace TemporalioSamples.Tests.MicrosoftAgentFramework;
 
 using Temporalio.Extensions.MicrosoftAgentFramework.Testing;
-using Temporalio.Testing;
 using Temporalio.Worker;
 using TemporalioSamples.MicrosoftAgentFramework.Mcp;
 using Xunit;
 using Xunit.Abstractions;
 
-public class McpWorkflowTests(ITestOutputHelper output) : TestBase(output)
+public class McpWorkflowTests(ITestOutputHelper output, WorkflowEnvironment env) : WorkflowEnvironmentTestBase(output, env)
 {
     [Fact]
     public async Task RunAsync_ListsAndCallsTheEchoTool_AsActivities()
@@ -18,13 +17,12 @@ public class McpWorkflowTests(ITestOutputHelper output) : TestBase(output)
         using var fake = new FakeChatClient(
             ScriptedResponse.ToolCalls(("echo", new Dictionary<string, object?> { ["message"] = "hello from MCP" })),
             ScriptedResponse.Text("The echo tool returned: hello from MCP"));
-        await using var env = await WorkflowEnvironment.StartLocalAsync(new() { LoggerFactory = LoggerFactory, });
         using var worker = new TemporalWorker(
-            env.Client,
+            Client,
             TestSupport.WorkerOptions("mcp", TestSupport.PluginFor(fake, "echo", mcp.ClientTransport)).AddWorkflow<McpWorkflow>());
         await worker.ExecuteAsync(async () =>
         {
-            var handle = await env.Client.StartWorkflowAsync(
+            var handle = await Client.StartWorkflowAsync(
                 (McpWorkflow wf) => wf.RunAsync("Use the echo tool to echo the message 'hello from MCP'."),
                 TestSupport.WorkflowOptions(worker, "mcp"));
             Assert.Equal("The echo tool returned: hello from MCP", await handle.GetResultAsync());
