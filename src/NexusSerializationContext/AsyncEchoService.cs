@@ -1,6 +1,5 @@
 namespace TemporalioSamples.NexusSerializationContext;
 
-using NexusRpc;
 using NexusRpc.Handlers;
 using Temporalio.Nexus;
 
