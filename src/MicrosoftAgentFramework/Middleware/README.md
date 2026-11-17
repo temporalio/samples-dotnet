@@ -1,6 +1,6 @@
 # Middleware
 
-Two hooks that run in the Workflow, next to the agent's loop. `BlockOutsideTmp` is a `DelegatingAIFunction` around `delete_file` that refuses paths outside `/tmp/` by returning a result without calling the inner function, so the tool never runs and the model reads the refusal. `AppendReminder` is an `AIContextProvider` that adds one sentence to the instructions of every model call.
+Two hooks that run in the Workflow, next to the agent's loop. `BlockOutsideTmp` is a `DelegatingAIFunction` around `delete_file` that refuses paths outside `/tmp/` by returning a result without calling the inner function, so the tool never runs and the model reads the refusal. It resolves `.` and `..` segments in memory first, so `/tmp/../etc/passwd` is refused too; `Path.GetFullPath` would read the host's rules and working directory, which a Workflow must not depend on. `AppendReminder` is an `AIContextProvider` that adds one sentence to the instructions of every model call.
 
 Agent Framework's `AIAgentBuilder` middleware (`agent.AsBuilder().Use(...)`) wraps `AIAgent.RunAsync`, which the plugin does not support inside a Workflow: that entry point resumes off the Workflow scheduler. Wrapping the tool and adding a context provider are the hooks that stay on it. Both run inside the Workflow, so a Workflow Definition that uses them must stay deterministic: no clock, no I/O, no randomness. A hook that needs I/O calls an Activity and adds the result to the prompt.
 
@@ -20,7 +20,7 @@ dotnet run worker
 dotnet run workflow
 ```
 
-The prompt asks for two deletes. The agent reports that `/etc/passwd` was refused and `/tmp/scratch.txt` was deleted, in one short sentence because of the reminder. The Workflow `microsoft-agent-framework-middleware` shows three `MicrosoftAgentFramework.InvokeModel` Activities and nothing for the tool calls.
+The prompt asks for two deletes. The agent reports that `/etc/passwd` was refused and `/tmp/scratch.txt` was deleted, in one short sentence because of the reminder. The Workflow `microsoft-agent-framework-middleware` shows one `MicrosoftAgentFramework.InvokeModel` Activity per model turn and nothing for the tool calls.
 
 ## Files
 

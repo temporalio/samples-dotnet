@@ -19,13 +19,37 @@ public sealed class BlockOutsideTmp : DelegatingAIFunction
     protected override ValueTask<object?> InvokeCoreAsync(AIFunctionArguments arguments, CancellationToken cancellationToken)
     {
         var path = arguments.TryGetValue("path", out var value) ? value?.ToString() ?? string.Empty : string.Empty;
-        if (!path.StartsWith(AllowedPrefix, StringComparison.Ordinal))
+        if (!Normalize(path).StartsWith(AllowedPrefix, StringComparison.Ordinal))
         {
             // Not calling the inner function skips the tool; the model reads this result instead.
             return new ValueTask<object?>($"Refused: {path} is outside {AllowedPrefix}");
         }
 
         return base.InvokeCoreAsync(arguments, cancellationToken);
+    }
+
+    // Resolves "." and ".." segments on "/" in memory, so "/tmp/../etc/passwd" is "/etc/passwd".
+    // Path.GetFullPath would read the host's rules and working directory, which differ between
+    // workers and so between replays.
+    private static string Normalize(string path)
+    {
+        var segments = new List<string>();
+        foreach (var segment in path.Split('/'))
+        {
+            if (segment == "..")
+            {
+                if (segments.Count > 0)
+                {
+                    segments.RemoveAt(segments.Count - 1);
+                }
+            }
+            else if (segment.Length > 0 && segment != ".")
+            {
+                segments.Add(segment);
+            }
+        }
+
+        return (path.StartsWith('/') ? "/" : string.Empty) + string.Join('/', segments);
     }
 }
 // @@@SNIPEND
