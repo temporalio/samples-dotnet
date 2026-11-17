@@ -19,11 +19,11 @@ dotnet run worker
 dotnet run workflow
 ```
 
-The starter polls the Query, prints `Approval requested: delete_file(path=/tmp/report.txt)`, sends `Decision` with the id the Query returned, prints `Decision: approved` and then the agent's report. Run `dotnet run workflow reject` to see the rejection path. If the agent answers without asking, or the run fails, the starter stops polling as soon as the Workflow closes and prints the result or the failure. The Workflow `microsoft-agent-framework-human-in-the-loop` shows two `MicrosoftAgentFramework.InvokeModel` Activities: the request and the report. Its id is fixed, so a run left waiting for a decision (for example after ctrl+c) blocks the next `dotnet run workflow` with `WorkflowAlreadyStartedException`; terminate it first with `temporal workflow terminate -w microsoft-agent-framework-human-in-the-loop`.
+The starter polls the Query, prints `Approval requested: delete_file(path=/tmp/report.txt)`, sends `Decision` with the id the Query returned, prints `Decision: approved` and then the agent's report. Run `dotnet run workflow --reject` to see the rejection path; any other spelling is a usage error, not an approval. If the agent answers without asking, or the run fails, the starter stops polling as soon as the Workflow closes and prints the result or the failure. The Workflow `microsoft-agent-framework-human-in-the-loop` shows two `MicrosoftAgentFramework.InvokeModel` Activities: the request and the report. Its id is fixed, so a run left waiting for a decision (for example after ctrl+c) blocks the next `dotnet run workflow` with `WorkflowAlreadyStartedException`; terminate it first with `temporal workflow terminate -w microsoft-agent-framework-human-in-the-loop`.
 
 ## Files
 
 | File | Description |
 |------|-------------|
 | `HumanInTheLoopWorkflow.workflow.cs` | `ApprovalRequest`, `Decision` and `HumanInTheLoopWorkflow` |
-| `Program.cs` | Runs the worker, or starts the Workflow, polls the Query, sends the Update and prints the result |
+| `Program.cs` | Runs the worker, or starts the Workflow, polls the Query, sends the Update (`--reject` to reject) and prints the result |

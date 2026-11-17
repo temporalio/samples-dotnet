@@ -18,7 +18,7 @@ public static class EchoMcpServer
 
     public static string Echo([Description("The message to echo")] string message) => message;
 
-    public static async Task RunAsync()
+    public static async Task RunAsync(CancellationToken cancellationToken = default)
     {
         var tools = new McpServerPrimitiveCollection<McpServerTool>();
         foreach (var tool in CreateTools())
@@ -34,7 +34,7 @@ public static class EchoMcpServer
                 ServerInfo = new Implementation { Name = "echo", Version = "1.0.0" },
                 ToolCollection = tools,
             });
-        await server.RunAsync();
+        await server.RunAsync(cancellationToken);
     }
 }
 // @@@SNIPEND

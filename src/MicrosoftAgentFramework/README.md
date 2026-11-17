@@ -37,7 +37,7 @@ These samples show the [Temporal plugin for Microsoft Agent Framework](https://g
 
 ## Running a sample
 
-Each sample is one console project with a `worker` verb and a starter verb. Start the worker first, then the starter in a second terminal, both from the sample's directory:
+Each sample is one console project with a `worker` command and a starter command, parsed with System.CommandLine like the other samples here; `dotnet run -- --help` lists them. Start the worker first, then the starter in a second terminal, both from the sample's directory:
 
 ```bash
 # Terminal 1
@@ -49,7 +49,7 @@ cd src/MicrosoftAgentFramework/HelloWorld
 dotnet run workflow
 ```
 
-`HumanInTheLoop`, `Streaming`, `ContinueAsNew` and `Mcp` add verbs or arguments of their own; each README lists them.
+`HumanInTheLoop`, `Streaming`, `ContinueAsNew` and `Mcp` add commands, options or arguments of their own; each README lists them.
 
 ## Key features
 
