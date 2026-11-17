@@ -14,7 +14,8 @@ public class StreamingWorkflowTests(ITestOutputHelper output, WorkflowEnvironmen
     public async Task RunAsync_PublishesUpdatesToTheTopic_OneModelActivity()
     {
         const string text = "One. Two. Three. Four. Five.";
-        using var fake = new FakeChatClient(ScriptedResponse.Text(text));
+        // A delay between updates keeps the model Activity open while the first updates arrive.
+        using var fake = new FakeChatClient(ScriptedResponse.Text(text).WithStreamingDelay(TimeSpan.FromMilliseconds(100)));
         using var worker = new TemporalWorker(
             Client,
             TestSupport.WorkerOptions("streaming", TestSupport.PluginFor(fake)).AddWorkflow<StreamingWorkflow>());
@@ -34,6 +35,13 @@ public class StreamingWorkflowTests(ITestOutputHelper output, WorkflowEnvironmen
             await foreach (var item in subscription.WithCancellation(timeout.Token))
             {
                 received.Add(item.Value);
+                if (received.Count == 1)
+                {
+                    // The first update arrives while the model Activity is still streaming, so the
+                    // Activity published as it went instead of flushing when it completed.
+                    var history = await handle.FetchHistoryAsync();
+                    Assert.DoesNotContain(history.Events, evt => evt.ActivityTaskCompletedEventAttributes is not null);
+                }
             }
 
             Assert.Equal(text, await handle.GetResultAsync());
