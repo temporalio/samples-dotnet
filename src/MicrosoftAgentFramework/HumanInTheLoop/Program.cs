@@ -97,22 +97,31 @@ async Task ExecuteWorkflowAsync(ParseResult parseResult, CancellationToken cance
         (HumanInTheLoopWorkflow wf) => wf.RunAsync("Please delete /tmp/report.txt"),
         new(id: "microsoft-agent-framework-human-in-the-loop", taskQueue: TaskQueue));
 
-    // Poll the Query until the agent asks for approval. Stop as soon as the Workflow closes: the
-    // agent may answer without calling the tool, and a failed run throws from the result below.
+    // Poll the Query while the Workflow runs and answer each request once; the agent may ask in
+    // more than one round. Stop as soon as the Workflow closes: the agent may answer without
+    // calling the tool, and a failed run throws from the result below.
     var result = handle.GetResultAsync();
-    IReadOnlyList<ApprovalRequest> requests = Array.Empty<ApprovalRequest>();
-    while (requests.Count == 0 && !result.IsCompleted)
+    var decided = new HashSet<string>();
+    while (!result.IsCompleted)
     {
         await Task.Delay(TimeSpan.FromMilliseconds(500), cancellationToken);
-        requests = await handle.QueryAsync(wf => wf.PendingApprovals());
-    }
+        if (result.IsCompleted)
+        {
+            break;
+        }
 
-    foreach (var request in requests)
-    {
-        var arguments = string.Join(", ", request.Arguments.Select(argument => $"{argument.Key}={argument.Value}"));
-        Console.WriteLine($"Approval requested: {request.ToolName}({arguments})");
-        var outcome = await handle.ExecuteUpdateAsync(wf => wf.DecideAsync(new Decision(request.RequestId, approve)));
-        Console.WriteLine($"Decision: {outcome}");
+        foreach (var request in await handle.QueryAsync(wf => wf.PendingApprovals()))
+        {
+            if (!decided.Add(request.RequestId))
+            {
+                continue;
+            }
+
+            var arguments = string.Join(", ", request.Arguments.Select(argument => $"{argument.Key}={argument.Value}"));
+            Console.WriteLine($"Approval requested: {request.ToolName}({arguments})");
+            var outcome = await handle.ExecuteUpdateAsync(wf => wf.DecideAsync(new Decision(request.RequestId, approve)));
+            Console.WriteLine($"Decision: {outcome}");
+        }
     }
 
     Console.WriteLine($"Result: {await result}");
