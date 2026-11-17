@@ -20,6 +20,15 @@
   </ItemGroup>
 
   <ItemGroup>
+    <!--
+    The Mcp sample test runs `dotnet <dll> mcp-server` from the sample's own output directory, which
+    carries the sample's full dependency closure. This test output does not: Microsoft.AspNetCore.Mvc.Testing
+    brings in the ASP.NET shared framework, so assemblies it provides are not copied next to the DLL.
+    -->
+    <AssemblyMetadata Include="MicrosoftAgentFrameworkMcpOutputDirectory" Value="$(MSBuildThisFileDirectory)../src/MicrosoftAgentFramework/Mcp/bin/$(Configuration)/$(TargetFramework)/" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\src\ActivitySimple\TemporalioSamples.ActivitySimple.csproj" />
     <ProjectReference Include="..\src\ActivityWorker\TemporalioSamples.ActivityWorker.csproj" />
     <ProjectReference Include="..\src\Bedrock\Entity\TemporalioSamples.Bedrock.Entity.csproj" />
