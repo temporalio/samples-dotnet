@@ -72,6 +72,9 @@
   <Folder Name="/src/NexusMultiArg/">
     <Project Path="src/NexusMultiArg/TemporalioSamples.NexusMultiArg.csproj" />
   </Folder>
+  <Folder Name="/src/NexusSerializationContext/">
+    <Project Path="src/NexusSerializationContext/TemporalioSamples.NexusSerializationContext.csproj" />
+  </Folder>
   <Folder Name="/src/NexusSimple/">
     <Project Path="src/NexusSimple/TemporalioSamples.NexusSimple.csproj" />
   </Folder>

@@ -38,6 +38,7 @@ Prerequisites:
 * [Nexus Messaging Temporal Operation](src/NexusMessagingTemporalOperation): Demonstrates how to send signal, update and query messages through Nexus.
   This version uses the `[TemporalOperation]` attribute to declare a Temporal-backed Nexus operation start handler directly on a method within a `[NexusServiceHandler]` class.
 * [NexusMultiArg](src/NexusMultiArg) - Nexus service implementation calling a workflow with multiple arguments.
+* [NexusSerializationContext](src/NexusSerializationContext) - Select encryption and compression by Nexus endpoint with native serialization context.
 * [NexusSimple](src/NexusSimple) - Simple Nexus service implementation.
 * [NexusStandaloneActivity](src/NexusStandaloneActivity) - Nexus Operation backed by a Standalone Activity.
 * [OpenTelemetry](src/OpenTelemetry) - Demonstrates how to set up OpenTelemetry tracing and metrics for both the client and worker, using both the .NET metrics API and internal forwarding from the Core SDK. Also shows how to forward internal Core SDK logs to an `ILogger`.
