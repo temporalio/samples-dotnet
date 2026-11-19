@@ -21,6 +21,8 @@ public class CodecTests
             AssertMetadata(request, endpoint);
             Assert.NotEmpty(Decrypt(request, RawKey(endpoint)).Data);
             Assert.Equal("hello", await handler.ToValueAsync<string>(request));
+            var plain = DataConverter.Default.PayloadConverter.ToPayload("plain");
+            Assert.Equal("plain", await handler.ToValueAsync<string>(plain));
             var reply = await handler.ToPayloadAsync("reply");
             AssertMetadata(reply, endpoint);
             Assert.NotEmpty(Decrypt(reply, RawKey(endpoint)).Data);
@@ -118,16 +120,18 @@ public class CodecTests
     }
 
     [Fact]
-    public async Task UnexpectedEnvelopeEncoding_IsRejectedAsync()
+    public async Task EncryptedPayloads_RequireExpectedKeyAndCompressionAsync()
     {
-        var encrypted = Bind(SampleConfig.CallerConverter(), SampleConfig.Endpoints[2]);
-        var plaintext = DataConverter.Default.PayloadConverter.ToPayload("hello");
-        await Assert.ThrowsAsync<InvalidOperationException>(() => encrypted.ToValueAsync<string>(plaintext));
+        var endpoint = SampleConfig.Endpoints[0];
+        var compressed = Bind(SampleConfig.CallerConverter(), endpoint);
+        var otherEndpoint = Bind(SampleConfig.CallerConverter(), SampleConfig.Endpoints[1]);
+        var wrongKey = await otherEndpoint.ToPayloadAsync("hello");
+        var keyError = await Assert.ThrowsAsync<InvalidOperationException>(() => compressed.ToValueAsync<string>(wrongKey));
+        Assert.Equal("Unexpected encryption key ID", keyError.Message);
 
-        // A valid encrypted envelope still needs the configured inner compression format.
-        var compressed = Bind(SampleConfig.CallerConverter(), SampleConfig.Endpoints[0]);
         var uncompressed = await SampleConfig.HandlerConverter(true).ToPayloadAsync("hello");
-        await Assert.ThrowsAsync<InvalidOperationException>(() => compressed.ToValueAsync<string>(uncompressed));
+        var formatError = await Assert.ThrowsAsync<InvalidOperationException>(() => compressed.ToValueAsync<string>(uncompressed));
+        Assert.Equal("Expected a Nexus zlib payload", formatError.Message);
     }
 
     private static DataConverter Bind(DataConverter converter, string endpoint) =>

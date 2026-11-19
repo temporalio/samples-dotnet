@@ -84,7 +84,7 @@ public sealed class NexusCodec : IPayloadCodec, IWithSerializationContext<IPaylo
         var selected = Selected;
         if (payload.Metadata.GetValueOrDefault("encoding")?.ToStringUtf8() != "binary/nexus-aes-gcm")
         {
-            throw new InvalidOperationException("Expected an AES-GCM payload");
+            return payload;
         }
         if (payload.Metadata.GetValueOrDefault("encryption-key-id")?.ToStringUtf8() != selected.KeyId)
         {
