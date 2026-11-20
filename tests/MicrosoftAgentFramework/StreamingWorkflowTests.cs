@@ -14,11 +14,13 @@ public class StreamingWorkflowTests(ITestOutputHelper output, WorkflowEnvironmen
     public async Task RunAsync_PublishesUpdatesToTheTopic_OneModelActivity()
     {
         const string text = "One. Two. Three. Four. Five.";
-        // A delay between updates keeps the model Activity open while the first updates arrive.
-        using var fake = new FakeChatClient(ScriptedResponse.Text(text).WithStreamingDelay(TimeSpan.FromMilliseconds(100)));
+        // The model call holds the rest of its stream until the subscriber has the first update.
+        var firstUpdateSeen = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
+        using var fake = new FakeChatClient(ScriptedResponse.Text(text));
+        using var chatClient = new FirstUpdateGateChatClient(fake, firstUpdateSeen.Task);
         using var worker = new TemporalWorker(
             Client,
-            TestSupport.WorkerOptions("streaming", TestSupport.PluginFor(fake)).AddWorkflow<StreamingWorkflow>());
+            TestSupport.WorkerOptions("streaming", TestSupport.PluginFor(chatClient)).AddWorkflow<StreamingWorkflow>());
         await worker.ExecuteAsync(async () =>
         {
             var handle = await Client.StartWorkflowAsync(
@@ -37,10 +39,11 @@ public class StreamingWorkflowTests(ITestOutputHelper output, WorkflowEnvironmen
                 received.Add(item.Value);
                 if (received.Count == 1)
                 {
-                    // The first update arrives while the model Activity is still streaming, so the
-                    // Activity published as it went instead of flushing when it completed.
+                    // The model call is still open, so the Activity published this update as it went
+                    // instead of when it completed.
                     var history = await handle.FetchHistoryAsync();
                     Assert.DoesNotContain(history.Events, evt => evt.ActivityTaskCompletedEventAttributes is not null);
+                    firstUpdateSeen.SetResult();
                 }
             }
 

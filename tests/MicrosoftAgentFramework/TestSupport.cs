@@ -22,7 +22,7 @@ internal static class TestSupport
     public static readonly TimeSpan RunTimeout = TimeSpan.FromMinutes(2);
 
     public static MicrosoftAgentFrameworkPlugin PluginFor(
-        FakeChatClient fake, string? mcpServer = null, IClientTransport? mcpTransport = null)
+        IChatClient chatClient, string? mcpServer = null, IClientTransport? mcpTransport = null)
     {
         var mcpServers = new Dictionary<string, Func<IClientTransport>>();
         if (mcpServer is not null && mcpTransport is not null)
@@ -32,7 +32,7 @@ internal static class TestSupport
 
         return new(new MicrosoftAgentFrameworkPluginOptions
         {
-            ChatClients = new Dictionary<string, Func<IChatClient>> { [Model] = () => fake },
+            ChatClients = new Dictionary<string, Func<IChatClient>> { [Model] = () => chatClient },
             McpServers = mcpServers,
         });
     }
