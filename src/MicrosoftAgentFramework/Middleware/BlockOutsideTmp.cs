@@ -19,13 +19,21 @@ public sealed class BlockOutsideTmp : DelegatingAIFunction
     protected override ValueTask<object?> InvokeCoreAsync(AIFunctionArguments arguments, CancellationToken cancellationToken)
     {
         var path = arguments.TryGetValue("path", out var value) ? value?.ToString() ?? string.Empty : string.Empty;
-        if (!Normalize(path).StartsWith(AllowedPrefix, StringComparison.Ordinal))
+        var normalized = Normalize(path);
+        if (!normalized.StartsWith(AllowedPrefix, StringComparison.Ordinal))
         {
             // Not calling the inner function skips the tool; the model reads this result instead.
             return new ValueTask<object?>($"Refused: {path} is outside {AllowedPrefix}");
         }
 
-        return base.InvokeCoreAsync(arguments, cancellationToken);
+        // Run the tool on the path that was checked. A copy keeps the model's own call unchanged.
+        var checkedArguments = new AIFunctionArguments(arguments)
+        {
+            ["path"] = normalized,
+            Services = arguments.Services,
+            Context = arguments.Context,
+        };
+        return base.InvokeCoreAsync(checkedArguments, cancellationToken);
     }
 
     // Resolves "." and ".." segments on "/" in memory, so "/tmp/../etc/passwd" is "/etc/passwd".
