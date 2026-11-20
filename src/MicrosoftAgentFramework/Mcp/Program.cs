@@ -33,9 +33,10 @@ async Task<TemporalClient> ConnectClientAsync(MicrosoftAgentFrameworkPlugin? plu
 
 async Task<int> RunWorkerAsync(ParseResult parseResult, CancellationToken cancellationToken)
 {
-    // The factory below runs inside the first model Activity, so check the key before the worker
-    // starts; otherwise that Activity would fail on every attempt while the starter waits.
-    if (string.IsNullOrWhiteSpace(Environment.GetEnvironmentVariable("OPENAI_API_KEY")))
+    // Read the key once, before the worker starts: a missing key would otherwise fail the first
+    // model Activity on every attempt while the starter waits. The factory below captures it.
+    var apiKey = Environment.GetEnvironmentVariable("OPENAI_API_KEY");
+    if (string.IsNullOrWhiteSpace(apiKey))
     {
         await Console.Error.WriteLineAsync("Set OPENAI_API_KEY before starting the worker.");
         return 1;
@@ -71,14 +72,6 @@ async Task<int> RunWorkerAsync(ParseResult parseResult, CancellationToken cancel
         {
             ["gpt-4o-mini"] = () =>
             {
-                var apiKey = Environment.GetEnvironmentVariable("OPENAI_API_KEY");
-                if (string.IsNullOrWhiteSpace(apiKey))
-                {
-                    // The worker checked the key before it started, so this is a last resort: the
-                    // plugin logs a throwing factory and retries the model Activity under its retry policy.
-                    throw new InvalidOperationException("OPENAI_API_KEY is not set");
-                }
-
                 // Temporal retries the model Activity, so the OpenAI client's own retries are off.
                 var options = new OpenAIClientOptions { RetryPolicy = new ClientRetryPolicy(maxRetries: 0) };
                 return new OpenAIClient(new ApiKeyCredential(apiKey), options).
