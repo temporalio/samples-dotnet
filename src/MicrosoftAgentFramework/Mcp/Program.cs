@@ -31,6 +31,17 @@ async Task<TemporalClient> ConnectClientAsync(MicrosoftAgentFrameworkPlugin? plu
     return await TemporalClient.ConnectAsync(connectOptions);
 }
 
+// The echo server is this same program with the mcp-server command. Under `dotnet run`, a publish or
+// a single-file publish the process is the app host, which takes the command directly; under
+// `dotnet <dll>` it is the dotnet muxer, which needs the DLL from AppContext.BaseDirectory.
+(string Command, List<string> Arguments) EchoServerCommand()
+{
+    var host = Environment.ProcessPath ?? "dotnet";
+    return string.Equals(Path.GetFileNameWithoutExtension(host), "dotnet", StringComparison.OrdinalIgnoreCase)
+        ? (host, new List<string> { Path.Combine(AppContext.BaseDirectory, "TemporalioSamples.MicrosoftAgentFramework.Mcp.dll"), "mcp-server" })
+        : (host, new List<string> { "mcp-server" });
+}
+
 async Task<int> RunWorkerAsync(ParseResult parseResult, CancellationToken cancellationToken)
 {
     // Read the key once, before the worker starts: a missing key would otherwise fail the first
@@ -45,21 +56,16 @@ async Task<int> RunWorkerAsync(ParseResult parseResult, CancellationToken cancel
     // @@@SNIPSTART dotnet-microsoft-agent-framework-mcp-worker
     // MCP transports are registered on the worker by name; the Workflow carries only the name. The
     // worker connects on the first MCP Activity, keeps the connection for 5 minutes of idleness, and
-    // closes it when the worker stops. Swap in any MCP server here. This one is the same program with
-    // the mcp-server command: under `dotnet run`, a publish or a single-file publish the process is
-    // the app host, which takes the command directly; under `dotnet <dll>` it is the dotnet muxer,
-    // which needs the DLL from AppContext.BaseDirectory.
-    var host = Environment.ProcessPath ?? "dotnet";
-    var hostIsMuxer = string.Equals(Path.GetFileNameWithoutExtension(host), "dotnet", StringComparison.OrdinalIgnoreCase);
+    // closes it when the worker stops. Swap in any MCP server here; this one is the sample's own echo
+    // server over stdio.
+    var (command, arguments) = EchoServerCommand();
     var mcpServers = new Dictionary<string, Func<IClientTransport>>
     {
         ["echo"] = () => new StdioClientTransport(new StdioClientTransportOptions
         {
             Name = "echo",
-            Command = host,
-            Arguments = hostIsMuxer
-                ? new List<string> { Path.Combine(AppContext.BaseDirectory, "TemporalioSamples.MicrosoftAgentFramework.Mcp.dll"), "mcp-server" }
-                : new List<string> { "mcp-server" },
+            Command = command,
+            Arguments = arguments,
         }),
     };
     // @@@SNIPEND
