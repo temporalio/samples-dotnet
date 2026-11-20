@@ -19,17 +19,22 @@
     <PackageReference Include="xunit.runner.visualstudio" />
   </ItemGroup>
 
-  <ItemGroup>
-    <!--
-    The Mcp sample test runs `dotnet <dll> mcp-server` from the sample's own output directory, which
-    carries the sample's full dependency closure. This test output does not: Microsoft.AspNetCore.Mvc.Testing
-    brings in the ASP.NET shared framework, so assemblies it provides are not copied next to the DLL.
-    The path assumes the default bin/$(Configuration)/$(TargetFramework) layout, so a build with the
-    dotnet test artifacts path option or a custom OutputPath puts the DLL elsewhere and the test fails
-    to find it. CI runs plain `dotnet test`.
-    -->
-    <AssemblyMetadata Include="MicrosoftAgentFrameworkMcpOutputDirectory" Value="$(MSBuildThisFileDirectory)../src/MicrosoftAgentFramework/Mcp/bin/$(Configuration)/$(TargetFramework)/" />
-  </ItemGroup>
+  <!--
+  The Mcp sample test runs `dotnet <dll> mcp-server` from the sample's own output directory, which
+  carries the sample's full dependency closure. This test output does not: Microsoft.AspNetCore.Mvc.Testing
+  brings in the ASP.NET shared framework, so assemblies it provides are not copied next to the DLL.
+  The directory comes from the resolved project reference, so it follows a custom OutputPath or an
+  artifacts path, and the build fails here if that reference is renamed or removed.
+  -->
+  <Target Name="AddMcpSampleOutputDirectory" BeforeTargets="GetAssemblyAttributes" DependsOnTargets="ResolveProjectReferences">
+    <ItemGroup>
+      <_McpSampleOutput Include="@(_ResolvedProjectReferencePaths)" Condition="'%(_ResolvedProjectReferencePaths.Filename)' == 'TemporalioSamples.MicrosoftAgentFramework.Mcp'" />
+    </ItemGroup>
+    <Error Condition="'@(_McpSampleOutput)' == ''" Text="No resolved project reference to TemporalioSamples.MicrosoftAgentFramework.Mcp; McpWorkflowTests needs its output directory." />
+    <ItemGroup>
+      <AssemblyMetadata Include="MicrosoftAgentFrameworkMcpOutputDirectory" Value="%(_McpSampleOutput.RootDir)%(_McpSampleOutput.Directory)" />
+    </ItemGroup>
+  </Target>
 
   <ItemGroup>
     <ProjectReference Include="..\src\ActivitySimple\TemporalioSamples.ActivitySimple.csproj" />

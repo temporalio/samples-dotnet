@@ -31,7 +31,6 @@ public class McpWorkflowTests(ITestOutputHelper output, WorkflowEnvironment env)
             GetCustomAttributes<AssemblyMetadataAttribute>().
             Single(attribute => attribute.Key == "MicrosoftAgentFrameworkMcpOutputDirectory").Value!;
         var dll = Path.Combine(outputDirectory, "TemporalioSamples.MicrosoftAgentFramework.Mcp.dll");
-        Assert.True(File.Exists(dll), $"{dll} not found; the test expects the default output layout (see TemporalioSamples.Tests.csproj)");
         var transport = new StdioClientTransport(new StdioClientTransportOptions
         {
             Name = "echo",
