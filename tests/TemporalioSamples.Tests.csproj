@@ -19,6 +19,23 @@
     <PackageReference Include="xunit.runner.visualstudio" />
   </ItemGroup>
 
+  <!--
+  The Mcp sample test runs `dotnet <dll> mcp-server` from the sample's own output directory, which
+  carries the sample's full dependency closure. This test output does not: Microsoft.AspNetCore.Mvc.Testing
+  brings in the ASP.NET shared framework, so assemblies it provides are not copied next to the DLL.
+  The directory comes from the resolved project reference, so it follows a custom OutputPath or an
+  artifacts path, and the build fails here if that reference is renamed or removed.
+  -->
+  <Target Name="AddMcpSampleOutputDirectory" BeforeTargets="GetAssemblyAttributes" DependsOnTargets="ResolveProjectReferences">
+    <ItemGroup>
+      <_McpSampleOutput Include="@(_ResolvedProjectReferencePaths)" Condition="'%(_ResolvedProjectReferencePaths.Filename)' == 'TemporalioSamples.MicrosoftAgentFramework.Mcp'" />
+    </ItemGroup>
+    <Error Condition="'@(_McpSampleOutput)' == ''" Text="No resolved project reference to TemporalioSamples.MicrosoftAgentFramework.Mcp; McpWorkflowTests needs its output directory." />
+    <ItemGroup>
+      <AssemblyMetadata Include="MicrosoftAgentFrameworkMcpOutputDirectory" Value="%(_McpSampleOutput.RootDir)%(_McpSampleOutput.Directory)" />
+    </ItemGroup>
+  </Target>
+
   <ItemGroup>
     <ProjectReference Include="..\src\ActivitySimple\TemporalioSamples.ActivitySimple.csproj" />
     <ProjectReference Include="..\src\ActivityWorker\TemporalioSamples.ActivityWorker.csproj" />
@@ -57,6 +74,14 @@
     <ProjectReference Include="..\src\NexusMessaging\TemporalioSamples.NexusMessaging.csproj" />
     <ProjectReference Include="..\src\SearchAttributes\TemporalioSamples.SearchAttributes.csproj" />
     <ProjectReference Include="..\src\NexusMessagingTemporalOperation\TemporalioSamples.NexusMessagingTemporalOperation.csproj" />
+    <ProjectReference Include="..\src\MicrosoftAgentFramework\ContinueAsNew\TemporalioSamples.MicrosoftAgentFramework.ContinueAsNew.csproj" />
+    <ProjectReference Include="..\src\MicrosoftAgentFramework\HelloWorld\TemporalioSamples.MicrosoftAgentFramework.HelloWorld.csproj" />
+    <ProjectReference Include="..\src\MicrosoftAgentFramework\HumanInTheLoop\TemporalioSamples.MicrosoftAgentFramework.HumanInTheLoop.csproj" />
+    <ProjectReference Include="..\src\MicrosoftAgentFramework\Mcp\TemporalioSamples.MicrosoftAgentFramework.Mcp.csproj" />
+    <ProjectReference Include="..\src\MicrosoftAgentFramework\Middleware\TemporalioSamples.MicrosoftAgentFramework.Middleware.csproj" />
+    <ProjectReference Include="..\src\MicrosoftAgentFramework\Streaming\TemporalioSamples.MicrosoftAgentFramework.Streaming.csproj" />
+    <ProjectReference Include="..\src\MicrosoftAgentFramework\StructuredOutput\TemporalioSamples.MicrosoftAgentFramework.StructuredOutput.csproj" />
+    <ProjectReference Include="..\src\MicrosoftAgentFramework\Tools\TemporalioSamples.MicrosoftAgentFramework.Tools.csproj" />
   </ItemGroup>
 
 </Project>
