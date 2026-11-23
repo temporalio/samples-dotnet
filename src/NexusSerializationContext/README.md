@@ -34,8 +34,10 @@ Both sides also need the same payload format, including whether to compress.
 
 The caller uses a separate key for its workflow input and final result.
 For this example, each handler reuses its endpoint-1 key for backing workflow inputs.
-If your application already has a workflow codec, keep it as the default so it
-can still read existing histories.
+
+When adapting this sample, use your existing codec for ordinary workflow payloads
+so workers can still read existing histories. The sample selects the workflow default
+in the `endpoint == null` case of `Selected` in [NexusCodec.cs](NexusCodec.cs).
 
 | Ordinary workflow payload | Default key ID |
 |---|---|
@@ -57,6 +59,8 @@ records `encrypted-1` and its result records `encrypted-2`.
 
 The caller starts all eight operations before waiting for their results. Each operation
 keeps its own endpoint context while calls using different keys run concurrently.
+[`NexusCodec.WithSerializationContext`](NexusCodec.cs) binds the endpoint on a new
+instance that shares the read-only configuration.
 No custom interceptor or workflow-header propagation is required.
 
 Each workflow execution has one serialized result, shared by all Nexus operations
@@ -82,18 +86,31 @@ established encryption implementation and secure key storage.
 
 ## Prerequisites
 
-Install the [.NET 10 SDK](https://dotnet.microsoft.com/download).
+Install the [.NET 10 SDK](https://dotnet.microsoft.com/download). This repository
+uses Temporal .NET SDK 1.22.0.
 Use a Temporal Server that supports Nexus serialization-context propagation for
 workflow-backed asynchronous operations. For the local walkthrough, download the prerelease
 [Temporal CLI `v1.9.3-nexus-serialization-context`](https://github.com/temporalio/cli/releases/tag/v1.9.3-nexus-serialization-context).
-Keep this prerelease binary separate from your stable CLI. Place the downloaded binary
-at the repository root as `temporal`. The commands below use `./temporal` explicitly.
+Extract the archive and place the `temporal` binary at the repository root.
+The commands below use `./temporal` to run this build separately from your installed CLI.
 
 ## Run locally
 
-Run these commands from the repository root. Each worker polls a task queue with the
-same name as its namespace. Both endpoints for a handler target that handler's namespace
-and task queue.
+Run these commands from the repository root. The CLI version should be
+`1.9.3-nexus-serialization-context`:
+
+```bash
+./temporal --version
+```
+
+Each worker polls a task queue with the same name as its namespace. Both endpoints
+for a handler target that handler's namespace and task queue.
+
+| Worker | Namespace and task queue |
+|---|---|
+| Caller | `nexus-serialization-caller` |
+| Compressed/encrypted handler | `nexus-serialization-compressed-encrypted-handler` |
+| Encrypted handler | `nexus-serialization-encrypted-handler` |
 
 Start the dev server in its own terminal:
 
