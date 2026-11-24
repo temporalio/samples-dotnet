@@ -1,14 +1,22 @@
 using System.CommandLine;
+using Microsoft.Extensions.Logging;
 using Temporalio.Client;
 using Temporalio.Common.EnvConfig;
 using Temporalio.Worker;
 using TemporalioSamples.NexusSerializationContext;
+
+using var loggerFactory = LoggerFactory.Create(builder =>
+    builder.
+        AddSimpleConsole(options => options.SingleLine = true).
+        SetMinimumLevel(LogLevel.Information));
+var logger = loggerFactory.CreateLogger<Program>();
 
 async Task<TemporalClient> ConnectAsync(string temporalNamespace)
 {
     var options = ClientEnvConfig.LoadClientConnectOptions();
     options.TargetHost ??= "localhost:7233";
     options.Namespace = temporalNamespace;
+    options.LoggerFactory = loggerFactory;
     options.DataConverter = temporalNamespace == SampleConfig.Caller ? SampleConfig.CallerConverter() :
         SampleConfig.HandlerConverter(temporalNamespace == SampleConfig.CompressedHandler);
     return await TemporalClient.ConnectAsync(options);
@@ -26,13 +34,14 @@ async Task RunWorkerAsync(string temporalNamespace, CancellationToken cancellati
         options.AddWorkflow<EchoWorkflow>().AddNexusService(new SyncEchoService()).AddNexusService(new AsyncEchoService());
     }
     using var worker = new TemporalWorker(await ConnectAsync(temporalNamespace), options);
+    logger.LogInformation("Running worker for namespace {Namespace}", temporalNamespace);
     try
     {
         await worker.ExecuteAsync(cancellationToken);
     }
     catch (OperationCanceledException)
     {
-        Console.WriteLine("Worker stopped");
+        logger.LogInformation("Worker stopped");
     }
 }
 
