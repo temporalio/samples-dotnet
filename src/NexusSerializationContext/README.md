@@ -22,10 +22,11 @@ the service and operation, which can be used to select keys.
 
 ## Adapt this pattern
 
-`NexusCodec` uses an immutable map from endpoints to encryption settings, with a
-default for ordinary workflow payloads. Set `DataConverter.PayloadCodec` to this codec,
-then configure `TemporalClientConnectOptions.DataConverter` with that converter on
-the caller and handler clients. See [SampleConfig.cs](SampleConfig.cs) for the key maps and [Program.cs](Program.cs)
+The sample's [`NexusCodec`](NexusCodec.cs) selects encryption and compression settings
+from an immutable endpoint map, with a default for ordinary workflow payloads. Set
+`DataConverter.PayloadCodec` to a `NexusCodec` instance, then pass the data converter to
+the caller and handler clients through `TemporalClientConnectOptions.DataConverter`.
+See [SampleConfig.cs](SampleConfig.cs) for the key maps and [Program.cs](Program.cs)
 for client setup.
 
 Because AES-GCM uses symmetric encryption, the caller and handler share a secret key
@@ -78,8 +79,8 @@ encryption-key-id: compressed-encrypted-1
 nexus-endpoint-name: nexus-serialization-compressed-encrypted-1
 ```
 
-The metadata identifies the key and endpoint. The key material stays in the codec
-configuration.
+The metadata records the key ID and endpoint, while the key material stays in the
+codec configuration.
 
 The AES-GCM codec and hard-coded keys are for this example. For production, use an
 established encryption implementation and secure key storage.
@@ -183,9 +184,9 @@ The four sync operations return directly from their handlers.
 Run the codec and workflow tests from the repository root:
 
 ```bash
-TEMPORAL_SERIALIZATION_CONTEXT_CLI="$PWD/temporal" \
-  dotnet test tests --filter FullyQualifiedName~NexusSerializationContext
+dotnet test tests --filter FullyQualifiedName~NexusSerializationContext
 ```
 
-The workflow test starts its own isolated server and checks the sync and async results
-for all four endpoints.
+The SDK reuses the pinned prerelease CLI from its cache or downloads it if needed.
+The workflow test starts its own isolated server and checks the sync and async
+results for all four endpoints.

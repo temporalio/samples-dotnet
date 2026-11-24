@@ -42,35 +42,6 @@ jobs:
         if: ${{ matrix.checkTarget }}
         run: dotnet format --verify-no-changes
 
-      # Download before parallel tests can inherit a writable CLI handle on Linux.
-      - name: Prepare Nexus serialization context CLI
-        shell: bash
-        run: |
-          case "$RUNNER_OS" in
-            Linux) platform=linux ;;
-            macOS) platform=darwin ;;
-            Windows) platform=windows ;;
-            *) exit 1 ;;
-          esac
-          case "$RUNNER_ARCH" in
-            X64) architecture=amd64 ;;
-            ARM64) architecture=arm64 ;;
-            *) exit 1 ;;
-          esac
-          cli_dir="$RUNNER_TEMP/nexus-serialization-context-cli"
-          if [[ "$RUNNER_OS" == Windows ]]; then
-            cli_dir="$(cygpath -u "$cli_dir")"
-          fi
-          mkdir -p "$cli_dir"
-          curl --retry 3 --retry-connrefused --fail --silent --show-error --location \
-            "https://github.com/temporalio/cli/releases/download/v1.9.3-nexus-serialization-context/temporal_cli_1.9.3-nexus-serialization-context_${platform}_${architecture}.tar.gz" |
-            tar -xzf - -C "$cli_dir"
-          cli_path="$cli_dir/temporal"
-          if [[ "$RUNNER_OS" == Windows ]]; then
-            cli_path="$(cygpath -m "$cli_dir/temporal.exe")"
-          fi
-          echo "TEMPORAL_SERIALIZATION_CONTEXT_CLI=$cli_path" >> "$GITHUB_ENV"
-
       - name: Test
         run: dotnet test --logger "console;verbosity=detailed" --blame-crash -v n
 

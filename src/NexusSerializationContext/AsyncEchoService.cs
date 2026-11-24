@@ -16,7 +16,6 @@ public class AsyncEchoService
                 operation.Logger.LogInformation("Starting async echo for endpoint {Endpoint}", operation.Info.Endpoint);
                 return context.StartWorkflowAsync(
                     (EchoWorkflow workflow) => workflow.RunAsync(message),
-                    // Request IDs survive retries and isolate independent operations, even for identical input.
                     new() { Id = $"nexus-echo-{context.HandlerContext.RequestId}" });
             });
 }

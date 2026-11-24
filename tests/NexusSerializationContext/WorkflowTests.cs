@@ -12,12 +12,10 @@ public class WorkflowTests
     [Fact]
     public async Task RunAsync_AllEndpoints_Succeeds()
     {
-        // Point this at the serialization-context CLI build described in the sample README.
         await using var env = await WorkflowEnvironment.StartLocalAsync(new()
         {
             DevServerOptions = new()
             {
-                ExistingPath = Environment.GetEnvironmentVariable("TEMPORAL_SERIALIZATION_CONTEXT_CLI"),
                 DownloadVersion = "v1.9.3-nexus-serialization-context",
             },
         });
