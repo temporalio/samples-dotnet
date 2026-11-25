@@ -30,11 +30,14 @@ public static class SampleConfig
             [Endpoints[2]] = new("encrypted-1", "handler-b-key-01", false),
             [Endpoints[3]] = new("encrypted-2", "handler-b-key-02", false),
         };
-        var codecs = allEndpoints.Where(e => compressed == null || e.Value.Compress == compressed).
-            ToFrozenDictionary();
+        var endpointCodecs = allEndpoints.Where(e => compressed == null || e.Value.Compress == compressed).
+            ToFrozenDictionary(e => e.Key, e => (IPayloadCodec)new AesGcmCodec(e.Value.KeyId, e.Value.Key, e.Value.Compress));
         var workflow = compressed == null
             ? new EndpointEncoding("caller-workflow", "sample-key-C-123", false)
-            : codecs[Endpoints[compressed.Value ? 0 : 2]] with { Compress = false };
-        return DataConverter.Default with { PayloadCodec = new NexusCodec(codecs, workflow) };
+            : allEndpoints[Endpoints[compressed.Value ? 0 : 2]];
+        var workflowCodec = new AesGcmCodec(workflow.KeyId, workflow.Key);
+        return DataConverter.Default with { PayloadCodec = new NexusCodec(endpointCodecs, workflowCodec) };
     }
+
+    private sealed record EndpointEncoding(string KeyId, string Key, bool Compress);
 }

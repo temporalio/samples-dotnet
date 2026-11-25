@@ -22,12 +22,12 @@ the service and operation, which can be used to select keys.
 
 ## Adapt this pattern
 
-The sample's [`NexusCodec`](NexusCodec.cs) selects encryption and compression settings
-from an immutable endpoint map, with a default for ordinary workflow payloads. Set
-`DataConverter.PayloadCodec` to a `NexusCodec` instance, then pass the data converter to
-the caller and handler clients through `TemporalClientConnectOptions.DataConverter`.
-See [SampleConfig.cs](SampleConfig.cs) for the key maps and [Program.cs](Program.cs)
-for client setup.
+The sample's [`NexusCodec`](NexusCodec.cs) takes an immutable map from endpoint names
+to `IPayloadCodec` instances and a separate workflow codec. [SampleConfig.cs](SampleConfig.cs)
+builds that map with [`AesGcmCodec`](AesGcmCodec.cs) instances. Set
+`DataConverter.PayloadCodec` to the resulting `NexusCodec` and pass the data converter
+to the caller and handler clients through `TemporalClientConnectOptions.DataConverter`.
+See [Program.cs](Program.cs) for client setup.
 
 Because AES-GCM uses symmetric encryption, the caller and handler share a secret key
 for each endpoint. This sample uses that key for both requests and results.
@@ -36,9 +36,10 @@ Both sides also need the same payload format, including whether to compress.
 The caller uses a separate key for its workflow input and final result.
 For this example, each handler reuses its endpoint-1 key for backing workflow inputs.
 
-When adapting this sample, use your existing codec for ordinary workflow payloads
-so workers can still read existing histories. The sample selects the workflow default
-in the `endpoint == null` case of `Selected` in [NexusCodec.cs](NexusCodec.cs).
+When adapting this sample, pass your existing workflow codec as the second argument
+to `new NexusCodec(endpointCodecs, existingWorkflowCodec)` so workers can still read
+existing histories. The router forwards serialization context to the selected codec
+when that codec implements `IWithSerializationContext<IPayloadCodec>`.
 
 | Ordinary workflow payload | Default key ID |
 |---|---|
@@ -60,7 +61,7 @@ records `encrypted-1` and its result records `encrypted-2`.
 
 The caller starts all eight operations before waiting for their results. Each operation
 keeps its own endpoint context while calls using different keys run concurrently.
-[`NexusCodec.WithSerializationContext`](NexusCodec.cs) binds the endpoint on a new
+[`NexusCodec.WithSerializationContext`](NexusCodec.cs) binds the context on a new
 instance that shares the read-only configuration.
 No custom interceptor or workflow-header propagation is required.
 

@@ -1,5 +1,6 @@
 namespace TemporalioSamples.Tests.NexusSerializationContext;
 
+using System.Collections.Frozen;
 using System.Security.Cryptography;
 using System.Text;
 using Google.Protobuf;
@@ -61,6 +62,30 @@ public class CodecTests
             Assert.Equal("json/plain", Decrypt(payload, key).Metadata["encoding"].ToStringUtf8());
             Assert.Equal("hello", await bound.ToValueAsync<string>(payload));
         }
+    }
+
+    [Fact]
+    public async Task WorkflowFallback_CanReuseAnExistingContextAwareCodecAsync()
+    {
+        var existingCodec = new WorkflowScopedCodec();
+        var workflowContext = new ISerializationContext.Workflow("caller", "existing-workflow");
+        var existingConverter = DataConverter.Default with { PayloadCodec = existingCodec };
+        var boundExistingConverter = existingConverter.WithSerializationContext(workflowContext);
+        var recordedPayload = await boundExistingConverter.ToPayloadAsync("history");
+        Assert.Equal("existing-workflow", recordedPayload.Metadata["workflow-id"].ToStringUtf8());
+
+        var endpoint = SampleConfig.Endpoints[2];
+        var endpointCodecs = new Dictionary<string, IPayloadCodec>
+        {
+            [endpoint] = new AesGcmCodec("encrypted-1", RawKey(endpoint)),
+        }.ToFrozenDictionary();
+        var converter = existingConverter with { PayloadCodec = new NexusCodec(endpointCodecs, existingCodec) };
+        var nexus = Bind(converter, endpoint);
+        var workflow = nexus.WithSerializationContext(workflowContext);
+
+        Assert.Equal("history", await workflow.ToValueAsync<string>(recordedPayload));
+        Assert.Equal(recordedPayload, await workflow.ToPayloadAsync("history"));
+        AssertMetadata(await nexus.ToPayloadAsync("request"), endpoint);
     }
 
     [Fact]
@@ -161,5 +186,25 @@ public class CodecTests
         using var aes = new AesGcm(Encoding.UTF8.GetBytes(key), 16);
         aes.Decrypt(data.AsSpan(0, 12), data.AsSpan(12, plaintext.Length), data.AsSpan(data.Length - 16), plaintext);
         return Payload.Parser.ParseFrom(plaintext);
+    }
+
+    private sealed class WorkflowScopedCodec(string? workflowId = null) : IPayloadCodec, IWithSerializationContext<IPayloadCodec>
+    {
+        public IPayloadCodec WithSerializationContext(ISerializationContext context) =>
+            new WorkflowScopedCodec(((ISerializationContext.Workflow)context).WorkflowId);
+
+        public Task<IReadOnlyCollection<Payload>> EncodeAsync(IReadOnlyCollection<Payload> payloads) =>
+            Task.FromResult<IReadOnlyCollection<Payload>>(payloads.Select(payload =>
+            {
+                var copy = payload.Clone();
+                copy.Metadata["workflow-id"] = ByteString.CopyFromUtf8(workflowId ?? throw new InvalidOperationException("Missing workflow context"));
+                return copy;
+            }).ToArray());
+
+        public Task<IReadOnlyCollection<Payload>> DecodeAsync(IReadOnlyCollection<Payload> payloads)
+        {
+            Assert.All(payloads, payload => Assert.Equal(workflowId, payload.Metadata["workflow-id"].ToStringUtf8()));
+            return Task.FromResult(payloads);
+        }
     }
 }
