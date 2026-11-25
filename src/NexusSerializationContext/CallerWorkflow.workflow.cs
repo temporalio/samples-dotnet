@@ -6,25 +6,17 @@ using Temporalio.Workflows;
 public class CallerWorkflow
 {
     [WorkflowRun]
-    public async Task<EndpointResults[]> RunAsync(string message)
-    {
-        var starts = SampleConfig.Endpoints.Select(async endpoint =>
+    public Task<EndpointResults[]> RunAsync(string message) =>
+        Task.WhenAll(SampleConfig.Endpoints.Select(async endpoint =>
         {
-            var syncStart = Workflow.CreateNexusWorkflowClient<ISyncEchoService>(endpoint).
-                StartNexusOperationAsync(service => service.Echo(message), new() { ScheduleToCloseTimeout = TimeSpan.FromSeconds(30) });
-            var asyncStart = Workflow.CreateNexusWorkflowClient<IAsyncEchoService>(endpoint).
-                StartNexusOperationAsync(service => service.Echo(message), new() { ScheduleToCloseTimeout = TimeSpan.FromSeconds(30) });
-            return (endpoint, sync: await syncStart, asyncOperation: await asyncStart);
-        }).ToArray();
-        // Start all eight operations before waiting for any results.
-        var handles = await Task.WhenAll(starts);
-        var results = new List<EndpointResults>();
-        foreach (var (endpoint, sync, asyncOperation) in handles)
-        {
-            results.Add(new(endpoint, await sync.GetResultAsync(), await asyncOperation.GetResultAsync()));
-        }
-        return results.ToArray();
-    }
+            var options = new NexusWorkflowOperationOptions { ScheduleToCloseTimeout = TimeSpan.FromSeconds(30) };
+            // Start both calls before awaiting either result.
+            var sync = Workflow.CreateNexusWorkflowClient<ISyncEchoService>(endpoint).
+                ExecuteNexusOperationAsync(service => service.Echo(message), options);
+            var asyncResult = Workflow.CreateNexusWorkflowClient<IAsyncEchoService>(endpoint).
+                ExecuteNexusOperationAsync(service => service.Echo(message), options);
+            return new EndpointResults(endpoint, await sync, await asyncResult);
+        }));
 }
 
 public record EndpointResults(string Endpoint, string Sync, string Async);
